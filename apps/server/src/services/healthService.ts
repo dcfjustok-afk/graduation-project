@@ -1,4 +1,5 @@
 import { env } from "../config/env";
+import { getDatabaseHealthStatus } from "../db/databaseHealth";
 
 /**
  * 健康检查服务。
@@ -15,7 +16,7 @@ export function getHealthStatus() {
     environment: env.nodeEnv,
     timestamp: new Date().toISOString(),
     dependencies: {
-      database: "pending",
+      database: getDatabaseHealthStatus(),
       blockchain: "pending",
     },
   };

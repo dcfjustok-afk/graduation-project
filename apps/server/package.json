@@ -8,7 +8,9 @@
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
-    "test": "echo \"No tests yet\""
+    "db:init": "node dist/scripts/initDatabase.js",
+    "db:verify": "node dist/scripts/verifyDatabase.js",
+    "test": "npm run db:init && npm run db:verify"
   },
   "keywords": [],
   "author": "",
@@ -20,7 +22,8 @@
   "dependencies": {
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "sql.js": "^1.14.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",

@@ -1,5 +1,6 @@
 import { createApp } from "./app";
 import { env } from "./config/env";
+import { initializeDatabase } from "./db/initDatabase";
 
 /**
  * 服务启动入口。
@@ -10,6 +11,8 @@ import { env } from "./config/env";
  * - 输出启动日志。
  */
 async function bootstrap() {
+  await initializeDatabase();
+
   const app = createApp();
 
   app.listen(env.port, () => {

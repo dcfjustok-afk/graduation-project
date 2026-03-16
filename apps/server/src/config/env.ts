@@ -14,4 +14,6 @@ export const env = {
   nodeEnv: process.env.NODE_ENV || "development",
   port: Number(process.env.PORT || 3001),
   serviceName: "graduation-project-server",
+  sqliteDbPath:
+    process.env.SQLITE_DB_PATH || "../../storage/sqlite/graduation-project.db",
 };
