@@ -7,10 +7,12 @@ async function main() {
   console.log("Deploying LogRegistry with account:", deployer.address);
 
   const logRegistryFactory = await ethers.getContractFactory("LogRegistry");
-  const logRegistry = await logRegistryFactory.deploy(deployer.address);
+  const logRegistry = await logRegistryFactory.deploy(deployer.address, deployer.address);
   await logRegistry.waitForDeployment();
 
   console.log("LogRegistry deployed to:", await logRegistry.getAddress());
+  console.log("Admin account:", deployer.address);
+  console.log("Initial logger account:", deployer.address);
 }
 
 main().catch((error) => {
