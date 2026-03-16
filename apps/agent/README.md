@@ -12,3 +12,37 @@
 ## 核心目标
 - 实现自动化、低侵入、稳定的日志采集
 - 减少人工上传日志的成本
+
+## 当前已完成
+- 基于 Node.js + TypeScript 初始化最小可运行 Agent 工程
+- 支持轮询监听本地日志文件变化
+- 支持按偏移量增量读取新增日志内容
+- 支持调用后端 `POST /api/logs` 接口上报日志
+- 支持失败重试与本地待发送队列持久化
+- 支持将偏移量与同步时间保存到本地状态文件
+
+## 目录结构
+- `src/config`：环境变量与运行配置
+- `src/collector`：日志增量读取逻辑
+- `src/http`：后端上报客户端
+- `src/retry`：失败重试队列
+- `src/state`：偏移量与队列本地存储
+- `src/agent`：Agent 主流程编排
+- `logs`：本地演示日志文件目录
+- `state`：本地状态文件目录
+
+## 最小运行说明
+
+1. 先启动 `apps/server`。
+2. 在 `apps/agent` 下复制 `.env.example` 为 `.env`。
+3. 运行 Agent：
+	- `npm run dev`
+4. 追加一条测试日志：
+	- `npm run demo:append`
+5. Agent 会读取新增内容，并自动调用后端接口上报。
+
+## 关键文件
+- `src/collector/fileReader.ts`：按偏移量读取新增内容
+- `src/retry/retryQueue.ts`：失败后按次数重试
+- `src/state/offsetStore.ts`：保存偏移量和待发送队列
+- `src/http/logApiClient.ts`：对接后端日志提交接口
