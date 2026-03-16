@@ -2,13 +2,43 @@
 
 这个目录用于实现后端服务。
 
-## 需要完成的内容
-- 搭建 Node.js + Express 服务
-- 提供日志接收、查询、审计、告警相关 API
-- 管理 SQLite 数据库
-- 负责哈希计算、数据校验与业务编排
-- 调用智能合约将日志哈希写入区块链
+## 当前已完成
+- 基于 Node.js + Express + TypeScript 初始化后端工程
+- 建立适合毕业设计讲解的目录结构
+- 提供统一响应格式
+- 提供基础健康检查接口
+- 预留数据库与区块链接入扩展位
 
-## 核心目标
-- 作为系统中枢连接 Agent、数据库、区块链与前端
-- 保证日志处理流程稳定、可追溯、可审计
+## 目录结构
+- `src/config`：环境变量与运行配置
+- `src/routes`：路由层
+- `src/controllers`：控制器层
+- `src/services`：业务服务层
+- `src/repositories`：数据访问层预留
+- `src/db`：数据库初始化与连接预留
+- `src/blockchain`：区块链接入预留
+- `src/middleware`：中间件
+- `src/utils`：通用工具与统一响应封装
+
+## 当前提供的接口
+- `GET /api/health`：健康检查接口
+
+返回格式统一为：
+
+```json
+{
+	"success": true,
+	"message": "服务运行正常",
+	"data": {
+		"service": "graduation-project-server"
+	}
+}
+```
+
+## 本地开发
+
+```powershell
+npm run dev
+npm run build
+npm run start
+```
