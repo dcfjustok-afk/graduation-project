@@ -10,6 +10,12 @@ export interface ApiResponse<T> {
   data: T;
 }
 
+export interface ApiListResponse<T> extends ApiResponse<T[]> {
+  meta: {
+    total: number;
+  };
+}
+
 /**
  * 创建成功响应。
  *
@@ -34,5 +40,22 @@ export function createErrorResponse(message: string): ApiResponse<null> {
     success: false,
     message,
     data: null,
+  };
+}
+
+/**
+ * 创建列表响应。
+ *
+ * 前端页面里的表格、列表、卡片统计通常都需要“数据 + 总数”，
+ * 所以这里补一个列表型响应工具，方便所有查询接口复用。
+ */
+export function createListResponse<T>(message: string, data: T[]): ApiListResponse<T> {
+  return {
+    success: true,
+    message,
+    data,
+    meta: {
+      total: data.length,
+    },
   };
 }

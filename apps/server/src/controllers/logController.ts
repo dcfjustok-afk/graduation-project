@@ -1,0 +1,27 @@
+import { Request, Response } from "express";
+import { submitLog, getLogs } from "../services/logService";
+import { createErrorResponse, createListResponse, createSuccessResponse } from "../utils/apiResponse";
+
+export async function submitLogController(req: Request, res: Response) {
+  const { taskId, sourceType, sourcePath, logContent, logLevel, collectedAt } = req.body;
+
+  if (!taskId || !logContent) {
+    return res.status(400).json(createErrorResponse("taskId 和 logContent 为必填字段"));
+  }
+
+  const createdRecord = await submitLog({
+    taskId,
+    sourceType,
+    sourcePath,
+    logContent,
+    logLevel,
+    collectedAt,
+  });
+
+  return res.status(201).json(createSuccessResponse("日志提交成功", createdRecord));
+}
+
+export async function listLogsController(_req: Request, res: Response) {
+  const logs = await getLogs();
+  return res.status(200).json(createListResponse("日志列表获取成功", logs));
+}
