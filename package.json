@@ -1,0 +1,16 @@
+{
+  "name": "graduation-project",
+  "version": "1.0.0",
+  "description": "This project is the graduation project of Charlie Dai.",
+  "main": "index.js",
+  "directories": {
+    "doc": "doc",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
