@@ -33,6 +33,17 @@ export interface UpsertAgentStatePayload {
   errorMessage?: string | null;
 }
 
+export interface CreateLogHashRecordPayload {
+  logId: number;
+  taskId: string;
+  logHash: string;
+  chainName?: string;
+  contractAddress?: string | null;
+  transactionHash?: string | null;
+  blockNumber?: number | null;
+  onChainStatus?: string;
+}
+
 export async function createLog(payload: CreateLogPayload): Promise<LogRecordEntity> {
   const { db, databasePath } = await openDatabase();
 
@@ -126,6 +137,57 @@ export async function upsertAgentState(payload: UpsertAgentStatePayload) {
     return executeSelect<Record<string, unknown>>(
       db,
       `SELECT * FROM agent_states WHERE agent_name = '${agentName}' LIMIT 1;`
+    )[0];
+  } finally {
+    closeDatabase(db);
+  }
+}
+
+export async function createLogHashRecord(payload: CreateLogHashRecordPayload) {
+  const { db, databasePath } = await openDatabase();
+
+  try {
+    const now = new Date().toISOString();
+    const taskId = escapeSqlString(payload.taskId);
+    const logHash = escapeSqlString(payload.logHash);
+    const chainName = escapeSqlString(payload.chainName || "hardhat");
+    const contractAddress = payload.contractAddress ? `'${escapeSqlString(payload.contractAddress)}'` : "NULL";
+    const transactionHash = payload.transactionHash ? `'${escapeSqlString(payload.transactionHash)}'` : "NULL";
+    const blockNumber = payload.blockNumber ?? "NULL";
+    const onChainStatus = escapeSqlString(payload.onChainStatus || "pending");
+
+    db.exec(`
+      INSERT INTO log_hash_records (
+        log_id,
+        task_id,
+        log_hash,
+        chain_name,
+        contract_address,
+        transaction_hash,
+        block_number,
+        on_chain_status,
+        created_at,
+        updated_at
+      )
+      VALUES (
+        ${payload.logId},
+        '${taskId}',
+        '${logHash}',
+        '${chainName}',
+        ${contractAddress},
+        ${transactionHash},
+        ${blockNumber},
+        '${onChainStatus}',
+        '${now}',
+        '${now}'
+      );
+    `);
+
+    persistDatabase(db, databasePath);
+
+    return executeSelect<Record<string, unknown>>(
+      db,
+      `SELECT * FROM log_hash_records ORDER BY id DESC LIMIT 1;`
     )[0];
   } finally {
     closeDatabase(db);

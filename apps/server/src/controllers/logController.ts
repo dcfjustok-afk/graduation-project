@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { submitLog, getLogs, syncAgentState } from "../services/logService";
 import { createErrorResponse, createListResponse, createSuccessResponse } from "../utils/apiResponse";
+import { persistLogAndWriteChain } from "../services/blockchainService";
 
 export async function submitLogController(req: Request, res: Response) {
   const { taskId, sourceType, sourcePath, logContent, logLevel, collectedAt } = req.body;
@@ -9,7 +10,7 @@ export async function submitLogController(req: Request, res: Response) {
     return res.status(400).json(createErrorResponse("taskId 和 logContent 为必填字段"));
   }
 
-  const createdRecord = await submitLog({
+  const result = await persistLogAndWriteChain({
     taskId,
     sourceType,
     sourcePath,
@@ -18,7 +19,13 @@ export async function submitLogController(req: Request, res: Response) {
     collectedAt,
   });
 
-  return res.status(201).json(createSuccessResponse("日志提交成功", createdRecord));
+  return res.status(201).json(
+    createSuccessResponse("日志提交成功", {
+      log: result.log,
+      hashRecord: result.hashRecord,
+      blockchainError: result.error || null,
+    })
+  );
 }
 
 export async function listLogsController(_req: Request, res: Response) {
