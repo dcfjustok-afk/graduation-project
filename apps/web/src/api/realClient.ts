@@ -1,4 +1,4 @@
-import type { ServerAlertRecord, ServerAuditRecord, ServerLogRecord, ServerOverviewStats } from '../types';
+import type { AuditExecutionResult, ServerAlertRecord, ServerAuditRecord, ServerLogRecord, ServerOverviewStats } from '../types';
 import { httpClient } from './httpClient';
 
 export function getOverviewStats() {
@@ -15,4 +15,8 @@ export function getAuditRecords() {
 
 export function getAlertsRaw() {
   return httpClient.requestList<ServerAlertRecord>('/alerts');
+}
+
+export function runAudits() {
+  return httpClient.post<AuditExecutionResult[]>('/audits/run');
 }

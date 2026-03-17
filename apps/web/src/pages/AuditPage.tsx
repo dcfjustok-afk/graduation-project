@@ -1,8 +1,8 @@
 import { CheckCircleOutlined, ClockCircleOutlined, ThunderboltOutlined, WarningOutlined } from '@ant-design/icons';
-import { Button, Card, Col, List, Result, Row, Space, Statistic, Table, Tag, Timeline } from 'antd';
+import { Button, Card, Col, List, Result, Row, Space, Statistic, Table, Tag, Timeline, message } from 'antd';
 import type { TableProps } from 'antd';
 import { useEffect, useState } from 'react';
-import { getAuditPageData } from '../api/dataService';
+import { getAuditPageData, runAudits } from '../api/dataService';
 import { SectionHeader } from '../components/SectionHeader';
 import type { DashboardViewData, LogRecord } from '../types';
 
@@ -35,13 +35,32 @@ const columns: TableProps<LogRecord>['columns'] = [
 export function AuditPage() {
   const [dashboard, setDashboard] = useState<DashboardViewData>(initialDashboard);
   const [logs, setLogs] = useState<LogRecord[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const loadPage = async () => {
+    const payload = await getAuditPageData();
+    setDashboard(payload.dashboard);
+    setLogs(payload.logs);
+  };
 
   useEffect(() => {
-    void getAuditPageData().then((payload) => {
-      setDashboard(payload.dashboard);
-      setLogs(payload.logs);
-    });
+    void loadPage();
   }, []);
+
+  const handleRunAudits = async () => {
+    setLoading(true);
+
+    try {
+      const results = await runAudits();
+      await loadPage();
+      message.success(`审计执行完成，共处理 ${results.length} 条日志`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : '审计执行失败';
+      message.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="section-space">
@@ -49,7 +68,7 @@ export function AuditPage() {
         title="审计中心"
         subtitle="先把审计流程页面和交互按钮做好，后续只需要把按钮动作绑定到真实接口。"
         extra={
-          <Button type="primary" icon={<ThunderboltOutlined />} size="large">
+          <Button type="primary" icon={<ThunderboltOutlined />} size="large" loading={loading} onClick={() => void handleRunAudits()}>
             一键批量审计
           </Button>
         }
@@ -95,8 +114,8 @@ export function AuditPage() {
               dataSource={[
                 '支持单条审计、批量审计、定时审计。',
                 '接入区块高度、交易哈希、钱包地址等链上字段。',
-                '接入真实异常原因与差异对比内容。',
-                '增加实时状态轮询与审计过程动画。',
+                '已经接入真实异常原因与哈希比对结果展示。',
+                '后续可继续增加实时状态轮询与审计过程动画。',
               ]}
               renderItem={(item) => <List.Item>{item}</List.Item>}
             />

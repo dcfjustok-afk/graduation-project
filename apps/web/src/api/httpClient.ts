@@ -44,4 +44,5 @@ async function requestList<T>(path: string): Promise<T[]> {
 export const httpClient = {
   request,
   requestList,
+  post: request,
 };

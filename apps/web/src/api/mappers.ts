@@ -72,6 +72,28 @@ export function mapServerLogsToView(logs: ServerLogRecord[]): LogRecord[] {
   }));
 }
 
+export function mergeAuditIntoLogs(logs: LogRecord[], auditRecords: ServerAuditRecord[]): LogRecord[] {
+  const auditByLogId = new Map(auditRecords.filter((item) => item.log_id !== null).map((item) => [item.log_id, item]));
+
+  return logs.map((item) => {
+    const numericId = Number(item.id.replace('LOG-', ''));
+    const audit = auditByLogId.get(numericId);
+
+    if (!audit) {
+      return item;
+    }
+
+    return {
+      ...item,
+      status: audit.audit_status === 'passed' ? '审计通过' : audit.audit_status === 'failed' ? '发现异常' : '待审计',
+      auditMessage: audit.audit_message || undefined,
+      expectedHash: audit.expected_hash || undefined,
+      actualHash: audit.actual_hash || undefined,
+      hash: audit.expected_hash || item.hash,
+    };
+  });
+}
+
 export function mapServerAlertsToView(alerts: ServerAlertRecord[]): AlertRecord[] {
   return alerts.map((item) => ({
     id: `ALT-${item.id}`,

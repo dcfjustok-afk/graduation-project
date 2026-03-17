@@ -16,6 +16,9 @@ export interface LogRecord {
   status: string;
   submittedAt: string;
   hash: string;
+  auditMessage?: string;
+  expectedHash?: string;
+  actualHash?: string;
 }
 
 export interface AlertRecord {
@@ -103,6 +106,17 @@ export interface ServerAuditRecord {
   audit_message: string | null;
   audited_at: string;
   created_at: string;
+}
+
+export interface AuditExecutionResult {
+  logId: number;
+  taskId: string;
+  expectedHash: string | null;
+  actualHash: string;
+  onChainHash: string | null;
+  auditStatus: 'passed' | 'failed' | 'pending';
+  auditMessage: string;
+  alertGenerated: boolean;
 }
 
 export interface ServerAlertRecord {

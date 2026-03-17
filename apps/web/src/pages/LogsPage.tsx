@@ -8,6 +8,7 @@ import type { LogRecord } from '../types';
 
 const statusColorMap: Record<string, string> = {
   已上链: 'green',
+  审计通过: 'green',
   待审计: 'gold',
   发现异常: 'red',
 };
@@ -30,6 +31,7 @@ const columns: TableProps<LogRecord>['columns'] = [
   },
   { title: '提交时间', dataIndex: 'submittedAt', key: 'submittedAt' },
   { title: '哈希摘要', dataIndex: 'hash', key: 'hash' },
+  { title: '审计说明', dataIndex: 'auditMessage', key: 'auditMessage', ellipsis: true },
 ];
 
 export function LogsPage() {
