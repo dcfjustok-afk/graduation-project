@@ -14,6 +14,20 @@ export interface LogRecordEntity {
   status: string;
 }
 
+export interface LogHashRecordEntity {
+  id: number;
+  log_id: number;
+  task_id: string;
+  log_hash: string;
+  chain_name: string;
+  contract_address: string | null;
+  transaction_hash: string | null;
+  block_number: number | null;
+  on_chain_status: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface CreateLogPayload {
   taskId: string;
   sourceType?: string;
@@ -79,6 +93,54 @@ export async function listLogs(): Promise<LogRecordEntity[]> {
 
   try {
     return executeSelect<LogRecordEntity>(db, `SELECT * FROM logs ORDER BY id DESC;`);
+  } finally {
+    closeDatabase(db);
+  }
+}
+
+export async function getLogById(logId: number): Promise<LogRecordEntity | null> {
+  const { db } = await openDatabase();
+
+  try {
+    return (
+      executeSelect<LogRecordEntity>(db, `SELECT * FROM logs WHERE id = ${Number(logId)} LIMIT 1;`)[0] || null
+    );
+  } finally {
+    closeDatabase(db);
+  }
+}
+
+export async function getLatestLogHashRecordByLogId(logId: number): Promise<LogHashRecordEntity | null> {
+  const { db } = await openDatabase();
+
+  try {
+    return (
+      executeSelect<LogHashRecordEntity>(
+        db,
+        `SELECT * FROM log_hash_records WHERE log_id = ${Number(logId)} ORDER BY id DESC LIMIT 1;`
+      )[0] || null
+    );
+  } finally {
+    closeDatabase(db);
+  }
+}
+
+export async function updateLogStatus(logId: number, status: string) {
+  const { db, databasePath } = await openDatabase();
+
+  try {
+    const now = new Date().toISOString();
+    const escapedStatus = escapeSqlString(status);
+
+    db.exec(`
+      UPDATE logs
+      SET status = '${escapedStatus}', updated_at = '${now}'
+      WHERE id = ${Number(logId)};
+    `);
+
+    persistDatabase(db, databasePath);
+
+    return getLogById(logId);
   } finally {
     closeDatabase(db);
   }

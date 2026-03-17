@@ -12,6 +12,8 @@
     "db:verify": "node dist/scripts/verifyDatabase.js",
     "demo:seed": "node dist/scripts/seedDemoData.js",
     "demo:blockchain": "node dist/scripts/demoBlockchainRoundtrip.js",
+    "demo:audit": "node dist/scripts/demoAuditRoundtrip.js",
+    "verify:audit": "node dist/scripts/verifyAuditRoundtrip.js",
     "test": "npm run db:init && npm run db:verify"
   },
   "keywords": [],

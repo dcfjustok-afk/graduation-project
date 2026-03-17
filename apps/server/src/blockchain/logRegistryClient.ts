@@ -25,3 +25,17 @@ export function createLogRegistryClient() {
     contract,
   };
 }
+
+export function createLogRegistryReadClient() {
+  if (!env.logRegistryAddress) {
+    throw new Error("未配置 LOG_REGISTRY_ADDRESS，无法执行链上查询");
+  }
+
+  const provider = new JsonRpcProvider(env.hardhatRpcUrl);
+  const contract = new Contract(env.logRegistryAddress, logRegistryAbi, provider);
+
+  return {
+    provider,
+    contract,
+  };
+}
