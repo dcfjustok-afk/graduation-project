@@ -4,6 +4,8 @@ import type { TableProps } from 'antd';
 import { useEffect, useState } from 'react';
 import { getAuditPageData, runAudits } from '../api/dataService';
 import { SectionHeader } from '../components/SectionHeader';
+import { DistributionChart } from '../components/DistributionChart';
+import { LineTrendChart } from '../components/LineTrendChart';
 import type { DashboardViewData, LogRecord } from '../types';
 
 const initialDashboard: DashboardViewData = {
@@ -11,6 +13,9 @@ const initialDashboard: DashboardViewData = {
   auditTimeline: [],
   systemModules: [],
   sourceMode: 'mock',
+  logTrend: [],
+  statusDistribution: [],
+  alertDistribution: [],
   auditSummary: {
     total: 0,
     passed: 0,
@@ -109,13 +114,26 @@ export function AuditPage() {
           </Card>
         </Col>
         <Col xs={24} xl={9}>
-          <Card className="panel-card" title="后续扩展位" bordered={false}>
+          <Card className="panel-card" title="状态统计图" bordered={false}>
+            <DistributionChart items={dashboard.statusDistribution} variant="donut" />
+          </Card>
+        </Col>
+      </Row>
+
+      <Row gutter={[18, 18]}>
+        <Col xs={24} xl={14}>
+          <Card className="panel-card" title="日志趋势图" extra={<span className="chart-badge">审计驱动趋势</span>} bordered={false}>
+            <LineTrendChart data={dashboard.logTrend} />
+          </Card>
+        </Col>
+        <Col xs={24} xl={10}>
+          <Card className="panel-card" title="审计增强说明" bordered={false}>
             <List
               dataSource={[
                 '支持单条审计、批量审计、定时审计。',
                 '接入区块高度、交易哈希、钱包地址等链上字段。',
                 '已经接入真实异常原因与哈希比对结果展示。',
-                '后续可继续增加实时状态轮询与审计过程动画。',
+                '支持 mock / 真实接口模式下统一呈现图表。',
               ]}
               renderItem={(item) => <List.Item>{item}</List.Item>}
             />

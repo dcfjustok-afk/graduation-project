@@ -5,6 +5,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { getDashboardData } from '../api/dataService';
 import { MetricCard } from '../components/MetricCard';
 import { SectionHeader } from '../components/SectionHeader';
+import { DistributionChart } from '../components/DistributionChart';
+import { LineTrendChart } from '../components/LineTrendChart';
 import type { DashboardViewData } from '../types';
 
 interface SummaryRow {
@@ -18,6 +20,9 @@ const initialData: DashboardViewData = {
   auditTimeline: [],
   systemModules: [],
   sourceMode: 'mock',
+  logTrend: [],
+  statusDistribution: [],
+  alertDistribution: [],
   auditSummary: {
     total: 0,
     passed: 0,
@@ -127,6 +132,24 @@ export function DashboardPage() {
         <Col xs={24} xl={9}>
           <Card className="panel-card" title="审计摘要" bordered={false}>
             <Table<SummaryRow> columns={columns} dataSource={summaryRows} pagination={false} size="small" />
+          </Card>
+        </Col>
+      </Row>
+
+      <Row gutter={[18, 18]}>
+        <Col xs={24} xl={12}>
+          <Card className="panel-card" title="日志趋势图" extra={<span className="chart-badge">最近 7 个时间片</span>} bordered={false}>
+            <LineTrendChart data={data.logTrend} />
+          </Card>
+        </Col>
+        <Col xs={24} md={12} xl={6}>
+          <Card className="panel-card" title="状态统计图" bordered={false}>
+            <DistributionChart items={data.statusDistribution} variant="donut" />
+          </Card>
+        </Col>
+        <Col xs={24} md={12} xl={6}>
+          <Card className="panel-card" title="异常分布图" bordered={false}>
+            <DistributionChart items={data.alertDistribution} variant="bars" />
           </Card>
         </Col>
       </Row>
