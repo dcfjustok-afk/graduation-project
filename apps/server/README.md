@@ -90,3 +90,24 @@ npm run demo:seed
 4. 将 `transaction_hash`、`block_number`、`contract_address`、`on_chain_status` 写入 `log_hash_records` 表
 
 如果链上写入失败，后端仍保留原始日志记录，并把失败信息记录到 `log_hash_records.on_chain_status` 中，便于后续重试或答辩时说明异常处理设计。
+
+## 第 12 步审计闭环说明
+
+当前后端已经支持以下审计流程：
+
+1. 读取本地日志原文并重新计算 SHA-256 哈希
+2. 查询当前日志在 `log_hash_records` 中的预期哈希
+3. 读取链上 `LogRegistry` 中同任务的哈希记录并进行匹配
+4. 将审计结果写入 `audit_records`
+5. 若发现不一致，则生成 `alerts` 异常告警并更新日志状态
+
+当前提供的审计接口：
+
+- `GET /api/audits`：查询审计记录
+- `POST /api/audits/run`：执行全部日志审计
+- `POST /api/audits/:logId/run`：执行单条日志审计
+
+为了方便演示，额外提供：
+
+- `npm run demo:audit`：生成通过/异常样本并执行审计
+- `npm run verify:audit`：校验是否真实产生 `passed`、`failed` 和异常告警
