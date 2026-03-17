@@ -25,6 +25,7 @@ export const env = {
   stateFilePath: resolveProjectFile(process.env.AGENT_STATE_FILE || "./state/agent-state.json"),
   serverBaseUrl: process.env.SERVER_BASE_URL || "http://127.0.0.1:3010",
   serverLogEndpoint: process.env.SERVER_LOG_ENDPOINT || "/api/logs",
+  serverAgentStateEndpoint: process.env.SERVER_AGENT_STATE_ENDPOINT || "/api/agents/state",
   pollIntervalMs: Number(process.env.POLL_INTERVAL_MS || 1500),
   retryIntervalMs: Number(process.env.RETRY_INTERVAL_MS || 4000),
   maxRetryTimes: Number(process.env.MAX_RETRY_TIMES || 5),
@@ -33,4 +34,8 @@ export const env = {
 
 export function getServerLogSubmitUrl() {
   return new URL(env.serverLogEndpoint, env.serverBaseUrl).toString();
+}
+
+export function getServerAgentStateUrl() {
+  return new URL(env.serverAgentStateEndpoint, env.serverBaseUrl).toString();
 }

@@ -1,7 +1,7 @@
 import fs from "fs";
 import { env } from "../config/env";
 import { collectNewLogRecords } from "../collector/logCollector";
-import { flushPendingQueue } from "../retry/retryQueue";
+import { flushPendingQueue, reportAgentError } from "../retry/retryQueue";
 import { loadOffsetState, saveOffsetState } from "../state/offsetStore";
 import { ensureFileExists } from "../utils/fsHelpers";
 import { logError, logInfo } from "../utils/logger";
@@ -43,6 +43,7 @@ export function createLogAgent() {
 
       await flushPendingQueue();
     } catch (error) {
+      await reportAgentError(error);
       logError("Agent 轮询执行失败", error);
     } finally {
       isRunning = false;

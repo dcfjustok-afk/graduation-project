@@ -24,3 +24,13 @@ export interface LogSubmitPayload {
   logLevel: string;
   collectedAt: string;
 }
+
+export interface AgentStateSyncPayload {
+  agentName: string;
+  sourcePath: string;
+  lastOffset: number;
+  lastHeartbeatAt: string | null;
+  lastSyncAt: string | null;
+  status: string;
+  errorMessage?: string | null;
+}

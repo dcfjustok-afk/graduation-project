@@ -1,7 +1,7 @@
 import { env } from "../config/env";
-import { submitLogToServer } from "../http/logApiClient";
+import { submitLogToServer, syncAgentStateToServer } from "../http/logApiClient";
 import { loadOffsetState, saveOffsetState } from "../state/offsetStore";
-import { LogSubmitPayload, PendingLogRecord } from "../types/agent";
+import { AgentStateSyncPayload, LogSubmitPayload, PendingLogRecord } from "../types/agent";
 import { logError, logInfo } from "../utils/logger";
 
 function toPayload(record: PendingLogRecord): LogSubmitPayload {
@@ -17,6 +17,20 @@ function toPayload(record: PendingLogRecord): LogSubmitPayload {
 
 function calculateNextRetryTime(retryCount: number) {
   return Date.now() + env.retryIntervalMs * Math.max(1, retryCount);
+}
+
+function buildAgentStatePayload(status: string, errorMessage?: string | null): AgentStateSyncPayload {
+  const state = loadOffsetState();
+
+  return {
+    agentName: state.agentName,
+    sourcePath: state.sourcePath,
+    lastOffset: state.lastOffset,
+    lastHeartbeatAt: state.lastHeartbeatAt,
+    lastSyncAt: state.lastSyncAt,
+    status,
+    errorMessage: errorMessage || null,
+  };
 }
 
 export async function flushPendingQueue() {
@@ -55,4 +69,20 @@ export async function flushPendingQueue() {
   state.lastSyncAt = new Date().toISOString();
   state.lastHeartbeatAt = new Date().toISOString();
   saveOffsetState(state);
+
+  try {
+    await syncAgentStateToServer(buildAgentStatePayload(remaining.length > 0 ? "retrying" : "running"));
+  } catch (error) {
+    logError("Agent 状态同步失败", error);
+  }
+}
+
+export async function reportAgentError(error: unknown) {
+  const message = error instanceof Error ? error.message : "未知错误";
+
+  try {
+    await syncAgentStateToServer(buildAgentStatePayload("error", message));
+  } catch (syncError) {
+    logError("Agent 错误状态同步失败", syncError);
+  }
 }
