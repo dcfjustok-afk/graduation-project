@@ -1,0 +1,47 @@
+import type { ApiListResponse, ApiResponse } from '../types';
+import { apiEnv } from './env';
+
+async function request<T>(path: string): Promise<T> {
+  const response = await fetch(`${apiEnv.baseUrl}${path}`, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`请求失败：${response.status}`);
+  }
+
+  const payload = (await response.json()) as ApiResponse<T>;
+
+  if (!payload.success) {
+    throw new Error(payload.message || '接口返回失败');
+  }
+
+  return payload.data;
+}
+
+async function requestList<T>(path: string): Promise<T[]> {
+  const response = await fetch(`${apiEnv.baseUrl}${path}`, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`请求失败：${response.status}`);
+  }
+
+  const payload = (await response.json()) as ApiListResponse<T>;
+
+  if (!payload.success) {
+    throw new Error(payload.message || '接口返回失败');
+  }
+
+  return payload.data;
+}
+
+export const httpClient = {
+  request,
+  requestList,
+};

@@ -18,7 +18,22 @@
 - 已搭建 `React + Vite + TypeScript` 前端工程
 - 已接入 `Ant Design`
 - 已完成 4 个 mock 页面：总览、日志中心、审计中心、异常告警
-- 当前阶段不绑定真实后端，后续可直接替换 mock 接口
+- 已抽离统一数据访问层，支持 `mock / 真实接口` 切换
+
+## 数据源切换
+
+前端默认使用 mock 数据，保证页面在后端未启动时也能稳定演示。
+
+- `VITE_API_SOURCE=mock`：使用本地 mock 数据
+- `VITE_API_SOURCE=real`：请求真实后端接口
+- `VITE_API_BASE_URL=http://127.0.0.1:3010/api`：真实接口基础地址
+
+当切到真实接口时，页面会请求：
+
+- `GET /overview`
+- `GET /logs`
+- `GET /audits`
+- `GET /alerts`
 
 ## 运行方式
 - 安装依赖：`npm install`

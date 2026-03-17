@@ -48,9 +48,72 @@ export interface DashboardData {
   auditSummary: AuditSummary;
 }
 
+export interface DashboardViewData extends DashboardData {
+  sourceMode: 'mock' | 'real';
+}
+
 export interface NavItem {
   key: string;
   label: string;
   icon: ReactNode;
   badge?: string;
+}
+
+export interface ApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
+}
+
+export interface ApiListResponse<T> extends ApiResponse<T[]> {
+  meta: {
+    total: number;
+  };
+}
+
+export interface ServerOverviewStats {
+  totalLogs: number;
+  totalHashRecords: number;
+  totalAuditRecords: number;
+  totalAlerts: number;
+  openAlerts: number;
+  onlineAgents: number;
+}
+
+export interface ServerLogRecord {
+  id: number;
+  task_id: string;
+  source_type: string;
+  source_path: string | null;
+  log_content: string;
+  log_level: string;
+  collected_at: string;
+  created_at: string;
+  updated_at: string;
+  status: string;
+}
+
+export interface ServerAuditRecord {
+  id: number;
+  log_id: number | null;
+  log_hash_record_id: number | null;
+  audit_status: string;
+  expected_hash: string | null;
+  actual_hash: string | null;
+  audit_message: string | null;
+  audited_at: string;
+  created_at: string;
+}
+
+export interface ServerAlertRecord {
+  id: number;
+  alert_type: string;
+  severity: string;
+  related_log_id: number | null;
+  related_audit_id: number | null;
+  title: string;
+  description: string;
+  status: string;
+  created_at: string;
+  resolved_at: string | null;
 }
