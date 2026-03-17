@@ -79,3 +79,14 @@ npm run demo:seed
 为了方便演示，额外提供了：
 
 - `npm run demo:seed`：向数据库写入一条演示日志和一条初始 Agent 状态
+
+## 第 10 步链上最小闭环说明
+
+当前后端在收到日志后会执行以下动作：
+
+1. 先把日志原文写入 SQLite `logs` 表
+2. 计算日志原文的 SHA-256 哈希
+3. 调用 `LogRegistry.storeLog(taskId, logHash)` 写入本地 Hardhat 网络
+4. 将 `transaction_hash`、`block_number`、`contract_address`、`on_chain_status` 写入 `log_hash_records` 表
+
+如果链上写入失败，后端仍保留原始日志记录，并把失败信息记录到 `log_hash_records.on_chain_status` 中，便于后续重试或答辩时说明异常处理设计。
