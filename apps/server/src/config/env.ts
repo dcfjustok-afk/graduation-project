@@ -16,4 +16,7 @@ export const env = {
   serviceName: "graduation-project-server",
   sqliteDbPath:
     process.env.SQLITE_DB_PATH || "../../storage/sqlite/graduation-project.db",
+  hardhatRpcUrl: process.env.HARDHAT_RPC_URL || "http://127.0.0.1:8545",
+  logRegistryAddress: process.env.LOG_REGISTRY_ADDRESS || "",
+  blockchainPrivateKey: process.env.BLOCKCHAIN_PRIVATE_KEY || "",
 };

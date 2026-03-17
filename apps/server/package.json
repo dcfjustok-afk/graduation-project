@@ -11,6 +11,7 @@
     "db:init": "node dist/scripts/initDatabase.js",
     "db:verify": "node dist/scripts/verifyDatabase.js",
     "demo:seed": "node dist/scripts/seedDemoData.js",
+    "demo:blockchain": "node dist/scripts/demoBlockchainRoundtrip.js",
     "test": "npm run db:init && npm run db:verify"
   },
   "keywords": [],
@@ -23,6 +24,7 @@
   "dependencies": {
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
+    "ethers": "^6.15.0",
     "express": "^5.2.1",
     "sql.js": "^1.14.1"
   },
