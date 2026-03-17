@@ -1,9 +1,24 @@
 import { CheckCircleOutlined, ClockCircleOutlined, ThunderboltOutlined, WarningOutlined } from '@ant-design/icons';
 import { Button, Card, Col, List, Result, Row, Space, Statistic, Table, Tag, Timeline } from 'antd';
 import type { TableProps } from 'antd';
+import { useEffect, useState } from 'react';
+import { getAuditPageData } from '../api/dataService';
 import { SectionHeader } from '../components/SectionHeader';
-import { auditSummary, auditTimeline, logs } from '../mock';
-import type { LogRecord } from '../types';
+import type { DashboardViewData, LogRecord } from '../types';
+
+const initialDashboard: DashboardViewData = {
+  overviewCards: [],
+  auditTimeline: [],
+  systemModules: [],
+  sourceMode: 'mock',
+  auditSummary: {
+    total: 0,
+    passed: 0,
+    warning: 0,
+    abnormal: 0,
+    pending: 0,
+  },
+};
 
 const columns: TableProps<LogRecord>['columns'] = [
   { title: '日志编号', dataIndex: 'id', key: 'id' },
@@ -18,6 +33,16 @@ const columns: TableProps<LogRecord>['columns'] = [
 ];
 
 export function AuditPage() {
+  const [dashboard, setDashboard] = useState<DashboardViewData>(initialDashboard);
+  const [logs, setLogs] = useState<LogRecord[]>([]);
+
+  useEffect(() => {
+    void getAuditPageData().then((payload) => {
+      setDashboard(payload.dashboard);
+      setLogs(payload.logs);
+    });
+  }, []);
+
   return (
     <div className="section-space">
       <SectionHeader
@@ -33,22 +58,22 @@ export function AuditPage() {
       <Row gutter={[18, 18]}>
         <Col xs={24} md={12} xl={6}>
           <Card className="metric-card" bordered={false}>
-            <Statistic title="待处理" value={auditSummary.pending} prefix={<ClockCircleOutlined />} />
+            <Statistic title="待处理" value={dashboard.auditSummary.pending} prefix={<ClockCircleOutlined />} />
           </Card>
         </Col>
         <Col xs={24} md={12} xl={6}>
           <Card className="metric-card" bordered={false}>
-            <Statistic title="审计通过" value={auditSummary.passed} prefix={<CheckCircleOutlined />} />
+            <Statistic title="审计通过" value={dashboard.auditSummary.passed} prefix={<CheckCircleOutlined />} />
           </Card>
         </Col>
         <Col xs={24} md={12} xl={6}>
           <Card className="metric-card" bordered={false}>
-            <Statistic title="预警数量" value={auditSummary.warning} prefix={<WarningOutlined />} />
+            <Statistic title="预警数量" value={dashboard.auditSummary.warning} prefix={<WarningOutlined />} />
           </Card>
         </Col>
         <Col xs={24} md={12} xl={6}>
           <Card className="metric-card" bordered={false}>
-            <Statistic title="异常数量" value={auditSummary.abnormal} prefix={<WarningOutlined />} />
+            <Statistic title="异常数量" value={dashboard.auditSummary.abnormal} prefix={<WarningOutlined />} />
           </Card>
         </Col>
       </Row>
@@ -57,11 +82,11 @@ export function AuditPage() {
         <Col xs={24} xl={15}>
           <Card className="panel-card" title="审计执行面板" bordered={false}>
             <Result
-              status="info"
-              title="当前为 mock 演示流程"
-              subTitle="后续后端接入后，这里可以直接显示链上校验进度、交易信息、异常原因和回溯详情。"
+              status={dashboard.sourceMode === 'real' ? 'success' : 'info'}
+              title={dashboard.sourceMode === 'real' ? '当前已接入真实接口数据' : '当前为 mock 演示流程'}
+              subTitle="这里保留了相同的页面结构，切换数据源后无需重做交互和布局。"
             />
-            <Timeline items={auditTimeline} />
+            <Timeline items={dashboard.auditTimeline} />
           </Card>
         </Col>
         <Col xs={24} xl={9}>

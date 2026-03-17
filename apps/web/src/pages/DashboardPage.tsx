@@ -2,10 +2,10 @@ import { FireOutlined, RocketOutlined } from '@ant-design/icons';
 import { Button, Card, Col, Divider, Progress, Row, Space, Statistic, Table, Timeline, Typography } from 'antd';
 import type { TableProps } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
-import { getDashboardData } from '../api/mockClient';
+import { getDashboardData } from '../api/dataService';
 import { MetricCard } from '../components/MetricCard';
 import { SectionHeader } from '../components/SectionHeader';
-import type { DashboardData } from '../types';
+import type { DashboardViewData } from '../types';
 
 interface SummaryRow {
   key: string;
@@ -13,10 +13,11 @@ interface SummaryRow {
   value: number;
 }
 
-const initialData: DashboardData = {
+const initialData: DashboardViewData = {
   overviewCards: [],
   auditTimeline: [],
   systemModules: [],
+  sourceMode: 'mock',
   auditSummary: {
     total: 0,
     passed: 0,
@@ -32,7 +33,7 @@ const columns: TableProps<SummaryRow>['columns'] = [
 ];
 
 export function DashboardPage() {
-  const [data, setData] = useState<DashboardData>(initialData);
+  const [data, setData] = useState<DashboardViewData>(initialData);
 
   useEffect(() => {
     void getDashboardData().then(setData);
@@ -97,11 +98,11 @@ export function DashboardPage() {
                 </div>
                 <div>
                   <span>数据来源模式</span>
-                  <strong>Mock</strong>
+                    <strong>{data.sourceMode === 'real' ? 'Real API' : 'Mock'}</strong>
                 </div>
                 <div>
                   <span>后续接入方式</span>
-                  <strong>接口替换</strong>
+                    <strong>{data.sourceMode === 'real' ? '已接真实接口' : '接口替换'}</strong>
                 </div>
               </div>
             </Card>

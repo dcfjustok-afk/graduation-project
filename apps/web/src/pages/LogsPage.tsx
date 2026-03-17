@@ -2,7 +2,7 @@ import { SearchOutlined } from '@ant-design/icons';
 import { Card, Input, Space, Table, Tag, Typography } from 'antd';
 import type { TableProps } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
-import { getLogs } from '../api/mockClient';
+import { getLogs } from '../api/dataService';
 import { SectionHeader } from '../components/SectionHeader';
 import type { LogRecord } from '../types';
 

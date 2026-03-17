@@ -1,7 +1,7 @@
 import { BellOutlined } from '@ant-design/icons';
 import { Badge, Card, Col, Empty, Row, Tag, Typography } from 'antd';
 import { useEffect, useState } from 'react';
-import { getAlerts } from '../api/mockClient';
+import { getAlerts } from '../api/dataService';
 import { SectionHeader } from '../components/SectionHeader';
 import type { AlertRecord } from '../types';
 
