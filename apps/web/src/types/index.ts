@@ -44,11 +44,32 @@ export interface AuditSummary {
   pending: number;
 }
 
+export interface TrendPoint {
+  label: string;
+  total: number;
+  abnormal: number;
+}
+
+export interface StatusDistributionItem {
+  label: string;
+  value: number;
+  color: string;
+}
+
+export interface AlertDistributionItem {
+  label: string;
+  value: number;
+  color: string;
+}
+
 export interface DashboardData {
   overviewCards: OverviewCard[];
   auditTimeline: TimelineItemProps[];
   systemModules: SystemModule[];
   auditSummary: AuditSummary;
+  logTrend: TrendPoint[];
+  statusDistribution: StatusDistributionItem[];
+  alertDistribution: AlertDistributionItem[];
 }
 
 export interface DashboardViewData extends DashboardData {

@@ -11,6 +11,22 @@ export async function getDashboardData(): Promise<DashboardData> {
     auditTimeline,
     systemModules,
     auditSummary,
+    logTrend: [
+      { label: '03-16 09', total: 2, abnormal: 0 },
+      { label: '03-16 10', total: 3, abnormal: 1 },
+      { label: '03-16 11', total: 4, abnormal: 1 },
+      { label: '03-16 12', total: 5, abnormal: 0 },
+    ],
+    statusDistribution: [
+      { label: '审计通过', value: auditSummary.passed, color: '#16a34a' },
+      { label: '待审计', value: auditSummary.pending, color: '#f59e0b' },
+      { label: '异常记录', value: auditSummary.abnormal, color: '#ef4444' },
+    ],
+    alertDistribution: [
+      { label: '高危', value: alerts.filter((item) => item.level === '高危').length, color: '#ef4444' },
+      { label: '中危', value: alerts.filter((item) => item.level === '中危').length, color: '#f59e0b' },
+      { label: '提示', value: alerts.filter((item) => item.level === '提示').length, color: '#3b82f6' },
+    ],
   };
 }
 

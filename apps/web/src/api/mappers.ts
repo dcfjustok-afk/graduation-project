@@ -1,4 +1,5 @@
 import type {
+  AlertDistributionItem,
   AlertRecord,
   AuditSummary,
   DashboardViewData,
@@ -8,7 +9,9 @@ import type {
   ServerAuditRecord,
   ServerLogRecord,
   ServerOverviewStats,
+  StatusDistributionItem,
   SystemModule,
+  TrendPoint,
 } from '../types';
 import type { TimelineItemProps } from 'antd';
 
@@ -58,6 +61,11 @@ function mapAlertStatus(status: string): AlertRecord['status'] {
   }
 
   return '已忽略';
+}
+
+function getDateLabel(value: string | null | undefined) {
+  const normalized = normalizeDate(value);
+  return normalized === '暂无时间' ? normalized : normalized.slice(5, 16);
 }
 
 export function mapServerLogsToView(logs: ServerLogRecord[]): LogRecord[] {
@@ -173,6 +181,52 @@ export function buildAuditTimeline(auditRecords: ServerAuditRecord[], logs: Serv
   }));
 }
 
+export function buildLogTrend(logs: ServerLogRecord[], auditRecords: ServerAuditRecord[]): TrendPoint[] {
+  const auditByLogId = new Map(auditRecords.filter((item) => item.log_id !== null).map((item) => [item.log_id, item.audit_status]));
+  const grouping = new Map<string, TrendPoint>();
+
+  for (const log of logs.slice().reverse()) {
+    const label = getDateLabel(log.collected_at || log.created_at);
+    const current = grouping.get(label) || { label, total: 0, abnormal: 0 };
+    current.total += 1;
+
+    if (auditByLogId.get(log.id) === 'failed') {
+      current.abnormal += 1;
+    }
+
+    grouping.set(label, current);
+  }
+
+  return Array.from(grouping.values()).slice(-7);
+}
+
+export function buildStatusDistribution(summary: AuditSummary): StatusDistributionItem[] {
+  return [
+    { label: '审计通过', value: summary.passed, color: '#16a34a' },
+    { label: '待审计', value: summary.pending, color: '#f59e0b' },
+    { label: '异常记录', value: summary.abnormal, color: '#ef4444' },
+  ];
+}
+
+export function buildAlertDistribution(alerts: ServerAlertRecord[]): AlertDistributionItem[] {
+  const stats = new Map<string, number>([
+    ['高危', 0],
+    ['中危', 0],
+    ['提示', 0],
+  ]);
+
+  for (const alert of alerts) {
+    const level = mapAlertLevel(alert.severity || alert.alert_type);
+    stats.set(level, (stats.get(level) || 0) + 1);
+  }
+
+  return [
+    { label: '高危', value: stats.get('高危') || 0, color: '#ef4444' },
+    { label: '中危', value: stats.get('中危') || 0, color: '#f59e0b' },
+    { label: '提示', value: stats.get('提示') || 0, color: '#3b82f6' },
+  ];
+}
+
 export function buildDashboardViewData(
   sourceMode: 'mock' | 'real',
   stats: ServerOverviewStats,
@@ -188,5 +242,8 @@ export function buildDashboardViewData(
     auditTimeline: buildAuditTimeline(auditRecords, logs),
     systemModules: buildSystemModules(stats),
     auditSummary,
+    logTrend: buildLogTrend(logs, auditRecords),
+    statusDistribution: buildStatusDistribution(auditSummary),
+    alertDistribution: buildAlertDistribution(alerts),
   };
 }
