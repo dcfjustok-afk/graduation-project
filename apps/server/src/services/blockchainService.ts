@@ -1,4 +1,4 @@
-import { createLogRegistryClient } from "../blockchain/logRegistryClient";
+import { createLogRegistryClient, ensureLogRegistryContractAvailable } from "../blockchain/logRegistryClient";
 import { calculateLogHash } from "../blockchain/logHashService";
 import { env } from "../config/env";
 import { createLog, CreateLogPayload, createLogHashRecord } from "../repositories/logRepository";
@@ -8,7 +8,8 @@ export async function persistLogAndWriteChain(payload: CreateLogPayload) {
   const logHash = calculateLogHash(payload.logContent);
 
   try {
-    const { contract } = createLogRegistryClient();
+    const { provider, contract } = createLogRegistryClient();
+    await ensureLogRegistryContractAvailable(provider);
     const tx = await contract.storeLog(payload.taskId, logHash);
     const receipt = await tx.wait();
 

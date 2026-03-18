@@ -1,4 +1,4 @@
-import { createLogRegistryReadClient } from "../blockchain/logRegistryClient";
+import { createLogRegistryReadClient, ensureLogRegistryContractAvailable } from "../blockchain/logRegistryClient";
 import { calculateLogHash } from "../blockchain/logHashService";
 import { createAlert } from "../repositories/alertRepository";
 import { createAuditRecord, listAuditRecords } from "../repositories/auditRepository";
@@ -24,16 +24,18 @@ interface OnChainLogRecord {
   logHash?: string;
 }
 
-async function resolveOnChainHashes(taskId: string): Promise<string[]> {
+async function resolveOnChainHashes(taskId: string, contractAddress?: string | null): Promise<string[]> {
   try {
-    const { contract } = createLogRegistryReadClient();
+    const targetAddress = contractAddress || undefined;
+    const { provider, contract } = createLogRegistryReadClient(targetAddress);
+    await ensureLogRegistryContractAvailable(provider, targetAddress);
     const logs = await contract.getLogsByTaskId(taskId);
 
-    if (!Array.isArray(logs) || logs.length === 0) {
+    if (!logs || typeof logs.length !== "number" || logs.length === 0) {
       return [];
     }
 
-    return logs
+    return Array.from(logs as ArrayLike<OnChainLogRecord>)
       .map((item) => (item as OnChainLogRecord)?.logHash || null)
       .filter((item): item is string => Boolean(item));
   } catch {
@@ -51,7 +53,7 @@ export async function runAuditForLog(logId: number): Promise<AuditExecutionResul
   const hashRecord = await getLatestLogHashRecordByLogId(log.id);
   const actualHash = calculateLogHash(log.log_content);
   const expectedHash = hashRecord?.log_hash || null;
-  const onChainHashes = await resolveOnChainHashes(log.task_id);
+  const onChainHashes = await resolveOnChainHashes(log.task_id, hashRecord?.contract_address);
   const matchedOnChainHash = expectedHash && onChainHashes.includes(expectedHash) ? expectedHash : null;
   const latestOnChainHash = onChainHashes[onChainHashes.length - 1] || null;
   const onChainHash = matchedOnChainHash || latestOnChainHash;
