@@ -1,3 +1,34 @@
-This project is the graduation project of Charlie Dai.
+# 基于区块链的可信任务日志审计系统
 
-Project structure plan: see [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md).
+本仓库实现了一个面向毕业设计答辩与论文实验的“可信任务日志审计系统”原型，当前已打通以下核心闭环：
+
+1. Agent 增量采集本地日志
+2. Server 接收日志并写入 SQLite
+3. Server 计算日志哈希并写入本地 Hardhat 链上合约
+4. 审计服务重新计算哈希并与链上记录比对
+5. 系统自动生成审计记录与异常告警
+6. Web 前端可视化展示总览、日志、审计和告警数据
+
+## 仓库说明
+
+- 项目结构规划：`PROJECT_STRUCTURE.md`
+- 开发路线图：`DEVELOPMENT_ROADMAP.md`
+- 论文技术说明：`doc/TECHNICAL_DOCUMENTATION.md`
+- 实验报告：`doc/EXPERIMENT_REPORT.md`
+- 答辩材料草案：`doc/DEFENSE_MATERIALS_DRAFT.md`
+
+## 常用命令
+
+```powershell
+npm run verify:all
+npm run bench:logs
+npm run bench:audits
+```
+
+## 当前验证状态
+
+- 合约测试已通过
+- 服务端 API 与审计闭环已通过
+- Agent 基础验证已通过
+- 前端构建已通过
+- 性能测试与篡改实验已补齐

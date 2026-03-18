@@ -10,6 +10,12 @@
 - 答辩 PPT
 - 实验记录与截图素材
 
+## 当前已整理的材料
+
+- `TECHNICAL_DOCUMENTATION.md`：可直接用于论文写作的技术说明材料
+- `EXPERIMENT_REPORT.md`：测试、性能与篡改实验的真实结果汇总
+- `DEFENSE_MATERIALS_DRAFT.md`：PPT 提纲、演示顺序、答辩问答草案
+
 ## 使用建议
 - 文档按阶段持续归档
 - 重要版本保留时间标记
