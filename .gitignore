@@ -1,2 +1,4 @@
 node_modules
 storage/sqlite/*.db
+packages/contracts/*.log
+tests/performance/results/*.json

@@ -9,7 +9,8 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
     "demo:append": "node scripts/append-demo-log.js",
-    "test": "npm run build"
+    "verify:basic": "node dist/scripts/verifyAgentBasics.js",
+    "test": "npm run build && npm run verify:basic"
   },
   "engines": {
     "node": ">=18"
