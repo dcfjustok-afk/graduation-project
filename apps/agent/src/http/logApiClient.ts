@@ -1,3 +1,4 @@
+import type { ApiResponse, LogSubmitResponseData, ServerAgentStateRecord } from "@graduation-project/shared";
 import { getServerAgentStateUrl, getServerLogSubmitUrl } from "../config/env";
 import { AgentStateSyncPayload, LogSubmitPayload } from "../types/agent";
 
@@ -20,7 +21,7 @@ export async function submitLogToServer(payload: LogSubmitPayload) {
     throw new Error(`日志上报失败，状态码 ${response.status}，响应内容：${body}`);
   }
 
-  return response.json();
+  return (await response.json()) as ApiResponse<LogSubmitResponseData>;
 }
 
 export async function syncAgentStateToServer(payload: AgentStateSyncPayload) {
@@ -37,5 +38,5 @@ export async function syncAgentStateToServer(payload: AgentStateSyncPayload) {
     throw new Error(`Agent 状态同步失败，状态码 ${response.status}，响应内容：${body}`);
   }
 
-  return response.json();
+  return (await response.json()) as ApiResponse<ServerAgentStateRecord>;
 }

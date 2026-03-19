@@ -20,7 +20,10 @@
 ## 常用命令
 
 ```powershell
+npm --prefix apps/server run db:reset
 npm run verify:all
+npm run verify:server
+npm run verify:agent
 npm run bench:logs
 npm run bench:audits
 ```
@@ -28,7 +31,9 @@ npm run bench:audits
 ## 当前验证状态
 
 - 合约测试已通过
-- 服务端 API 与审计闭环已通过
-- Agent 基础验证已通过
+- 服务端 API 与审计闭环已通过，并已接入数据库重置隔离
+- Agent 基础验证与 Agent -> Server 真实闭环验证已通过
 - 前端构建已通过
-- 性能测试与篡改实验已补齐
+- 共享协议已沉淀到 `packages/shared`
+- 最新日志压测结果：100 次请求全部成功，平均 107.03 ms，吞吐量 9.33 条/秒
+- 最新审计压测结果：5 轮全部成功，平均 97.12 ms，平均每轮处理 3 条记录

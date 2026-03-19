@@ -10,12 +10,12 @@
   "scripts": {
     "chain:deploy": "npm --prefix packages/contracts run deploy:local",
     "verify:contracts": "npm --prefix packages/contracts test",
-    "verify:server": "npm run chain:deploy && npm --prefix apps/server run build && npm --prefix apps/server run verify:api && npm --prefix apps/server run demo:audit && npm --prefix apps/server run verify:audit",
-    "verify:agent": "npm --prefix apps/agent run build && npm --prefix apps/agent run verify:basic",
+    "verify:server": "node scripts/verify-server.js",
+    "verify:agent": "node scripts/verify-agent.js",
     "verify:web": "npm --prefix apps/web run build",
     "verify:all": "npm run verify:contracts && npm run verify:server && npm run verify:agent && npm run verify:web",
-    "bench:logs": "node tests/performance/log-submit-benchmark.js",
-    "bench:audits": "node tests/performance/audit-benchmark.js",
+    "bench:logs": "node scripts/run-benchmark.js logs",
+    "bench:audits": "node scripts/run-benchmark.js audits",
     "test": "npm run verify:all"
   },
   "keywords": [],

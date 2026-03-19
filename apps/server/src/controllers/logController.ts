@@ -1,14 +1,17 @@
 import { Request, Response } from "express";
+import { validateAgentStateSyncPayload, validateLogSubmitPayload } from "@graduation-project/shared";
 import { submitLog, getLogs, syncAgentState } from "../services/logService";
 import { createErrorResponse, createListResponse, createSuccessResponse } from "../utils/apiResponse";
 import { persistLogAndWriteChain } from "../services/blockchainService";
 
 export async function submitLogController(req: Request, res: Response) {
-  const { taskId, sourceType, sourcePath, logContent, logLevel, collectedAt } = req.body;
+  const validation = validateLogSubmitPayload(req.body);
 
-  if (!taskId || !logContent) {
-    return res.status(400).json(createErrorResponse("taskId 和 logContent 为必填字段"));
+  if (!validation.valid) {
+    return res.status(400).json(createErrorResponse(validation.errors.join("；")));
   }
+
+  const { taskId, sourceType, sourcePath, logContent, logLevel, collectedAt } = req.body;
 
   const result = await persistLogAndWriteChain({
     taskId,
@@ -34,11 +37,13 @@ export async function listLogsController(_req: Request, res: Response) {
 }
 
 export async function syncAgentStateController(req: Request, res: Response) {
-  const { agentName, sourcePath, lastOffset, lastHeartbeatAt, lastSyncAt, status, errorMessage } = req.body;
+  const validation = validateAgentStateSyncPayload(req.body);
 
-  if (!agentName) {
-    return res.status(400).json(createErrorResponse("agentName 为必填字段"));
+  if (!validation.valid) {
+    return res.status(400).json(createErrorResponse(validation.errors.join("；")));
   }
+
+  const { agentName, sourcePath, lastOffset, lastHeartbeatAt, lastSyncAt, status, errorMessage } = req.body;
 
   const agentState = await syncAgentState({
     agentName,

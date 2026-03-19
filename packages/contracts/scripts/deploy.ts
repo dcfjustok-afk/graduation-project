@@ -2,23 +2,37 @@ import hre from "hardhat";
 import fs from "node:fs";
 import path from "node:path";
 
+const localhostDeployerPrivateKey =
+  process.env.LOCALHOST_DEPLOYER_PRIVATE_KEY ||
+  "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
+
 function syncServerEnv(contractAddress: string) {
   const envPath = path.resolve(__dirname, "../../../apps/server/.env");
-  const nextLine = `LOG_REGISTRY_ADDRESS=${contractAddress}`;
+  const nextLines = [
+    `PORT=3010`,
+    `LOG_REGISTRY_ADDRESS=${contractAddress}`,
+    `BLOCKCHAIN_PRIVATE_KEY=${localhostDeployerPrivateKey}`,
+  ];
 
   if (!fs.existsSync(envPath)) {
-    fs.writeFileSync(envPath, `${nextLine}\n`, "utf8");
-    console.log("Synced LOG_REGISTRY_ADDRESS to apps/server/.env");
+    fs.writeFileSync(envPath, `${nextLines.join("\n")}\n`, "utf8");
+    console.log("Synced localhost blockchain config to apps/server/.env");
     return;
   }
 
   const current = fs.readFileSync(envPath, "utf8");
-  const updated = current.match(/^LOG_REGISTRY_ADDRESS=.*$/m)
-    ? current.replace(/^LOG_REGISTRY_ADDRESS=.*$/m, nextLine)
-    : `${current.trimEnd()}\n${nextLine}\n`;
+  let updated = current;
+
+  for (const nextLine of nextLines) {
+    const key = nextLine.split("=", 1)[0];
+    const pattern = new RegExp(`^${key}=.*$`, "m");
+    updated = updated.match(pattern)
+      ? updated.replace(pattern, nextLine)
+      : `${updated.trimEnd()}\n${nextLine}\n`;
+  }
 
   fs.writeFileSync(envPath, updated, "utf8");
-  console.log("Synced LOG_REGISTRY_ADDRESS to apps/server/.env");
+  console.log("Synced localhost blockchain config to apps/server/.env");
 }
 
 async function main() {

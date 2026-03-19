@@ -1,3 +1,4 @@
+import type { ServerOverviewStats } from "@graduation-project/shared";
 import { closeDatabase, openDatabase } from "../db/sqliteClient";
 import { executeSelect } from "../db/queryHelpers";
 
@@ -5,14 +6,7 @@ interface CountResult {
   total: number;
 }
 
-export interface OverviewStats {
-  totalLogs: number;
-  totalHashRecords: number;
-  totalAuditRecords: number;
-  totalAlerts: number;
-  openAlerts: number;
-  onlineAgents: number;
-}
+export type OverviewStats = ServerOverviewStats;
 
 async function queryCount(sql: string) {
   const { db } = await openDatabase();
