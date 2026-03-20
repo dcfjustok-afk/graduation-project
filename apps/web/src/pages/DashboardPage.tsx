@@ -126,7 +126,7 @@ export function DashboardPage() {
       <Row gutter={[18, 18]}>
         <Col xs={24} xl={15}>
           <Card className="panel-card" title="审计流程时间线" bordered={false}>
-            <Timeline items={data.auditTimeline} />
+            <Timeline items={data.auditTimeline.map((item) => ({ color: item.color, children: item.content }))} />
           </Card>
         </Col>
         <Col xs={24} xl={9}>

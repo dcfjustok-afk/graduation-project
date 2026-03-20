@@ -1,3 +1,10 @@
+import {
+  AUDIT_STATUSES,
+  SERVER_ALERT_STATUSES,
+  VIEW_ALERT_LEVELS,
+  VIEW_ALERT_STATUSES,
+  VIEW_LOG_STATUSES,
+} from '@graduation-project/shared';
 import type { AlertRecord, DashboardData, LogRecord, ServerAlertRecord, ServerAuditRecord, ServerLogRecord, ServerOverviewStats } from '../types';
 import { alerts, auditSummary, auditTimeline, logs, overviewCards, systemModules } from '../mock';
 
@@ -23,9 +30,9 @@ export async function getDashboardData(): Promise<DashboardData> {
       { label: '异常记录', value: auditSummary.abnormal, color: '#ef4444' },
     ],
     alertDistribution: [
-      { label: '高危', value: alerts.filter((item) => item.level === '高危').length, color: '#ef4444' },
-      { label: '中危', value: alerts.filter((item) => item.level === '中危').length, color: '#f59e0b' },
-      { label: '提示', value: alerts.filter((item) => item.level === '提示').length, color: '#3b82f6' },
+      { label: VIEW_ALERT_LEVELS.HIGH, value: alerts.filter((item) => item.level === VIEW_ALERT_LEVELS.HIGH).length, color: '#ef4444' },
+      { label: VIEW_ALERT_LEVELS.MEDIUM, value: alerts.filter((item) => item.level === VIEW_ALERT_LEVELS.MEDIUM).length, color: '#f59e0b' },
+      { label: VIEW_ALERT_LEVELS.INFO, value: alerts.filter((item) => item.level === VIEW_ALERT_LEVELS.INFO).length, color: '#3b82f6' },
     ],
   };
 }
@@ -48,7 +55,7 @@ export async function getOverviewStats(): Promise<ServerOverviewStats> {
     totalHashRecords: Math.max(auditSummary.passed, 0),
     totalAuditRecords: auditSummary.total,
     totalAlerts: alerts.length,
-    openAlerts: alerts.filter((item) => item.status !== '已忽略').length,
+    openAlerts: alerts.filter((item) => item.status !== VIEW_ALERT_STATUSES.IGNORED).length,
     onlineAgents: 1,
   };
 }
@@ -60,13 +67,18 @@ export async function getAuditRecords(): Promise<ServerAuditRecord[]> {
     id: index + 1,
     log_id: index + 1,
     log_hash_record_id: index + 1,
-    audit_status: item.status === '发现异常' ? 'failed' : item.status === '待审计' ? 'pending' : 'passed',
+    audit_status:
+      item.status === VIEW_LOG_STATUSES.ABNORMAL
+        ? AUDIT_STATUSES.FAILED
+        : item.status === VIEW_LOG_STATUSES.PENDING_AUDIT
+          ? AUDIT_STATUSES.PENDING
+          : AUDIT_STATUSES.PASSED,
     expected_hash: item.hash,
-    actual_hash: item.status === '发现异常' ? `${item.hash}-mismatch` : item.hash,
+    actual_hash: item.status === VIEW_LOG_STATUSES.ABNORMAL ? `${item.hash}-mismatch` : item.hash,
     audit_message:
-      item.status === '发现异常'
+      item.status === VIEW_LOG_STATUSES.ABNORMAL
         ? '检测到日志哈希与链上记录不一致'
-        : item.status === '待审计'
+        : item.status === VIEW_LOG_STATUSES.PENDING_AUDIT
           ? '等待审计任务执行'
           : '日志与链上记录一致',
     audited_at: item.submittedAt,
@@ -87,7 +99,12 @@ export async function getLogsRaw(): Promise<ServerLogRecord[]> {
     collected_at: item.submittedAt,
     created_at: item.submittedAt,
     updated_at: item.submittedAt,
-    status: item.status === '已上链' ? 'confirmed' : item.status === '待审计' ? 'pending' : 'failed',
+    status:
+      item.status === VIEW_LOG_STATUSES.CHAINED || item.status === VIEW_LOG_STATUSES.AUDIT_PASSED
+        ? 'confirmed'
+        : item.status === VIEW_LOG_STATUSES.PENDING_AUDIT
+          ? 'pending'
+          : 'failed',
   }));
 }
 
@@ -102,8 +119,13 @@ export async function getAlertsRaw(): Promise<ServerAlertRecord[]> {
     related_audit_id: index + 1,
     title: item.title,
     description: item.description,
-    status: item.status === '待处理' ? 'open' : item.status === '处理中' ? 'processing' : 'ignored',
+    status:
+      item.status === VIEW_ALERT_STATUSES.OPEN
+        ? SERVER_ALERT_STATUSES.OPEN
+        : item.status === VIEW_ALERT_STATUSES.PROCESSING
+          ? SERVER_ALERT_STATUSES.PROCESSING
+          : SERVER_ALERT_STATUSES.IGNORED,
     created_at: item.time,
-    resolved_at: item.status === '已忽略' ? item.time : null,
+    resolved_at: item.status === VIEW_ALERT_STATUSES.IGNORED ? item.time : null,
   }));
 }

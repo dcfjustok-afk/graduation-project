@@ -1,5 +1,5 @@
-import type { AlertRecord, AuditSummary, LogRecord, OverviewCard, SystemModule } from '../types';
-import type { TimelineItemProps } from 'antd';
+import { VIEW_ALERT_LEVELS, VIEW_ALERT_STATUSES, VIEW_LOG_STATUSES } from '@graduation-project/shared';
+import type { AlertRecord, AuditSummary, AuditTimelineEntry, LogRecord, OverviewCard, SystemModule } from '../types';
 
 export const overviewCards: OverviewCard[] = [
   { title: '今日采集日志', value: 1286, suffix: '条', trend: '+12.6%' },
@@ -14,7 +14,7 @@ export const logs: LogRecord[] = [
     taskName: '数据同步任务',
     source: '/var/log/sync-task.log',
     level: 'INFO',
-    status: '已上链',
+    status: VIEW_LOG_STATUSES.CHAINED,
     submittedAt: '2026-03-16 09:10:22',
     hash: '0x9f3a...3c82',
   },
@@ -23,7 +23,7 @@ export const logs: LogRecord[] = [
     taskName: '定时备份任务',
     source: '/var/log/backup.log',
     level: 'WARN',
-    status: '待审计',
+    status: VIEW_LOG_STATUSES.PENDING_AUDIT,
     submittedAt: '2026-03-16 09:32:08',
     hash: '0x5ca7...af12',
   },
@@ -32,7 +32,7 @@ export const logs: LogRecord[] = [
     taskName: '权限变更任务',
     source: '/var/log/auth-change.log',
     level: 'ERROR',
-    status: '发现异常',
+    status: VIEW_LOG_STATUSES.ABNORMAL,
     submittedAt: '2026-03-16 10:05:41',
     hash: '0x7bf9...8d77',
   },
@@ -41,43 +41,43 @@ export const logs: LogRecord[] = [
     taskName: '日报生成任务',
     source: '/var/log/daily-report.log',
     level: 'INFO',
-    status: '已上链',
+    status: VIEW_LOG_STATUSES.CHAINED,
     submittedAt: '2026-03-16 10:42:15',
     hash: '0x3e12...d9c4',
   },
 ];
 
-export const auditTimeline: TimelineItemProps[] = [
-  { color: 'blue', children: '09:10 Agent 监听到新日志，提交数据同步任务日志。' },
-  { color: 'green', children: '09:11 后端完成哈希计算并写入本地数据库。' },
-  { color: 'green', children: '09:12 区块链写入成功，生成链上存证记录。' },
-  { color: 'red', children: '10:06 审计发现权限变更任务日志与链上哈希不一致。' },
+export const auditTimeline: AuditTimelineEntry[] = [
+  { color: 'blue', content: '09:10 Agent 监听到新日志，提交数据同步任务日志。' },
+  { color: 'green', content: '09:11 后端完成哈希计算并写入本地数据库。' },
+  { color: 'green', content: '09:12 区块链写入成功，生成链上存证记录。' },
+  { color: 'red', content: '10:06 审计发现权限变更任务日志与链上哈希不一致。' },
 ];
 
 export const alerts: AlertRecord[] = [
   {
     id: 'ALT-001',
-    level: '高危',
+    level: VIEW_ALERT_LEVELS.HIGH,
     title: '权限变更任务日志存在篡改风险',
     description: '本地日志重新计算后的哈希与链上记录不一致，建议立即复核原始任务来源。',
     time: '2026-03-16 10:06:15',
-    status: '待处理',
+    status: VIEW_ALERT_STATUSES.OPEN,
   },
   {
     id: 'ALT-002',
-    level: '中危',
+    level: VIEW_ALERT_LEVELS.MEDIUM,
     title: '备份任务存在延迟上链',
     description: '日志已接收但未完成链上确认，可能是网络或合约调用延迟。',
     time: '2026-03-16 09:35:42',
-    status: '处理中',
+    status: VIEW_ALERT_STATUSES.PROCESSING,
   },
   {
     id: 'ALT-003',
-    level: '提示',
+    level: VIEW_ALERT_LEVELS.INFO,
     title: '日报任务需要人工复核',
     description: '该类任务已通过审计，但命中人工复核策略，可作为演示数据展示。',
     time: '2026-03-16 10:50:03',
-    status: '已忽略',
+    status: VIEW_ALERT_STATUSES.IGNORED,
   },
 ];
 

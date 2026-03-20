@@ -1,3 +1,4 @@
+import { VIEW_ALERT_LEVELS, VIEW_ALERT_STATUSES } from '@graduation-project/shared';
 import { BellOutlined } from '@ant-design/icons';
 import { Badge, Card, Col, Empty, Row, Tag, Typography } from 'antd';
 import { useEffect, useState } from 'react';
@@ -26,9 +27,9 @@ export function AlertsPage() {
   }, []);
 
   const distribution = [
-    { label: '高危', value: alerts.filter((item) => item.level === '高危').length, color: '#ef4444' },
-    { label: '中危', value: alerts.filter((item) => item.level === '中危').length, color: '#f59e0b' },
-    { label: '提示', value: alerts.filter((item) => item.level === '提示').length, color: '#3b82f6' },
+    { label: VIEW_ALERT_LEVELS.HIGH, value: alerts.filter((item) => item.level === VIEW_ALERT_LEVELS.HIGH).length, color: '#ef4444' },
+    { label: VIEW_ALERT_LEVELS.MEDIUM, value: alerts.filter((item) => item.level === VIEW_ALERT_LEVELS.MEDIUM).length, color: '#f59e0b' },
+    { label: VIEW_ALERT_LEVELS.INFO, value: alerts.filter((item) => item.level === VIEW_ALERT_LEVELS.INFO).length, color: '#3b82f6' },
   ];
 
   return (
@@ -46,15 +47,15 @@ export function AlertsPage() {
             <div className="alert-highlights">
               <div className="alert-highlight">
                 <span>待处理告警</span>
-                <strong>{alerts.filter((item) => item.status === '待处理').length}</strong>
+                <strong>{alerts.filter((item) => item.status === VIEW_ALERT_STATUSES.OPEN).length}</strong>
               </div>
               <div className="alert-highlight">
                 <span>处理中告警</span>
-                <strong>{alerts.filter((item) => item.status === '处理中').length}</strong>
+                <strong>{alerts.filter((item) => item.status === VIEW_ALERT_STATUSES.PROCESSING).length}</strong>
               </div>
               <div className="alert-highlight">
                 <span>高危占比</span>
-                <strong>{alerts.length === 0 ? '0%' : `${Math.round((alerts.filter((item) => item.level === '高危').length / alerts.length) * 100)}%`}</strong>
+                <strong>{alerts.length === 0 ? '0%' : `${Math.round((alerts.filter((item) => item.level === VIEW_ALERT_LEVELS.HIGH).length / alerts.length) * 100)}%`}</strong>
               </div>
             </div>
           </Card>

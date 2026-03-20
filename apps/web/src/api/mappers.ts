@@ -1,6 +1,13 @@
+import {
+  AUDIT_STATUSES,
+  VIEW_ALERT_LEVELS,
+  VIEW_ALERT_STATUSES,
+  VIEW_LOG_STATUSES,
+} from '@graduation-project/shared';
 import type {
   AlertDistributionItem,
   AlertRecord,
+  AuditTimelineEntry,
   AuditSummary,
   DashboardViewData,
   LogRecord,
@@ -13,7 +20,6 @@ import type {
   SystemModule,
   TrendPoint,
 } from '../types';
-import type { TimelineItemProps } from 'antd';
 
 function normalizeDate(value: string | null | undefined) {
   if (!value) {
@@ -25,42 +31,42 @@ function normalizeDate(value: string | null | undefined) {
 
 function mapLogStatus(status: string) {
   if (status.includes('confirm') || status.includes('chain') || status === 'collected') {
-    return '已上链';
+    return VIEW_LOG_STATUSES.CHAINED;
   }
 
   if (status.includes('pending')) {
-    return '待审计';
+    return VIEW_LOG_STATUSES.PENDING_AUDIT;
   }
 
   if (status.includes('fail')) {
-    return '发现异常';
+    return VIEW_LOG_STATUSES.ABNORMAL;
   }
 
-  return '待审计';
+  return VIEW_LOG_STATUSES.PENDING_AUDIT;
 }
 
 function mapAlertLevel(severity: string): AlertRecord['level'] {
   if (severity.includes('高') || severity.toLowerCase().includes('high')) {
-    return '高危';
+    return VIEW_ALERT_LEVELS.HIGH;
   }
 
   if (severity.includes('中') || severity.toLowerCase().includes('medium')) {
-    return '中危';
+    return VIEW_ALERT_LEVELS.MEDIUM;
   }
 
-  return '提示';
+  return VIEW_ALERT_LEVELS.INFO;
 }
 
 function mapAlertStatus(status: string): AlertRecord['status'] {
   if (status === 'open') {
-    return '待处理';
+    return VIEW_ALERT_STATUSES.OPEN;
   }
 
   if (status === 'processing') {
-    return '处理中';
+    return VIEW_ALERT_STATUSES.PROCESSING;
   }
 
-  return '已忽略';
+  return VIEW_ALERT_STATUSES.IGNORED;
 }
 
 function getDateLabel(value: string | null | undefined) {
@@ -93,7 +99,12 @@ export function mergeAuditIntoLogs(logs: LogRecord[], auditRecords: ServerAuditR
 
     return {
       ...item,
-      status: audit.audit_status === 'passed' ? '审计通过' : audit.audit_status === 'failed' ? '发现异常' : '待审计',
+      status:
+        audit.audit_status === AUDIT_STATUSES.PASSED
+          ? VIEW_LOG_STATUSES.AUDIT_PASSED
+          : audit.audit_status === AUDIT_STATUSES.FAILED
+            ? VIEW_LOG_STATUSES.ABNORMAL
+            : VIEW_LOG_STATUSES.PENDING_AUDIT,
       auditMessage: audit.audit_message || undefined,
       expectedHash: audit.expected_hash || undefined,
       actualHash: audit.actual_hash || undefined,
@@ -114,9 +125,9 @@ export function mapServerAlertsToView(alerts: ServerAlertRecord[]): AlertRecord[
 }
 
 export function buildAuditSummary(stats: ServerOverviewStats, auditRecords: ServerAuditRecord[], alerts: ServerAlertRecord[]): AuditSummary {
-  const passed = auditRecords.filter((item) => item.audit_status === 'passed').length;
-  const pending = auditRecords.filter((item) => item.audit_status === 'pending').length;
-  const abnormal = auditRecords.filter((item) => item.audit_status === 'failed').length;
+  const passed = auditRecords.filter((item) => item.audit_status === AUDIT_STATUSES.PASSED).length;
+  const pending = auditRecords.filter((item) => item.audit_status === AUDIT_STATUSES.PENDING).length;
+  const abnormal = auditRecords.filter((item) => item.audit_status === AUDIT_STATUSES.FAILED).length;
 
   return {
     total: stats.totalLogs,
@@ -161,23 +172,23 @@ export function buildSystemModules(stats: ServerOverviewStats): SystemModule[] {
   ];
 }
 
-export function buildAuditTimeline(auditRecords: ServerAuditRecord[], logs: ServerLogRecord[]): TimelineItemProps[] {
+export function buildAuditTimeline(auditRecords: ServerAuditRecord[], logs: ServerLogRecord[]): AuditTimelineEntry[] {
   if (auditRecords.length === 0 && logs.length === 0) {
-    return [{ color: 'blue', children: '当前暂无审计与日志记录，等待后端生成数据。' }];
+    return [{ color: 'blue', content: '当前暂无审计与日志记录，等待后端生成数据。' }];
   }
 
-  const auditItems = auditRecords.slice(0, 4).map<TimelineItemProps>((item) => ({
+  const auditItems = auditRecords.slice(0, 4).map<AuditTimelineEntry>((item) => ({
     color: item.audit_status === 'failed' ? 'red' : item.audit_status === 'passed' ? 'green' : 'blue',
-    children: `${normalizeDate(item.audited_at)} 审计记录 #${item.id}：${item.audit_message || item.audit_status}`,
+    content: `${normalizeDate(item.audited_at)} 审计记录 #${item.id}：${item.audit_message || item.audit_status}`,
   }));
 
   if (auditItems.length > 0) {
     return auditItems;
   }
 
-  return logs.slice(0, 4).map<TimelineItemProps>((item) => ({
+  return logs.slice(0, 4).map<AuditTimelineEntry>((item) => ({
     color: 'blue',
-    children: `${normalizeDate(item.collected_at)} 接收到任务 ${item.task_id} 的日志。`,
+    content: `${normalizeDate(item.collected_at)} 接收到任务 ${item.task_id} 的日志。`,
   }));
 }
 
@@ -190,7 +201,7 @@ export function buildLogTrend(logs: ServerLogRecord[], auditRecords: ServerAudit
     const current = grouping.get(label) || { label, total: 0, abnormal: 0 };
     current.total += 1;
 
-    if (auditByLogId.get(log.id) === 'failed') {
+    if (auditByLogId.get(log.id) === AUDIT_STATUSES.FAILED) {
       current.abnormal += 1;
     }
 
@@ -228,7 +239,7 @@ export function buildAlertDistribution(alerts: ServerAlertRecord[]): AlertDistri
 }
 
 export function buildDashboardViewData(
-  sourceMode: 'mock' | 'real',
+  sourceMode: DashboardViewData['sourceMode'],
   stats: ServerOverviewStats,
   logs: ServerLogRecord[],
   auditRecords: ServerAuditRecord[],

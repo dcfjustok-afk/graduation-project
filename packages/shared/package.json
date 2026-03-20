@@ -3,5 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "main": "index.js",
-  "types": "index.d.ts"
+  "module": "index.mjs",
+  "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.mjs",
+      "require": "./index.js"
+    }
+  }
 }

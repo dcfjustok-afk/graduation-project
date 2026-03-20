@@ -1,3 +1,4 @@
+import { VIEW_LOG_STATUSES } from '@graduation-project/shared';
 import { SearchOutlined } from '@ant-design/icons';
 import { Card, Input, Space, Table, Tag, Typography } from 'antd';
 import type { TableProps } from 'antd';
@@ -6,11 +7,11 @@ import { getLogs } from '../api/dataService';
 import { SectionHeader } from '../components/SectionHeader';
 import type { LogRecord } from '../types';
 
-const statusColorMap: Record<string, string> = {
-  已上链: 'green',
-  审计通过: 'green',
-  待审计: 'gold',
-  发现异常: 'red',
+const statusColorMap: Record<LogRecord['status'], string> = {
+  [VIEW_LOG_STATUSES.CHAINED]: 'green',
+  [VIEW_LOG_STATUSES.AUDIT_PASSED]: 'green',
+  [VIEW_LOG_STATUSES.PENDING_AUDIT]: 'gold',
+  [VIEW_LOG_STATUSES.ABNORMAL]: 'red',
 };
 
 const columns: TableProps<LogRecord>['columns'] = [
@@ -27,7 +28,7 @@ const columns: TableProps<LogRecord>['columns'] = [
     title: '状态',
     dataIndex: 'status',
     key: 'status',
-    render: (value: string) => <Tag color={statusColorMap[value] || 'default'}>{value}</Tag>,
+    render: (value: LogRecord['status']) => <Tag color={statusColorMap[value] || 'default'}>{value}</Tag>,
   },
   { title: '提交时间', dataIndex: 'submittedAt', key: 'submittedAt' },
   { title: '哈希摘要', dataIndex: 'hash', key: 'hash' },

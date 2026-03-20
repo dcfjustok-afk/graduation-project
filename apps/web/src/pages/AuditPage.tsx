@@ -1,4 +1,5 @@
 import { CheckCircleOutlined, ClockCircleOutlined, ThunderboltOutlined, WarningOutlined } from '@ant-design/icons';
+import { VIEW_LOG_STATUSES } from '@graduation-project/shared';
 import { Button, Card, Col, List, Result, Row, Space, Statistic, Table, Tag, Timeline, message } from 'antd';
 import type { TableProps } from 'antd';
 import { useEffect, useState } from 'react';
@@ -32,7 +33,7 @@ const columns: TableProps<LogRecord>['columns'] = [
     title: '当前状态',
     dataIndex: 'status',
     key: 'status',
-    render: (value: string) => <Tag color={value === '发现异常' ? 'red' : value === '待审计' ? 'gold' : 'green'}>{value}</Tag>,
+    render: (value: LogRecord['status']) => <Tag color={value === VIEW_LOG_STATUSES.ABNORMAL ? 'red' : value === VIEW_LOG_STATUSES.PENDING_AUDIT ? 'gold' : 'green'}>{value}</Tag>,
   },
   { title: '提交时间', dataIndex: 'submittedAt', key: 'submittedAt' },
 ];
@@ -110,7 +111,7 @@ export function AuditPage() {
               title={dashboard.sourceMode === 'real' ? '当前已接入真实接口数据' : '当前为 mock 演示流程'}
               subTitle="这里保留了相同的页面结构，切换数据源后无需重做交互和布局。"
             />
-            <Timeline items={dashboard.auditTimeline} />
+            <Timeline items={dashboard.auditTimeline.map((item) => ({ color: item.color, children: item.content }))} />
           </Card>
         </Col>
         <Col xs={24} xl={9}>
