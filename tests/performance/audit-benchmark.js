@@ -4,6 +4,7 @@ const { performance } = require('node:perf_hooks');
 
 const baseUrl = process.env.BENCH_BASE_URL || 'http://127.0.0.1:3010';
 const rounds = Number(process.env.BENCH_AUDIT_ROUNDS || 5);
+const datasetSize = Number(process.env.BENCH_AUDIT_DATASET_SIZE || 100);
 const resultsDir = path.resolve(__dirname, 'results');
 
 async function runAuditRound() {
@@ -36,6 +37,7 @@ async function main() {
   const summary = {
     benchmark: 'audit-run',
     baseUrl,
+    datasetSize,
     rounds,
     successCount,
     failureCount: rounds - successCount,
@@ -46,6 +48,7 @@ async function main() {
   };
 
   fs.mkdirSync(resultsDir, { recursive: true });
+  fs.writeFileSync(path.join(resultsDir, `audit-benchmark-${datasetSize}.json`), JSON.stringify(summary, null, 2), 'utf8');
   fs.writeFileSync(path.join(resultsDir, 'audit-benchmark.json'), JSON.stringify(summary, null, 2), 'utf8');
   console.log(JSON.stringify(summary, null, 2));
 }

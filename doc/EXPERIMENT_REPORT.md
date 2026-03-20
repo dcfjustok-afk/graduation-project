@@ -193,26 +193,50 @@ npm run bench:audits
 实验参数：
 
 - 审计轮次：5
+- 审计数据规模：100 / 500 / 1000
 
 实际结果：
 
 ```json
 {
-  "benchmark": "audit-run",
-  "rounds": 5,
-  "successCount": 5,
-  "failureCount": 0,
-  "avgLatencyMs": 97.12,
-  "maxLatencyMs": 127.23,
-  "avgProcessedCount": 3
+  "benchmark": "audit-run-tiers",
+  "datasets": [
+    {
+      "datasetSize": 100,
+      "rounds": 5,
+      "successCount": 5,
+      "failureCount": 0,
+      "avgLatencyMs": 3067.77,
+      "maxLatencyMs": 3360.32,
+      "avgProcessedCount": 100
+    },
+    {
+      "datasetSize": 500,
+      "rounds": 5,
+      "successCount": 5,
+      "failureCount": 0,
+      "avgLatencyMs": 15659.44,
+      "maxLatencyMs": 17361.38,
+      "avgProcessedCount": 500
+    },
+    {
+      "datasetSize": 1000,
+      "rounds": 5,
+      "successCount": 5,
+      "failureCount": 0,
+      "avgLatencyMs": 35032.13,
+      "maxLatencyMs": 39131.21,
+      "avgProcessedCount": 1000
+    }
+  ]
 }
 ```
 
 结果分析：
 
-- 5 轮批量审计全部执行成功，成功率为 100%。
-- 在数据库重置后，基准脚本会先生成 3 条演示日志，因此单轮平均处理约 3 条记录。
-- 平均时延约 97.12 ms，说明当前小规模审计闭环已适合答辩演示和论文截图；若需要更高负载实验，可继续扩展种子数据规模。
+- 三档批量审计全部执行成功，成功率均为 100%。
+- 在数据库重置后，基准脚本会自动按 100 / 500 / 1000 三档生成独立审计数据集，因此单轮平均处理数量已稳定扩展到对应规模。
+- 平均时延随规模近似线性增长：100 条为 3067.77 ms，500 条为 15659.44 ms，1000 条为 35032.13 ms，说明当前实现的主要耗时集中在逐条哈希重算、数据库写入与链上读取校验。
 
 ## 5. 篡改检测实验
 
@@ -273,6 +297,6 @@ npm --prefix apps/server run experiment:tamper
 
 1. 系统已具备从日志采集、链下入库、链上存证到审计告警的完整闭环。
 2. 在 100 条日志批量提交实验中，系统成功率达到 100%，平均响应时间为 107.03 ms。
-3. 在 5 轮批量审计实验中，系统成功率达到 100%，平均每轮处理 3 条记录，平均耗时约 97.12 ms。
+3. 在 100 / 500 / 1000 三档批量审计实验中，系统成功率均达到 100%，平均每轮分别处理 100、500、1000 条记录，对应平均耗时约 3067.77 ms、15659.44 ms、35032.13 ms。
 4. 在篡改检测实验中，系统可稳定识别链下日志内容被修改的情况，并自动生成审计失败记录与异常告警。
 5. 通过增加“数据库重置隔离”“共享协议统一”“按历史合约地址审计”三项修复，实验结果的可复现性与可信度得到进一步提升。

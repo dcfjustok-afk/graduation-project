@@ -11,6 +11,7 @@
     "db:reset": "node dist/scripts/resetDatabase.js",
     "db:init": "node dist/scripts/initDatabase.js",
     "db:verify": "node dist/scripts/verifyDatabase.js",
+    "seed:audit-benchmark": "node dist/scripts/seedAuditBenchmarkData.js",
     "demo:seed": "node dist/scripts/seedDemoData.js",
     "demo:blockchain": "node dist/scripts/demoBlockchainRoundtrip.js",
     "demo:audit": "node dist/scripts/demoAuditRoundtrip.js",

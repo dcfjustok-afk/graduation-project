@@ -146,6 +146,27 @@ export async function updateLogStatus(logId: number, status: string) {
   }
 }
 
+export async function updateLogContent(logId: number, logContent: string) {
+  const { db, databasePath } = await openDatabase();
+
+  try {
+    const now = new Date().toISOString();
+    const escapedLogContent = escapeSqlString(logContent);
+
+    db.exec(`
+      UPDATE logs
+      SET log_content = '${escapedLogContent}', updated_at = '${now}'
+      WHERE id = ${Number(logId)};
+    `);
+
+    persistDatabase(db, databasePath);
+
+    return getLogById(logId);
+  } finally {
+    closeDatabase(db);
+  }
+}
+
 export async function upsertAgentState(payload: UpsertAgentStatePayload) {
   const { db, databasePath } = await openDatabase();
 
