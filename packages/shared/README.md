@@ -13,6 +13,9 @@
 
 ## 当前共享范围
 - 统一 API 响应结构：`ApiResponse`、`ApiListResponse`
+- 统一错误码：`ERROR_CODES`
+- 统一状态枚举：审计状态、Agent 状态、告警状态、展示态状态
 - 统一 Agent/Server 请求体：`LogSubmitPayload`、`AgentStateSyncPayload`
 - 统一后端返回实体：`ServerLogRecord`、`ServerAuditRecord`、`ServerAlertRecord`、`ServerOverviewStats`
+- 统一前端可复用视图模型：`OverviewCard`、`LogRecord`、`AlertRecord`、`DashboardData`
 - 统一协议校验入口：`validateLogSubmitPayload`、`validateAgentStateSyncPayload`

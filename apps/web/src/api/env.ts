@@ -1,4 +1,6 @@
-export type ApiSourceMode = 'mock' | 'real';
+import type { ApiSourceMode } from '@graduation-project/shared';
+
+export type { ApiSourceMode };
 
 const sourceMode = (import.meta.env.VITE_API_SOURCE || 'mock').toLowerCase();
 

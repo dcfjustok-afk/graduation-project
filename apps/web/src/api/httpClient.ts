@@ -15,7 +15,7 @@ async function request<T>(path: string): Promise<T> {
   const payload = (await response.json()) as ApiResponse<T>;
 
   if (!payload.success) {
-    throw new Error(payload.message || '接口返回失败');
+    throw new Error(payload.error?.code ? `${payload.error.code}: ${payload.message || '接口返回失败'}` : payload.message || '接口返回失败');
   }
 
   return payload.data;
@@ -35,7 +35,7 @@ async function requestList<T>(path: string): Promise<T[]> {
   const payload = (await response.json()) as ApiListResponse<T>;
 
   if (!payload.success) {
-    throw new Error(payload.message || '接口返回失败');
+    throw new Error(payload.error?.code ? `${payload.error.code}: ${payload.message || '接口返回失败'}` : payload.message || '接口返回失败');
   }
 
   return payload.data;

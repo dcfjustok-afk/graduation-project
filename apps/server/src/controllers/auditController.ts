@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { ERROR_CODES } from "@graduation-project/shared";
 import { getAuditRecords } from "../services/auditService";
 import { createErrorResponse, createListResponse, createSuccessResponse } from "../utils/apiResponse";
 import { runAuditForAllLogs, runAuditForLog } from "../services/auditExecutionService";
@@ -17,7 +18,7 @@ export async function runAuditForSingleLogController(req: Request, res: Response
   const logId = Number(req.params.logId);
 
   if (!Number.isFinite(logId) || logId <= 0) {
-    return res.status(400).json(createErrorResponse("logId 必须为正整数"));
+    return res.status(400).json(createErrorResponse("logId 必须为正整数", ERROR_CODES.INVALID_LOG_ID, { logId: req.params.logId }));
   }
 
   const result = await runAuditForLog(logId);

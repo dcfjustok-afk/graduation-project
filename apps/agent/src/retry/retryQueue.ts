@@ -19,7 +19,7 @@ function calculateNextRetryTime(retryCount: number) {
   return Date.now() + env.retryIntervalMs * Math.max(1, retryCount);
 }
 
-function buildAgentStatePayload(status: string, errorMessage?: string | null): AgentStateSyncPayload {
+function buildAgentStatePayload(status: NonNullable<AgentStateSyncPayload["status"]>, errorMessage?: string | null): AgentStateSyncPayload {
   const state = loadOffsetState();
 
   return {

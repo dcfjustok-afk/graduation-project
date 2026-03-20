@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { ERROR_CODES } from "@graduation-project/shared";
 import { createErrorResponse } from "../utils/apiResponse";
 
 /**
@@ -11,5 +12,5 @@ import { createErrorResponse } from "../utils/apiResponse";
  */
 export function errorHandler(error: Error, _req: Request, res: Response, _next: NextFunction) {
   console.error("[server error]", error);
-  res.status(500).json(createErrorResponse("服务器内部发生错误"));
+  res.status(500).json(createErrorResponse("服务器内部发生错误", ERROR_CODES.INTERNAL_ERROR));
 }

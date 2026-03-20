@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { validateAgentStateSyncPayload, validateLogSubmitPayload } from "@graduation-project/shared";
+import { ERROR_CODES, validateAgentStateSyncPayload, validateLogSubmitPayload } from "@graduation-project/shared";
 import { submitLog, getLogs, syncAgentState } from "../services/logService";
 import { createErrorResponse, createListResponse, createSuccessResponse } from "../utils/apiResponse";
 import { persistLogAndWriteChain } from "../services/blockchainService";
@@ -8,7 +8,7 @@ export async function submitLogController(req: Request, res: Response) {
   const validation = validateLogSubmitPayload(req.body);
 
   if (!validation.valid) {
-    return res.status(400).json(createErrorResponse(validation.errors.join("；")));
+    return res.status(400).json(createErrorResponse(validation.errors.join("；"), ERROR_CODES.VALIDATION_ERROR, validation.errors));
   }
 
   const { taskId, sourceType, sourcePath, logContent, logLevel, collectedAt } = req.body;
@@ -40,7 +40,7 @@ export async function syncAgentStateController(req: Request, res: Response) {
   const validation = validateAgentStateSyncPayload(req.body);
 
   if (!validation.valid) {
-    return res.status(400).json(createErrorResponse(validation.errors.join("；")));
+    return res.status(400).json(createErrorResponse(validation.errors.join("；"), ERROR_CODES.VALIDATION_ERROR, validation.errors));
   }
 
   const { agentName, sourcePath, lastOffset, lastHeartbeatAt, lastSyncAt, status, errorMessage } = req.body;

@@ -2,19 +2,86 @@ function isNonEmptyString(value) {
   return typeof value === 'string' && value.trim().length > 0;
 }
 
+const ERROR_CODES = {
+  VALIDATION_ERROR: 'validation_error',
+  NOT_FOUND: 'not_found',
+  INTERNAL_ERROR: 'internal_error',
+  INVALID_LOG_ID: 'invalid_log_id',
+};
+
+const API_SOURCE_MODES = {
+  MOCK: 'mock',
+  REAL: 'real',
+};
+
+const LOG_LEVELS = {
+  INFO: 'INFO',
+  WARN: 'WARN',
+  ERROR: 'ERROR',
+};
+
+const AUDIT_STATUSES = {
+  PASSED: 'passed',
+  FAILED: 'failed',
+  PENDING: 'pending',
+};
+
+const AGENT_RUN_STATUSES = {
+  IDLE: 'idle',
+  RUNNING: 'running',
+  RETRYING: 'retrying',
+  ERROR: 'error',
+};
+
+const SERVER_ALERT_SEVERITIES = {
+  HIGH: 'high',
+  MEDIUM: 'medium',
+  INFO: 'info',
+};
+
+const SERVER_ALERT_STATUSES = {
+  OPEN: 'open',
+  PROCESSING: 'processing',
+  IGNORED: 'ignored',
+};
+
+const VIEW_LOG_STATUSES = {
+  CHAINED: '已上链',
+  PENDING_AUDIT: '待审计',
+  AUDIT_PASSED: '审计通过',
+  ABNORMAL: '发现异常',
+};
+
+const VIEW_ALERT_LEVELS = {
+  HIGH: '高危',
+  MEDIUM: '中危',
+  INFO: '提示',
+};
+
+const VIEW_ALERT_STATUSES = {
+  OPEN: '待处理',
+  PROCESSING: '处理中',
+  IGNORED: '已忽略',
+};
+
 function createSuccessResponse(message, data) {
   return {
     success: true,
     message,
     data,
+    error: null,
   };
 }
 
-function createErrorResponse(message) {
+function createErrorResponse(message, code = ERROR_CODES.INTERNAL_ERROR, details) {
   return {
     success: false,
     message,
     data: null,
+    error: {
+      code,
+      details,
+    },
   };
 }
 
@@ -26,6 +93,7 @@ function createListResponse(message, data) {
     meta: {
       total: data.length,
     },
+    error: null,
   };
 }
 
@@ -108,6 +176,16 @@ function validateAgentStateSyncPayload(payload) {
 }
 
 module.exports = {
+  ERROR_CODES,
+  API_SOURCE_MODES,
+  LOG_LEVELS,
+  AUDIT_STATUSES,
+  AGENT_RUN_STATUSES,
+  SERVER_ALERT_SEVERITIES,
+  SERVER_ALERT_STATUSES,
+  VIEW_LOG_STATUSES,
+  VIEW_ALERT_LEVELS,
+  VIEW_ALERT_STATUSES,
   createSuccessResponse,
   createErrorResponse,
   createListResponse,
