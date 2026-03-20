@@ -1,5 +1,6 @@
 import {
   AlertOutlined,
+  EditOutlined,
   DashboardOutlined,
   FileTextOutlined,
   SafetyCertificateOutlined,
@@ -12,6 +13,7 @@ const { Header, Sider, Content } = Layout;
 
 const menuItems: MenuProps['items'] = [
   { key: '/dashboard', icon: <DashboardOutlined />, label: '系统总览' },
+  { key: '/log-generator', icon: <EditOutlined />, label: '日志生成台' },
   { key: '/logs', icon: <FileTextOutlined />, label: '日志中心' },
   { key: '/audit', icon: <SafetyCertificateOutlined />, label: '审计中心' },
   { key: '/alerts', icon: <AlertOutlined />, label: '异常告警' },

@@ -1,4 +1,16 @@
-import type { AlertRecord, DashboardViewData, LogRecord, ServerAlertRecord, ServerAuditRecord, ServerLogRecord, ServerOverviewStats } from '../types';
+import type {
+  AlertRecord,
+  DashboardViewData,
+  LogGeneratePayload,
+  LogGenerateResponseData,
+  LogRecord,
+  LogSubmitPayload,
+  LogSubmitResponseData,
+  ServerAlertRecord,
+  ServerAuditRecord,
+  ServerLogRecord,
+  ServerOverviewStats,
+} from '../types';
 import { apiEnv, type ApiSourceMode } from './env';
 import { buildDashboardViewData, mapServerAlertsToView, mapServerLogsToView, mergeAuditIntoLogs } from './mappers';
 import * as mockClient from './mockClient';
@@ -63,4 +75,20 @@ export async function runAudits() {
   }
 
   return [];
+}
+
+export async function createLog(payload: LogSubmitPayload): Promise<LogSubmitResponseData> {
+  if (apiEnv.sourceMode === 'real') {
+    return realClient.createLog(payload);
+  }
+
+  return mockClient.createLog(payload);
+}
+
+export async function generateLogs(payload: LogGeneratePayload): Promise<LogGenerateResponseData> {
+  if (apiEnv.sourceMode === 'real') {
+    return realClient.generateLogs(payload);
+  }
+
+  return mockClient.generateLogs(payload);
 }

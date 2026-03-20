@@ -4,6 +4,8 @@ import type {
   ApiListResponse,
   ApiResponse,
   AuditExecutionResult,
+  LogGeneratePayload,
+  LogGenerateResponseData,
   LogSubmitPayload,
   LogSubmitResponseData,
   ServerAlertRecord,
@@ -81,6 +83,42 @@ async function main() {
     const logs = await requestList<ServerLogRecord>(baseUrl, "/api/logs");
     assert.equal(logs.data.some((item) => item.task_id === taskId), true, "日志列表中未找到刚提交的记录");
 
+    const batchPayload: LogGeneratePayload = {
+      count: 2,
+      intervalMs: 0,
+      base: {
+        taskId: `${taskId}-batch`,
+        sourceType: "web-generator",
+        sourcePath: "D:/verify/batch.log",
+        logContent: `verify batch log ${new Date().toISOString()}`,
+        logLevel: "WARN",
+        collectedAt: new Date().toISOString(),
+      },
+      overrides: [{ logContent: "verify batch log item 1" }, { taskId: "", logLevel: "ERROR", logContent: "verify batch invalid item" }],
+    };
+
+    const batch = await requestItem<LogGenerateResponseData>(baseUrl, "/api/logs/generate", {
+      method: "POST",
+      body: JSON.stringify(batchPayload),
+    });
+
+    assert.equal(batch.data.successCount, 1);
+    assert.equal(batch.data.failures.length, 1);
+    assert.equal(batch.data.failures[0]?.index, 1);
+
+    const invalidLimitResponse = await fetch(`${baseUrl}/api/logs/generate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...batchPayload,
+        count: 999,
+      }),
+    });
+
+    assert.equal(invalidLimitResponse.status, 400, "超出批量限制时应返回 400");
+
     const audits = await requestItem<AuditExecutionResult[]>(baseUrl, "/api/audits/run", { method: "POST" });
     assert.equal(Array.isArray(audits.data), true);
 
@@ -95,6 +133,7 @@ async function main() {
         {
           health: health.message,
           totalLogs: logs.meta?.total ?? logs.data.length,
+          generatedLogs: batch.data.successCount,
           totalAudits: auditList.meta?.total ?? auditList.data.length,
           totalAlerts: alerts.meta?.total ?? alerts.data.length,
           lastTaskId: taskId,

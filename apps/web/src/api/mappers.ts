@@ -10,7 +10,9 @@ import type {
   AuditTimelineEntry,
   AuditSummary,
   DashboardViewData,
+  LogGeneratePayload,
   LogRecord,
+  LogSubmitPayload,
   OverviewCard,
   ServerAlertRecord,
   ServerAuditRecord,
@@ -84,6 +86,65 @@ export function mapServerLogsToView(logs: ServerLogRecord[]): LogRecord[] {
     submittedAt: normalizeDate(item.collected_at || item.created_at),
     hash: `log-${item.id}`,
   }));
+}
+
+export interface LogGeneratorFormValues {
+  taskName: string;
+  sourceType: string;
+  sourcePath: string;
+  logLevel: 'INFO' | 'WARN' | 'ERROR';
+  logContent: string;
+  collectedAt?: string;
+  batchCount?: number;
+  intervalMs?: number;
+}
+
+function toIsoString(value?: string) {
+  if (!value) {
+    return new Date().toISOString();
+  }
+
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? new Date().toISOString() : date.toISOString();
+}
+
+export function mapLogGeneratorToSubmitPayload(values: LogGeneratorFormValues): LogSubmitPayload {
+  return {
+    taskId: values.taskName.trim() || `web-task-${Date.now()}`,
+    sourceType: values.sourceType.trim() || 'web-generator',
+    sourcePath: values.sourcePath.trim() || '/virtual/web-generator.log',
+    logContent: values.logContent.trim(),
+    logLevel: values.logLevel,
+    collectedAt: toIsoString(values.collectedAt),
+  };
+}
+
+export function mapLogGeneratorToBatchPayload(values: LogGeneratorFormValues): LogGeneratePayload {
+  const base = mapLogGeneratorToSubmitPayload(values);
+  const count = Math.max(1, Number(values.batchCount || 1));
+
+  return {
+    count,
+    intervalMs: Math.max(0, Number(values.intervalMs || 0)),
+    base,
+    overrides: Array.from({ length: count }, (_, index) => ({
+      taskId: `${base.taskId}-${String(index + 1).padStart(2, '0')}`,
+      logContent: `${base.logContent} #${index + 1}`,
+      collectedAt: new Date(Date.parse(base.collectedAt || new Date().toISOString()) + index * Math.max(1000, Number(values.intervalMs || 0))).toISOString(),
+    })),
+  };
+}
+
+export function mapCreatedServerLogToView(log: ServerLogRecord): LogRecord {
+  return {
+    id: `LOG-${log.id}`,
+    taskName: log.task_id,
+    source: log.source_path || log.source_type,
+    level: log.log_level === 'ERROR' ? 'ERROR' : log.log_level === 'WARN' ? 'WARN' : 'INFO',
+    status: mapLogStatus(log.status),
+    submittedAt: normalizeDate(log.collected_at || log.created_at),
+    hash: `log-${log.id}`,
+  };
 }
 
 export function mergeAuditIntoLogs(logs: LogRecord[], auditRecords: ServerAuditRecord[]): LogRecord[] {

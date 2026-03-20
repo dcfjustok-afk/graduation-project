@@ -1,4 +1,14 @@
-import type { AuditExecutionResult, ServerAlertRecord, ServerAuditRecord, ServerLogRecord, ServerOverviewStats } from '../types';
+import type {
+  AuditExecutionResult,
+  LogGeneratePayload,
+  LogGenerateResponseData,
+  LogSubmitPayload,
+  LogSubmitResponseData,
+  ServerAlertRecord,
+  ServerAuditRecord,
+  ServerLogRecord,
+  ServerOverviewStats,
+} from '../types';
 import { httpClient } from './httpClient';
 
 export function getOverviewStats() {
@@ -19,4 +29,12 @@ export function getAlertsRaw() {
 
 export function runAudits() {
   return httpClient.post<AuditExecutionResult[]>('/audits/run');
+}
+
+export function createLog(payload: LogSubmitPayload) {
+  return httpClient.post<LogSubmitResponseData, LogSubmitPayload>('/logs', payload);
+}
+
+export function generateLogs(payload: LogGeneratePayload) {
+  return httpClient.post<LogGenerateResponseData, LogGeneratePayload>('/logs/generate', payload);
 }

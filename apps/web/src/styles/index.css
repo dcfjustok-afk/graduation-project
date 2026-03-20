@@ -334,6 +334,81 @@ body {
   border: 1px solid #dbe7ff;
 }
 
+.generator-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(30, 64, 175, 0.96) 0%, rgba(14, 116, 144, 0.92) 100%);
+  color: #fff;
+}
+
+.generator-hero .ant-typography,
+.generator-hero .ant-typography-secondary {
+  color: #fff !important;
+}
+
+.generator-hero__stats {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.generator-hero__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.preset-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.preset-card {
+  border: 0;
+  text-align: left;
+  padding: 18px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.98) 0%, rgba(239, 246, 255, 0.88) 100%);
+  box-shadow: inset 0 0 0 1px rgba(191, 219, 254, 0.7);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.preset-card:hover {
+  transform: translateY(-2px);
+  box-shadow: inset 0 0 0 1px rgba(96, 165, 250, 0.9), 0 16px 30px rgba(14, 116, 144, 0.12);
+}
+
+.preset-card span {
+  color: #475467;
+}
+
+.generator-result-block {
+  display: grid;
+  gap: 12px;
+}
+
+.generator-result-block__summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #f8fbff 0%, #eef7ff 100%);
+}
+
 .status-pill {
   padding: 4px 10px;
   border-radius: 999px;
@@ -592,6 +667,10 @@ body {
   .alert-highlights {
     grid-template-columns: 1fr;
   }
+
+  .preset-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 992px) {
@@ -615,7 +694,13 @@ body {
   }
 
   .progress-item__head,
-  .alert-card__footer {
+  .alert-card__footer,
+  .generator-hero,
+  .generator-result-block__summary {
     flex-direction: column;
+  }
+
+  .generator-hero__stats {
+    align-items: flex-start;
   }
 }

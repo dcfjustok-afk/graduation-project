@@ -48,6 +48,29 @@ export interface LogSubmitPayload {
   collectedAt?: string;
 }
 
+export interface LogGeneratePayload {
+  count: number;
+  intervalMs?: number;
+  base: LogSubmitPayload;
+  overrides?: Array<Partial<LogSubmitPayload>>;
+}
+
+export interface LogGenerateFailure {
+  index: number;
+  ok: false;
+  error: string;
+}
+
+export interface LogGenerateResponseData {
+  successCount: number;
+  failures: LogGenerateFailure[];
+  createdLogIds: number[];
+  limits: {
+    maxCount: number;
+    minIntervalMs: number;
+  };
+}
+
 export interface AgentStateSyncPayload {
   agentName: string;
   sourcePath?: string;

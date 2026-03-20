@@ -1,8 +1,9 @@
 import { VIEW_LOG_STATUSES } from '@graduation-project/shared';
-import { SearchOutlined } from '@ant-design/icons';
-import { Card, Input, Space, Table, Tag, Typography } from 'antd';
+import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
+import { Button, Card, Input, Space, Table, Tag, message } from 'antd';
 import type { TableProps } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { getLogs } from '../api/dataService';
 import { SectionHeader } from '../components/SectionHeader';
 import type { LogRecord } from '../types';
@@ -36,11 +37,33 @@ const columns: TableProps<LogRecord>['columns'] = [
 ];
 
 export function LogsPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [keyword, setKeyword] = useState<string>('');
   const [logs, setLogs] = useState<LogRecord[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const loadLogs = async (notify = false) => {
+    setLoading(true);
+
+    try {
+      const nextLogs = await getLogs();
+      setLogs(nextLogs);
+
+      if (notify) {
+        message.success(`日志已刷新，当前共 ${nextLogs.length} 条`);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    void getLogs().then(setLogs);
+    void loadLogs(searchParams.get('refresh') === '1');
+
+    if (searchParams.get('refresh') === '1') {
+      searchParams.delete('refresh');
+      setSearchParams(searchParams, { replace: true });
+    }
   }, []);
 
   const filteredLogs = useMemo(() => {
@@ -62,6 +85,11 @@ export function LogsPage() {
       <SectionHeader
         title="日志中心"
         subtitle="字段先保持松耦合设计。后续后端接入时，只需要把表格映射到真实字段。"
+        extra={
+          <Button size="large" icon={<ReloadOutlined />} loading={loading} onClick={() => void loadLogs(true)}>
+            刷新日志
+          </Button>
+        }
       />
 
       <Card className="panel-card" bordered={false}>
@@ -79,6 +107,7 @@ export function LogsPage() {
             rowKey="id"
             columns={columns}
             dataSource={filteredLogs}
+            loading={loading}
             pagination={{ pageSize: 6, showSizeChanger: false }}
             scroll={{ x: 1100 }}
           />
