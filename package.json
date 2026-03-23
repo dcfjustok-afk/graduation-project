@@ -8,6 +8,7 @@
     "test": "tests"
   },
   "scripts": {
+    "dev": "npx concurrently \"npm --prefix packages/contracts run node\" \"npm --prefix apps/server run dev\" \"npm --prefix apps/agent run dev\" \"npm --prefix apps/web run dev\"",
     "chain:deploy": "npm --prefix packages/contracts run deploy:local",
     "verify:contracts": "npm --prefix packages/contracts test",
     "verify:server": "node scripts/verify-server.js",
