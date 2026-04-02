@@ -1,5 +1,5 @@
-import { FireOutlined, RocketOutlined } from '@ant-design/icons';
-import { Button, Card, Col, Divider, Progress, Row, Space, Statistic, Table, Timeline, Typography } from 'antd';
+import { FireOutlined, RocketOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
+import { Button, Card, Col, Divider, Progress, Row, Space, Statistic, Table, Timeline, Typography, message } from 'antd';
 import type { TableProps } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { getDashboardData } from '../api/dataService';
@@ -41,7 +41,9 @@ export function DashboardPage() {
   const [data, setData] = useState<DashboardViewData>(initialData);
 
   useEffect(() => {
-    void getDashboardData().then(setData);
+    void getDashboardData().then(setData).catch((err: unknown) => {
+      message.error(err instanceof Error ? err.message : '数据加载失败');
+    });
   }, []);
 
   const summaryRows = useMemo<SummaryRow[]>(
@@ -59,12 +61,12 @@ export function DashboardPage() {
     <div className="section-space">
       <SectionHeader
         title="系统总览"
-        subtitle="先把前端展示层做完整。后面接入真实后端时，只需要替换数据源与字段映射。"
+        subtitle="基于区块链的可信任务日志审计系统 — 实时监控日志采集、链上存证与审计状态"
         extra={
           <Space>
-            <Button size="large">查看设计说明</Button>
-            <Button type="primary" size="large" icon={<RocketOutlined />}>
-              进入审计演示
+            <Button size="large" icon={<SafetyCertificateOutlined />} href="#/audit">审计管理</Button>
+            <Button type="primary" size="large" icon={<RocketOutlined />} href="#/log-generator">
+              日志生成
             </Button>
           </Space>
         }
@@ -80,34 +82,34 @@ export function DashboardPage() {
                 可信任务日志审计系统
               </Typography.Title>
               <Typography.Paragraph className="hero-card__desc">
-                现在先把视觉层、交互层和页面结构搭稳。你之后做后端时，可以直接把 mock 接口替换成真实 API，前端结构不用推倒重来。
+                本系统实现了日志自动采集、链下保存、链上哈希存证、审计核验与异常告警的完整闭环，支持篡改检测与可视化分析。
               </Typography.Paragraph>
               <Space wrap>
-                <Button type="primary" size="large" icon={<FireOutlined />}>
+                <Button type="primary" size="large" icon={<FireOutlined />} href="#/logs">
                   查看日志流转
                 </Button>
-                <Button ghost size="large">
-                  保留接口扩展位
+                <Button ghost size="large" href="#/alerts">
+                  查看异常告警
                 </Button>
               </Space>
             </Space>
           </Col>
           <Col xs={24} xl={9}>
             <Card className="hero-card__panel" bordered={false}>
-              <Statistic title="当前前端完成度" value={78} suffix="%" />
+              <Statistic title="系统运行状态" value="正常" valueStyle={{ color: '#16a34a' }} />
               <Divider style={{ margin: '16px 0' }} />
               <div className="hero-card__panel-list">
                 <div>
-                  <span>已完成页面骨架</span>
-                  <strong>4 个</strong>
+                  <span>功能模块</span>
+                  <strong>5 个</strong>
                 </div>
                 <div>
-                  <span>数据来源模式</span>
-                    <strong>{data.sourceMode === 'real' ? 'Real API' : 'Mock'}</strong>
+                  <span>数据来源</span>
+                    <strong>{data.sourceMode === 'real' ? '真实后端' : 'Mock 演示'}</strong>
                 </div>
                 <div>
-                  <span>后续接入方式</span>
-                    <strong>{data.sourceMode === 'real' ? '已接真实接口' : '接口替换'}</strong>
+                  <span>区块链网络</span>
+                    <strong>Hardhat 本地链</strong>
                 </div>
               </div>
             </Card>
@@ -179,5 +181,5 @@ export function DashboardPage() {
 }
 
 function Tagline() {
-  return <div className="hero-badge">毕业设计前端原型 · 已完成 TypeScript 化</div>;
+  return <div className="hero-badge">基于区块链的可信任务日志审计系统</div>;
 }

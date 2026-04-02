@@ -92,22 +92,22 @@ export const auditSummary: AuditSummary = {
 export const systemModules: SystemModule[] = [
   {
     name: '日志采集 Agent',
-    progress: 85,
-    description: '已完成监听、增量读取与 mock 上报流程展示。',
+    progress: 100,
+    description: '支持增量读取、失败重试、偏移量持久化与状态同步。',
   },
   {
     name: '后端审计服务',
-    progress: 40,
-    description: '当前以前端 mock 数据驱动，等待后端接口接入。',
+    progress: 100,
+    description: '已完成日志接收、哈希计算、链上存证、审计核验与告警生成。',
   },
   {
     name: '区块链存证模块',
-    progress: 35,
-    description: '当前仅保留页面扩展位，后续可接入真实链上状态。',
+    progress: 100,
+    description: '基于 Hardhat + OpenZeppelin 实现 LogRegistry 合约，支持权限控制与链上查询。',
   },
   {
     name: '可视化审计平台',
-    progress: 70,
-    description: '已完成首页、日志页、审计页、告警页的静态原型。',
+    progress: 100,
+    description: '支持总览、日志、审计、告警、日志生成五大功能页面。',
   },
 ];

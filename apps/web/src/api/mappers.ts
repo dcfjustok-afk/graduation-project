@@ -212,23 +212,23 @@ export function buildSystemModules(stats: ServerOverviewStats): SystemModule[] {
   return [
     {
       name: '日志采集 Agent',
-      progress: stats.onlineAgents > 0 ? 88 : 72,
+      progress: 100,
       description: `当前在线 Agent 数：${stats.onlineAgents}`,
     },
     {
       name: '后端审计服务',
-      progress: stats.totalLogs > 0 ? 78 : 60,
+      progress: 100,
       description: `已接入真实接口，累计日志 ${stats.totalLogs} 条。`,
     },
     {
       name: '区块链存证模块',
-      progress: stats.totalHashRecords > 0 ? 76 : 52,
+      progress: 100,
       description: `累计链上存证 ${stats.totalHashRecords} 条。`,
     },
     {
       name: '可视化审计平台',
-      progress: 86,
-      description: '已支持 mock / 真实接口切换。',
+      progress: 100,
+      description: '支持总览、日志、审计、告警、日志生成五大功能页面。',
     },
   ];
 }

@@ -2,15 +2,21 @@ const { spawn } = require('node:child_process');
 
 const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 
+const isWindows = process.platform === 'win32';
+
 function spawnProcess(command, args, options = {}) {
-  const child = spawn(command, args, {
+  const spawnOptions = {
     stdio: options.stdio || 'pipe',
     cwd: options.cwd || process.cwd(),
     env: {
       ...process.env,
       ...(options.env || {}),
     },
-  });
+  };
+
+  const child = isWindows
+    ? spawn('cmd.exe', ['/c', command, ...args], spawnOptions)
+    : spawn(command, args, spawnOptions);
 
   if (options.label) {
     child.stdout?.on('data', (chunk) => {
