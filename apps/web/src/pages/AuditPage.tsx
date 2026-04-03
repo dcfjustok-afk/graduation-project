@@ -13,7 +13,7 @@ const initialDashboard: DashboardViewData = {
   overviewCards: [],
   auditTimeline: [],
   systemModules: [],
-  sourceMode: 'mock',
+  sourceMode: 'real',
   logTrend: [],
   statusDistribution: [],
   alertDistribution: [],
@@ -72,7 +72,7 @@ export function AuditPage() {
     <div className="section-space">
       <SectionHeader
         title="审计中心"
-        subtitle="先把审计流程页面和交互按钮做好，后续只需要把按钮动作绑定到真实接口。"
+        subtitle="对日志进行链上哈希比对审计，检测是否存在篡改行为，并生成审计报告。"
         extra={
           <Button type="primary" icon={<ThunderboltOutlined />} size="large" loading={loading} onClick={() => void handleRunAudits()}>
             一键批量审计
@@ -109,7 +109,7 @@ export function AuditPage() {
             <Result
               status={dashboard.sourceMode === 'real' ? 'success' : 'info'}
               title={dashboard.sourceMode === 'real' ? '当前已接入真实接口数据' : '当前为 mock 演示流程'}
-              subTitle="这里保留了相同的页面结构，切换数据源后无需重做交互和布局。"
+              subTitle="系统会自动比对链上哈希与链下日志数据，发现篡改即触发告警。"
             />
             <Timeline items={dashboard.auditTimeline.map((item) => ({ color: item.color, children: item.content }))} />
           </Card>
@@ -131,10 +131,10 @@ export function AuditPage() {
           <Card className="panel-card" title="审计增强说明" bordered={false}>
             <List
               dataSource={[
-                '支持单条审计、批量审计、定时审计。',
-                '接入区块高度、交易哈希、钱包地址等链上字段。',
-                '已经接入真实异常原因与哈希比对结果展示。',
-                '支持 mock / 真实接口模式下统一呈现图表。',
+                '支持一键批量审计，自动比对链上哈希与链下数据。',
+                '审计结果关联区块高度、交易哈希、合约地址等链上信息。',
+                '篡改检测失败时自动标记异常并生成告警记录。',
+                '可视化展示审计状态分布、日志趋势与异常分布。',
               ]}
               renderItem={(item) => <List.Item>{item}</List.Item>}
             />

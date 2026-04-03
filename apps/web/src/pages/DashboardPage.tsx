@@ -2,6 +2,7 @@ import { FireOutlined, RocketOutlined, SafetyCertificateOutlined } from '@ant-de
 import { Button, Card, Col, Divider, Progress, Row, Space, Statistic, Table, Timeline, Typography, message } from 'antd';
 import type { TableProps } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getDashboardData } from '../api/dataService';
 import { MetricCard } from '../components/MetricCard';
 import { SectionHeader } from '../components/SectionHeader';
@@ -19,7 +20,7 @@ const initialData: DashboardViewData = {
   overviewCards: [],
   auditTimeline: [],
   systemModules: [],
-  sourceMode: 'mock',
+  sourceMode: 'real',
   logTrend: [],
   statusDistribution: [],
   alertDistribution: [],
@@ -57,6 +58,8 @@ export function DashboardPage() {
     [data.auditSummary],
   );
 
+  const navigate = useNavigate();
+
   return (
     <div className="section-space">
       <SectionHeader
@@ -64,8 +67,8 @@ export function DashboardPage() {
         subtitle="基于区块链的可信任务日志审计系统 — 实时监控日志采集、链上存证与审计状态"
         extra={
           <Space>
-            <Button size="large" icon={<SafetyCertificateOutlined />} href="#/audit">审计管理</Button>
-            <Button type="primary" size="large" icon={<RocketOutlined />} href="#/log-generator">
+            <Button size="large" icon={<SafetyCertificateOutlined />} onClick={() => navigate('/audit')}>审计管理</Button>
+            <Button type="primary" size="large" icon={<RocketOutlined />} onClick={() => navigate('/log-generator')}>
               日志生成
             </Button>
           </Space>
@@ -85,10 +88,10 @@ export function DashboardPage() {
                 本系统实现了日志自动采集、链下保存、链上哈希存证、审计核验与异常告警的完整闭环，支持篡改检测与可视化分析。
               </Typography.Paragraph>
               <Space wrap>
-                <Button type="primary" size="large" icon={<FireOutlined />} href="#/logs">
+                <Button type="primary" size="large" icon={<FireOutlined />} onClick={() => navigate('/logs')}>
                   查看日志流转
                 </Button>
-                <Button ghost size="large" href="#/alerts">
+                <Button ghost size="large" onClick={() => navigate('/alerts')}>
                   查看异常告警
                 </Button>
               </Space>

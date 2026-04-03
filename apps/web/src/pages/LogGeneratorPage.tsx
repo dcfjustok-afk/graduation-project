@@ -139,7 +139,7 @@ export function LogGeneratorPage() {
     <div className="section-space">
       <SectionHeader
         title="日志生成台"
-        subtitle="这里负责主动造数：既能手工生成单条日志，也能批量构造演示数据，方便你联调日志中心、审计中心和链上写入流程。"
+        subtitle="通过表单生成日志数据，支持单条提交和批量生成，日志将直接写入后端并上链存证。"
         extra={
           <Space wrap>
             <Tag color={apiEnv.sourceMode === 'real' ? 'success' : 'processing'}>{apiEnv.sourceMode === 'real' ? 'Real API' : 'Mock 演示'}</Tag>
@@ -221,7 +221,7 @@ export function LogGeneratorPage() {
                   </Col>
                   <Col xs={24}>
                     <Form.Item name="logContent" label="日志内容" rules={[{ required: true, message: '请输入日志内容' }]}>
-                      <Input.TextArea rows={5} placeholder="输入日志正文，提交后将作为 logContent 发送给后端或 mock store。" />
+                      <Input.TextArea rows={5} placeholder="输入日志正文，提交后将以 logContent 字段发送至后端。" />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -278,7 +278,7 @@ export function LogGeneratorPage() {
             <Card className="panel-card" bordered={false} title="提交结果">
               <Space direction="vertical" size="middle" style={{ width: '100%' }}>
                 <div className="soft-note">
-                  单条提交会返回新建日志 ID；批量生成会统计成功条数和失败详情，方便你继续去日志中心或审计中心验证。
+                  单条提交会返回新建日志 ID；批量生成会统计成功条数和失败详情。
                 </div>
                 {createdLogId ? <Tag color="success">最近创建日志 ID：{createdLogId}</Tag> : null}
                 {batchSummary ? (
@@ -297,7 +297,7 @@ export function LogGeneratorPage() {
                     />
                   </div>
                 ) : null}
-                {!createdLogId && !batchSummary ? <Typography.Text type="secondary">还没有提交结果，先选一个模板或填写表单开始造数。</Typography.Text> : null}
+                {!createdLogId && !batchSummary ? <Typography.Text type="secondary">还没有提交结果，先选一个模板或填写表单开始生成日志。</Typography.Text> : null}
                 <Button type="link" onClick={() => navigate('/logs?refresh=1&source=generator')}>
                   去日志中心查看最新记录
                 </Button>

@@ -34,7 +34,7 @@ export function AlertsPage() {
 
   return (
     <div className="section-space">
-      <SectionHeader title="异常告警" subtitle="告警卡片和状态样式已经预留完成，后面只需要接真实告警数据。" />
+      <SectionHeader title="异常告警" subtitle="审计过程中检测到的篡改、哈希不匹配等异常事件，按严重程度分级展示。" />
 
       <Row gutter={[18, 18]}>
         <Col xs={24} xl={8}>

@@ -84,7 +84,7 @@ export function LogsPage() {
     <div className="section-space">
       <SectionHeader
         title="日志中心"
-        subtitle="字段先保持松耦合设计。后续后端接入时，只需要把表格映射到真实字段。"
+        subtitle="展示系统采集的所有日志记录，支持按关键字搜索和状态筛选。"
         extra={
           <Button size="large" icon={<ReloadOutlined />} loading={loading} onClick={() => void loadLogs(true)}>
             刷新日志
@@ -112,9 +112,7 @@ export function LogsPage() {
             scroll={{ x: 1100 }}
           />
 
-          <div className="soft-note">
-            当前先展示前端页面体验，不强绑定字段类型细节，方便你后面开发后端时自由扩展。
-          </div>
+
         </Space>
       </Card>
     </div>

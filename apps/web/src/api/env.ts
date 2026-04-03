@@ -2,7 +2,7 @@ import type { ApiSourceMode } from '@graduation-project/shared';
 
 export type { ApiSourceMode };
 
-const sourceMode = (import.meta.env.VITE_API_SOURCE || 'mock').toLowerCase();
+const sourceMode = (import.meta.env.VITE_API_SOURCE || 'real').toLowerCase();
 
 export const apiEnv: { sourceMode: ApiSourceMode; baseUrl: string } = {
   sourceMode: sourceMode === 'real' ? 'real' : 'mock',

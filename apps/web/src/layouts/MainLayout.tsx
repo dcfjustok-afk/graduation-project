@@ -30,7 +30,7 @@ export function MainLayout() {
           <div className="brand-logo">TA</div>
           <div>
             <Typography.Text className="brand-title">可信任务日志审计</Typography.Text>
-            <Typography.Text className="brand-subtitle">React · TypeScript 原型</Typography.Text>
+            <Typography.Text className="brand-subtitle">区块链 · 全栈系统</Typography.Text>
           </div>
         </div>
 
@@ -46,11 +46,11 @@ export function MainLayout() {
         <div className="sider-footer">
           <div className="sider-footer__label">当前模式</div>
           <Space wrap>
-            <Tag color="processing" bordered={false}>
-              Mock 数据
-            </Tag>
             <Tag color="success" bordered={false}>
-              可扩展
+              真实数据
+            </Tag>
+            <Tag color="purple" bordered={false}>
+              链上存证
             </Tag>
           </Space>
         </div>
@@ -62,14 +62,14 @@ export function MainLayout() {
             <Typography.Title level={4} style={{ margin: 0, color: '#0f172a' }}>
               区块链可信日志审计平台
             </Typography.Title>
-            <Typography.Text type="secondary">当前先聚焦前端界面，后续可无缝接入后端接口与真实字段。</Typography.Text>
+            <Typography.Text type="secondary">日志采集 → 链下存储 → 链上存证 → 审计核验 → 异常告警</Typography.Text>
           </div>
           <Space wrap>
             <Tag color="success" className="header-tag" bordered={false}>
-              页面可预览
+              系统运行中
             </Tag>
-            <Tag color="purple" className="header-tag" bordered={false}>
-              TypeScript 化
+            <Tag color="blue" className="header-tag" bordered={false}>
+              Hardhat 本地链
             </Tag>
           </Space>
         </Header>
