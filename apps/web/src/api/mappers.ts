@@ -202,7 +202,7 @@ export function buildAuditSummary(stats: ServerOverviewStats, auditRecords: Serv
 export function buildOverviewCards(stats: ServerOverviewStats, summary: AuditSummary): OverviewCard[] {
   return [
     { title: '日志总量', value: stats.totalLogs, suffix: '条', trend: '实时统计' },
-    { title: '链上存证记录', value: stats.totalHashRecords, suffix: '条', trend: '已接后端' },
+    { title: '链上存证记录', value: stats.totalHashRecords, suffix: '条', trend: '链上同步' },
     { title: '审计记录数', value: stats.totalAuditRecords, suffix: '条', trend: '实时聚合' },
     { title: '活动告警数', value: summary.warning, suffix: '条', trend: stats.openAlerts > 0 ? '需关注' : '稳定' },
   ];
@@ -218,7 +218,7 @@ export function buildSystemModules(stats: ServerOverviewStats): SystemModule[] {
     {
       name: '后端审计服务',
       progress: 100,
-      description: `已接入真实接口，累计日志 ${stats.totalLogs} 条。`,
+      description: `累计审计日志 ${stats.totalLogs} 条，支持自动比对与告警生成。`,
     },
     {
       name: '区块链存证模块',
@@ -300,7 +300,6 @@ export function buildAlertDistribution(alerts: ServerAlertRecord[]): AlertDistri
 }
 
 export function buildDashboardViewData(
-  sourceMode: DashboardViewData['sourceMode'],
   stats: ServerOverviewStats,
   logs: ServerLogRecord[],
   auditRecords: ServerAuditRecord[],
@@ -309,7 +308,6 @@ export function buildDashboardViewData(
   const auditSummary = buildAuditSummary(stats, auditRecords, alerts);
 
   return {
-    sourceMode,
     overviewCards: buildOverviewCards(stats, auditSummary),
     auditTimeline: buildAuditTimeline(auditRecords, logs),
     systemModules: buildSystemModules(stats),

@@ -11,9 +11,7 @@ import type {
   ServerLogRecord,
   ServerOverviewStats,
 } from '../types';
-import { apiEnv, type ApiSourceMode } from './env';
 import { buildDashboardViewData, mapServerAlertsToView, mapServerLogsToView, mergeAuditIntoLogs } from './mappers';
-import * as mockClient from './mockClient';
 import * as realClient from './realClient';
 
 type RawBundle = {
@@ -24,22 +22,11 @@ type RawBundle = {
 };
 
 async function loadRawBundle(): Promise<RawBundle> {
-  if (apiEnv.sourceMode === 'real') {
-    const [stats, logs, audits, alerts] = await Promise.all([
-      realClient.getOverviewStats(),
-      realClient.getLogsRaw(),
-      realClient.getAuditRecords(),
-      realClient.getAlertsRaw(),
-    ]);
-
-    return { stats, logs, audits, alerts };
-  }
-
   const [stats, logs, audits, alerts] = await Promise.all([
-    mockClient.getOverviewStats(),
-    mockClient.getLogsRaw(),
-    mockClient.getAuditRecords(),
-    mockClient.getAlertsRaw(),
+    realClient.getOverviewStats(),
+    realClient.getLogsRaw(),
+    realClient.getAuditRecords(),
+    realClient.getAlertsRaw(),
   ]);
 
   return { stats, logs, audits, alerts };
@@ -47,7 +34,7 @@ async function loadRawBundle(): Promise<RawBundle> {
 
 export async function getDashboardData(): Promise<DashboardViewData> {
   const bundle = await loadRawBundle();
-  return buildDashboardViewData(apiEnv.sourceMode as ApiSourceMode, bundle.stats, bundle.logs, bundle.audits, bundle.alerts);
+  return buildDashboardViewData(bundle.stats, bundle.logs, bundle.audits, bundle.alerts);
 }
 
 export async function getLogs(): Promise<LogRecord[]> {
@@ -64,31 +51,37 @@ export async function getAuditPageData(): Promise<{ dashboard: DashboardViewData
   const bundle = await loadRawBundle();
 
   return {
-    dashboard: buildDashboardViewData(apiEnv.sourceMode as ApiSourceMode, bundle.stats, bundle.logs, bundle.audits, bundle.alerts),
+    dashboard: buildDashboardViewData(bundle.stats, bundle.logs, bundle.audits, bundle.alerts),
     logs: mergeAuditIntoLogs(mapServerLogsToView(bundle.logs), bundle.audits),
   };
 }
 
 export async function runAudits() {
-  if (apiEnv.sourceMode === 'real') {
-    return realClient.runAudits();
-  }
-
-  return [];
+  return realClient.runAudits();
 }
 
 export async function createLog(payload: LogSubmitPayload): Promise<LogSubmitResponseData> {
-  if (apiEnv.sourceMode === 'real') {
-    return realClient.createLog(payload);
-  }
-
-  return mockClient.createLog(payload);
+  return realClient.createLog(payload);
 }
 
 export async function generateLogs(payload: LogGeneratePayload): Promise<LogGenerateResponseData> {
-  if (apiEnv.sourceMode === 'real') {
-    return realClient.generateLogs(payload);
-  }
+  return realClient.generateLogs(payload);
+}
 
-  return mockClient.generateLogs(payload);
+export async function resetAllData(): Promise<void> {
+  return realClient.resetAllData();
+}
+
+export async function runTamperExperiment(): Promise<TamperExperimentResult> {
+  return realClient.runTamperExperiment();
+}
+
+export interface TamperExperimentResult {
+  logId: number;
+  taskId: string;
+  originalContent: string;
+  tamperedContent: string;
+  auditStatus: string;
+  auditMessage: string;
+  alertGenerated: boolean;
 }

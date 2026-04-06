@@ -38,3 +38,11 @@ export function createLog(payload: LogSubmitPayload) {
 export function generateLogs(payload: LogGeneratePayload) {
   return httpClient.post<LogGenerateResponseData, LogGeneratePayload>('/logs/generate', payload);
 }
+
+export function resetAllData() {
+  return httpClient.post<void>('/admin/reset');
+}
+
+export function runTamperExperiment() {
+  return httpClient.post<import('../api/dataService').TamperExperimentResult>('/admin/tamper');
+}

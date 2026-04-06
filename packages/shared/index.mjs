@@ -9,11 +9,6 @@ export const ERROR_CODES = {
   INVALID_LOG_ID: 'invalid_log_id',
 };
 
-export const API_SOURCE_MODES = {
-  MOCK: 'mock',
-  REAL: 'real',
-};
-
 export const LOG_LEVELS = {
   INFO: 'INFO',
   WARN: 'WARN',

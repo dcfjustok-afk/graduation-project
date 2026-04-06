@@ -12,7 +12,6 @@ import type { ColumnsType } from 'antd/es/table';
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createLog, generateLogs } from '../api/dataService';
-import { apiEnv } from '../api/env';
 import { mapLogGeneratorToBatchPayload, mapLogGeneratorToSubmitPayload, type LogGeneratorFormValues } from '../api/mappers';
 import { SectionHeader } from '../components/SectionHeader';
 import type { LogGenerateFailure } from '../types';
@@ -138,21 +137,18 @@ export function LogGeneratorPage() {
   return (
     <div className="section-space">
       <SectionHeader
-        title="日志生成台"
+        title="日志生成器"
         subtitle="通过表单生成日志数据，支持单条提交和批量生成，日志将直接写入后端并上链存证。"
         extra={
-          <Space wrap>
-            <Tag color={apiEnv.sourceMode === 'real' ? 'success' : 'processing'}>{apiEnv.sourceMode === 'real' ? 'Real API' : 'Mock 演示'}</Tag>
-            <Button size="large" onClick={() => navigate('/logs?refresh=1&source=generator')}>
-              查看日志中心
-            </Button>
-          </Space>
+          <Button size="large" onClick={() => navigate('/logs?refresh=1&source=generator')}>
+            查看日志中心
+          </Button>
         }
       />
 
       <Row gutter={[18, 18]}>
         <Col xs={24} xl={16}>
-          <Card className="panel-card" bordered={false}>
+          <Card className="panel-card" variant="borderless">
             <Space direction="vertical" size="large" style={{ width: '100%' }}>
               <div className="generator-hero">
                 <div>
@@ -258,7 +254,7 @@ export function LogGeneratorPage() {
 
         <Col xs={24} xl={8}>
           <Space direction="vertical" size="large" style={{ width: '100%' }}>
-            <Card className="panel-card" bordered={false}>
+            <Card className="panel-card" variant="borderless">
               <Row gutter={[12, 12]}>
                 <Col span={12}>
                   <Statistic title="当前级别" value={preview.logLevel} prefix={<FireOutlined />} />
@@ -275,12 +271,12 @@ export function LogGeneratorPage() {
               </Space>
             </Card>
 
-            <Card className="panel-card" bordered={false} title="提交结果">
+            <Card className="panel-card" variant="borderless" title="提交结果">
               <Space direction="vertical" size="middle" style={{ width: '100%' }}>
                 <div className="soft-note">
-                  单条提交会返回新建日志 ID；批量生成会统计成功条数和失败详情。
+                  单条提交会返回新建日志ID；批量生成会统计成功条数和失败详情。
                 </div>
-                {createdLogId ? <Tag color="success">最近创建日志 ID：{createdLogId}</Tag> : null}
+                {createdLogId ? <Tag color="success">最近创建日志ID：{createdLogId}</Tag> : null}
                 {batchSummary ? (
                   <div className="generator-result-block">
                     <div className="generator-result-block__summary">

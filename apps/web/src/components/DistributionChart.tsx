@@ -17,14 +17,14 @@ export function DistributionChart({ items, variant = 'donut' }: DistributionChar
 }
 
 function DonutChart({ items }: { items: DistributionItem[] }) {
-  const total = items.reduce((sum, item) => sum + item.value, 0) || 1;
+  const total = items.reduce((sum, item) => sum + item.value, 0);
   let currentOffset = 0;
 
   return (
     <div className="distribution-layout">
       <svg viewBox="0 0 220 220" className="donut-chart" role="img" aria-label="状态统计图">
         <circle cx="110" cy="110" r="70" className="donut-chart__track" />
-        {items.map((item) => {
+        {total > 0 && items.map((item) => {
           const ratio = item.value / total;
           const dash = ratio * 439.6;
           const segment = (

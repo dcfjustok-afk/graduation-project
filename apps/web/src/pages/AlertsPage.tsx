@@ -1,7 +1,7 @@
 import { VIEW_ALERT_LEVELS, VIEW_ALERT_STATUSES } from '@graduation-project/shared';
-import { BellOutlined } from '@ant-design/icons';
-import { Badge, Card, Col, Empty, Row, Tag, Typography } from 'antd';
-import { useEffect, useState } from 'react';
+import { BellOutlined, WarningOutlined } from '@ant-design/icons';
+import { Badge, Card, Col, Empty, Row, Statistic, Tag, Timeline, Typography } from 'antd';
+import { useEffect, useMemo, useState } from 'react';
 import { getAlerts } from '../api/dataService';
 import { SectionHeader } from '../components/SectionHeader';
 import { DistributionChart } from '../components/DistributionChart';
@@ -19,6 +19,12 @@ const badgeMap: Record<AlertRecord['status'], 'error' | 'processing' | 'default'
   已忽略: 'default',
 };
 
+const timelineColorMap: Record<AlertRecord['level'], 'red' | 'blue' | 'gray'> = {
+  高危: 'red',
+  中危: 'blue',
+  提示: 'gray',
+};
+
 export function AlertsPage() {
   const [alerts, setAlerts] = useState<AlertRecord[]>([]);
 
@@ -32,45 +38,81 @@ export function AlertsPage() {
     { label: VIEW_ALERT_LEVELS.INFO, value: alerts.filter((item) => item.level === VIEW_ALERT_LEVELS.INFO).length, color: '#3b82f6' },
   ];
 
+  const stats = useMemo(() => ({
+    open: alerts.filter((item) => item.status === VIEW_ALERT_STATUSES.OPEN).length,
+    processing: alerts.filter((item) => item.status === VIEW_ALERT_STATUSES.PROCESSING).length,
+    highRatio: alerts.length === 0 ? '0%' : `${Math.round((alerts.filter((item) => item.level === VIEW_ALERT_LEVELS.HIGH).length / alerts.length) * 100)}%`,
+  }), [alerts]);
+
   return (
     <div className="section-space">
-      <SectionHeader title="异常告警" subtitle="审计过程中检测到的篡改、哈希不匹配等异常事件，按严重程度分级展示。" />
+      <SectionHeader title="异常告警" subtitle="审计过程中检测到的篡改、哈希不匹配等异常事件，按严重程度分级展示" />
 
+      {/* ── Stats + Distribution ── */}
       <Row gutter={[18, 18]}>
-        <Col xs={24} xl={8}>
-          <Card className="panel-card" title="异常分布图" bordered={false}>
-            <DistributionChart items={distribution} variant="bars" />
+        <Col xs={24} xl={6}>
+          <Card className="metric-card" variant="borderless">
+            <Statistic title="告警总数" value={alerts.length} prefix={<BellOutlined />} valueStyle={{ color: '#0ea5e9' }} />
           </Card>
         </Col>
-        <Col xs={24} xl={16}>
-          <Card className="panel-card" title="告警关注重点" bordered={false}>
-            <div className="alert-highlights">
-              <div className="alert-highlight">
-                <span>待处理告警</span>
-                <strong>{alerts.filter((item) => item.status === VIEW_ALERT_STATUSES.OPEN).length}</strong>
-              </div>
-              <div className="alert-highlight">
-                <span>处理中告警</span>
-                <strong>{alerts.filter((item) => item.status === VIEW_ALERT_STATUSES.PROCESSING).length}</strong>
-              </div>
-              <div className="alert-highlight">
-                <span>高危占比</span>
-                <strong>{alerts.length === 0 ? '0%' : `${Math.round((alerts.filter((item) => item.level === VIEW_ALERT_LEVELS.HIGH).length / alerts.length) * 100)}%`}</strong>
-              </div>
-            </div>
+        <Col xs={24} xl={6}>
+          <Card className="metric-card" variant="borderless">
+            <Statistic title="待处理" value={stats.open} prefix={<WarningOutlined />} valueStyle={{ color: '#ef4444' }} />
+          </Card>
+        </Col>
+        <Col xs={24} xl={6}>
+          <Card className="metric-card" variant="borderless">
+            <Statistic title="处理中" value={stats.processing} valueStyle={{ color: '#f59e0b' }} />
+          </Card>
+        </Col>
+        <Col xs={24} xl={6}>
+          <Card className="metric-card" variant="borderless">
+            <Statistic title="高危占比" value={stats.highRatio} valueStyle={{ color: '#ef4444' }} />
           </Card>
         </Col>
       </Row>
 
+      <Row gutter={[18, 18]}>
+        <Col xs={24} xl={8}>
+          <Card className="panel-card" title="异常分布" variant="borderless">
+            <DistributionChart items={distribution} variant="bars" />
+          </Card>
+        </Col>
+        <Col xs={24} xl={16}>
+          <Card className="panel-card" title="告警时间线" variant="borderless">
+            {alerts.length === 0 ? (
+              <Empty description="暂无告警记录" />
+            ) : (
+              <Timeline
+                items={alerts.slice(0, 10).map((item) => ({
+                  color: timelineColorMap[item.level] || 'gray',
+                  children: (
+                    <div>
+                      <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 4 }}>
+                        <Tag color={colorMap[item.level]}>{item.level}</Tag>
+                        <Typography.Text strong>{item.title}</Typography.Text>
+                        <Typography.Text type="secondary" style={{ fontSize: 12 }}>{item.time}</Typography.Text>
+                      </div>
+                      <Typography.Text type="secondary">{item.description}</Typography.Text>
+                    </div>
+                  ),
+                }))}
+              />
+            )}
+          </Card>
+        </Col>
+      </Row>
+
+      {/* ── Alert Cards ── */}
       {alerts.length === 0 ? (
-        <Card className="panel-card" bordered={false}>
+        <Card className="panel-card" variant="borderless">
           <Empty description="暂无告警" />
         </Card>
       ) : (
         <Row gutter={[18, 18]}>
           {alerts.map((item) => (
             <Col xs={24} md={12} xl={8} key={item.id}>
-              <Card className="alert-card" bordered={false}>
+              <Card className="alert-card" variant="borderless">
                 <div className="alert-card__top">
                   <div className="alert-card__icon">
                     <BellOutlined />

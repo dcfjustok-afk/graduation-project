@@ -9,10 +9,7 @@ const ERROR_CODES = {
   INVALID_LOG_ID: 'invalid_log_id',
 };
 
-const API_SOURCE_MODES = {
-  MOCK: 'mock',
-  REAL: 'real',
-};
+
 
 const LOG_LEVELS = {
   INFO: 'INFO',
@@ -177,7 +174,6 @@ function validateAgentStateSyncPayload(payload) {
 
 module.exports = {
   ERROR_CODES,
-  API_SOURCE_MODES,
   LOG_LEVELS,
   AUDIT_STATUSES,
   AGENT_RUN_STATUSES,

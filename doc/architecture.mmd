@@ -1,0 +1,80 @@
+graph TB
+    subgraph 产生日志的机器
+        LF["📄 日志文件\n(Log Files)"]
+        subgraph Agent["🤖 日志采集 Agent"]
+            FR["增量文件读取\n(FileReader)"]
+            LC["日志收集器\n(LogCollector)"]
+            RQ["重试队列 (RetryQueue)\n指数退避 · 持久化"]
+            OS["偏移量存储\n(OffsetStore)"]
+            FR --> LC
+            LC --> RQ
+            FR -.-> OS
+        end
+        LF -->|"按偏移量\n增量读取"| FR
+    end
+
+    subgraph 审计服务器
+        subgraph Server["⚙️ 后端服务 Server\n(Express + TypeScript)"]
+            direction TB
+            subgraph API["API 层 (10个接口)"]
+                R1["POST /api/logs\n接收日志"]
+                R3["POST /api/audits/run\n执行审计"]
+                R5["GET /api/alerts\n查询告警"]
+                R6["GET /api/overview\n系统总览"]
+            end
+            subgraph BIZ["业务层 (Services)"]
+                BS["区块链服务\nSHA-256哈希 · 合约调用"]
+                AS["审计服务\n三方哈希比对"]
+                ALS["告警服务\n异常自动告警"]
+            end
+            subgraph DATA["数据层 (Repositories)"]
+                LR["日志仓库"]
+                AR["审计仓库"]
+                ALR["告警仓库"]
+            end
+            API --> BIZ
+            BIZ --> DATA
+        end
+
+        subgraph DB["💾 SQLite 数据库 (5张表)"]
+            T1["logs\n日志原文"]
+            T2["log_hash_records\n上链记录"]
+            T3["audit_records\n审计记录"]
+            T4["alerts\n告警记录"]
+            T5["agent_states\nAgent状态"]
+        end
+        DATA --> DB
+    end
+
+    subgraph 以太坊区块链网络
+        subgraph Contract["📜 LogRegistry 智能合约\n(Solidity + OpenZeppelin)"]
+            direction TB
+            SL["storeLog(taskId, logHash)\n写入日志哈希存证"]
+            GL["getLogsByTaskId(taskId)\n按任务查询链上记录"]
+            AC["AccessControl\nLOGGER_ROLE 权限控制"]
+        end
+    end
+
+    subgraph 用户浏览器
+        subgraph Web["🌐 前端 Web\n(React + Ant Design)"]
+            P1["📊 Dashboard 总览"]
+            P2["📋 日志中心"]
+            P3["🔍 审计管理"]
+            P4["🚨 告警管理"]
+            P5["⚡ 日志生成器"]
+        end
+    end
+
+    RQ -->|"HTTP POST\n日志提交"| R1
+    BS -->|"Ethers.js\n哈希上链"| SL
+    AS -->|"读取链上哈希\n审计比对"| GL
+    Web -->|"REST API"| API
+
+    style Agent fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    style Server fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    style Contract fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    style Web fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px
+    style DB fill:#fce4ec,stroke:#c62828,stroke-width:2px
+    style API fill:#bbdefb,stroke:#1565c0
+    style BIZ fill:#bbdefb,stroke:#1565c0
+    style DATA fill:#bbdefb,stroke:#1565c0

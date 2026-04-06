@@ -4,7 +4,7 @@ export type ApiErrorCode =
   | "internal_error"
   | "invalid_log_id";
 
-export type ApiSourceMode = "mock" | "real";
+
 export type LogLevel = "INFO" | "WARN" | "ERROR";
 export type AuditStatus = "passed" | "failed" | "pending";
 export type AgentRunStatus = "idle" | "running" | "retrying" | "error";
@@ -253,9 +253,7 @@ export interface DashboardData {
   alertDistribution: AlertDistributionItem[];
 }
 
-export interface DashboardViewData extends DashboardData {
-  sourceMode: ApiSourceMode;
-}
+export interface DashboardViewData extends DashboardData {}
 
 export interface LogSubmitResponseData {
   log: ServerLogRecord;
@@ -275,10 +273,7 @@ export const ERROR_CODES: {
   INVALID_LOG_ID: "invalid_log_id";
 };
 
-export const API_SOURCE_MODES: {
-  MOCK: "mock";
-  REAL: "real";
-};
+
 
 export const LOG_LEVELS: {
   INFO: "INFO";

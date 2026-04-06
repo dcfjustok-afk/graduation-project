@@ -13,7 +13,7 @@ const { Header, Sider, Content } = Layout;
 
 const menuItems: MenuProps['items'] = [
   { key: '/dashboard', icon: <DashboardOutlined />, label: '系统总览' },
-  { key: '/log-generator', icon: <EditOutlined />, label: '日志生成台' },
+  { key: '/log-generator', icon: <EditOutlined />, label: '日志生成器' },
   { key: '/logs', icon: <FileTextOutlined />, label: '日志中心' },
   { key: '/audit', icon: <SafetyCertificateOutlined />, label: '审计中心' },
   { key: '/alerts', icon: <AlertOutlined />, label: '异常告警' },
@@ -44,12 +44,12 @@ export function MainLayout() {
         />
 
         <div className="sider-footer">
-          <div className="sider-footer__label">当前模式</div>
+          <div className="sider-footer__label">系统状态</div>
           <Space wrap>
-            <Tag color="success" bordered={false}>
-              真实数据
+            <Tag color="success">
+              运行中
             </Tag>
-            <Tag color="purple" bordered={false}>
+            <Tag color="purple">
               链上存证
             </Tag>
           </Space>
@@ -65,10 +65,10 @@ export function MainLayout() {
             <Typography.Text type="secondary">日志采集 → 链下存储 → 链上存证 → 审计核验 → 异常告警</Typography.Text>
           </div>
           <Space wrap>
-            <Tag color="success" className="header-tag" bordered={false}>
+            <Tag color="success" className="header-tag">
               系统运行中
             </Tag>
-            <Tag color="blue" className="header-tag" bordered={false}>
+            <Tag color="blue" className="header-tag">
               Hardhat 本地链
             </Tag>
           </Space>

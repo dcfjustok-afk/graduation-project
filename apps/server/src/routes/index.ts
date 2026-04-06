@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { adminRouter } from "./adminRoutes";
 import { alertRouter } from "./alertRoutes";
 import { auditRouter } from "./auditRoutes";
 import { healthRouter } from "./healthRoutes";
@@ -18,5 +19,6 @@ apiRouter.use(logRouter);
 apiRouter.use(auditRouter);
 apiRouter.use(alertRouter);
 apiRouter.use(overviewRouter);
+apiRouter.use(adminRouter);
 
 export { apiRouter };

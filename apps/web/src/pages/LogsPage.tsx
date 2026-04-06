@@ -1,6 +1,6 @@
 import { VIEW_LOG_STATUSES } from '@graduation-project/shared';
-import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
-import { Button, Card, Input, Space, Table, Tag, message } from 'antd';
+import { CheckCircleOutlined, ClockCircleOutlined, FileTextOutlined, ReloadOutlined, SearchOutlined, WarningOutlined } from '@ant-design/icons';
+import { Button, Card, Col, Input, Row, Space, Statistic, Table, Tag, message } from 'antd';
 import type { TableProps } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -16,23 +16,25 @@ const statusColorMap: Record<LogRecord['status'], string> = {
 };
 
 const columns: TableProps<LogRecord>['columns'] = [
-  { title: '日志编号', dataIndex: 'id', key: 'id' },
-  { title: '任务名称', dataIndex: 'taskName', key: 'taskName' },
+  { title: '日志编号', dataIndex: 'id', key: 'id', width: 100 },
+  { title: '任务名称', dataIndex: 'taskName', key: 'taskName', ellipsis: true },
   { title: '来源文件', dataIndex: 'source', key: 'source', ellipsis: true },
   {
     title: '级别',
     dataIndex: 'level',
     key: 'level',
+    width: 80,
     render: (value: LogRecord['level']) => <Tag color={value === 'ERROR' ? 'red' : value === 'WARN' ? 'gold' : 'blue'}>{value}</Tag>,
   },
   {
     title: '状态',
     dataIndex: 'status',
     key: 'status',
+    width: 100,
     render: (value: LogRecord['status']) => <Tag color={statusColorMap[value] || 'default'}>{value}</Tag>,
   },
-  { title: '提交时间', dataIndex: 'submittedAt', key: 'submittedAt' },
-  { title: '哈希摘要', dataIndex: 'hash', key: 'hash' },
+  { title: '提交时间', dataIndex: 'submittedAt', key: 'submittedAt', width: 170 },
+  { title: '哈希摘要', dataIndex: 'hash', key: 'hash', ellipsis: true },
   { title: '审计说明', dataIndex: 'auditMessage', key: 'auditMessage', ellipsis: true },
 ];
 
@@ -50,7 +52,7 @@ export function LogsPage() {
       setLogs(nextLogs);
 
       if (notify) {
-        message.success(`日志已刷新，当前共 ${nextLogs.length} 条`);
+        message.success(`日志已刷新，当前共${nextLogs.length} 条`);
       }
     } finally {
       setLoading(false);
@@ -80,6 +82,13 @@ export function LogsPage() {
     );
   }, [keyword, logs]);
 
+  const stats = useMemo(() => {
+    const chained = logs.filter((l) => l.status === VIEW_LOG_STATUSES.CHAINED || l.status === VIEW_LOG_STATUSES.AUDIT_PASSED).length;
+    const pending = logs.filter((l) => l.status === VIEW_LOG_STATUSES.PENDING_AUDIT).length;
+    const abnormal = logs.filter((l) => l.status === VIEW_LOG_STATUSES.ABNORMAL).length;
+    return { total: logs.length, chained, pending, abnormal };
+  }, [logs]);
+
   return (
     <div className="section-space">
       <SectionHeader
@@ -92,7 +101,32 @@ export function LogsPage() {
         }
       />
 
-      <Card className="panel-card" bordered={false}>
+      {/* ── Summary Stats ── */}
+      <Row gutter={[18, 18]}>
+        <Col xs={24} md={12} xl={6}>
+          <Card className="metric-card" variant="borderless">
+            <Statistic title="日志总条数" value={stats.total} prefix={<FileTextOutlined />} valueStyle={{ color: '#0ea5e9' }} />
+          </Card>
+        </Col>
+        <Col xs={24} md={12} xl={6}>
+          <Card className="metric-card" variant="borderless">
+            <Statistic title="已上链/审计通过" value={stats.chained} prefix={<CheckCircleOutlined />} valueStyle={{ color: '#16a34a' }} />
+          </Card>
+        </Col>
+        <Col xs={24} md={12} xl={6}>
+          <Card className="metric-card" variant="borderless">
+            <Statistic title="待审计" value={stats.pending} prefix={<ClockCircleOutlined />} valueStyle={{ color: '#f59e0b' }} />
+          </Card>
+        </Col>
+        <Col xs={24} md={12} xl={6}>
+          <Card className="metric-card" variant="borderless">
+            <Statistic title="异常记录" value={stats.abnormal} prefix={<WarningOutlined />} valueStyle={{ color: '#ef4444' }} />
+          </Card>
+        </Col>
+      </Row>
+
+      {/* ── Search + Table ── */}
+      <Card className="panel-card" variant="borderless">
         <Space direction="vertical" size="large" style={{ width: '100%' }}>
           <Input
             allowClear
@@ -108,11 +142,9 @@ export function LogsPage() {
             columns={columns}
             dataSource={filteredLogs}
             loading={loading}
-            pagination={{ pageSize: 6, showSizeChanger: false }}
+            pagination={{ pageSize: 8, showSizeChanger: false, showTotal: (total) => `共 ${total} 条` }}
             scroll={{ x: 1100 }}
           />
-
-
         </Space>
       </Card>
     </div>
