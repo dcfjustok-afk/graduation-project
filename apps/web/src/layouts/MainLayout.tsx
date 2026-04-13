@@ -1,5 +1,6 @@
 import {
   AlertOutlined,
+  BlockOutlined,
   EditOutlined,
   DashboardOutlined,
   FileTextOutlined,
@@ -27,10 +28,10 @@ export function MainLayout() {
     <Layout className="app-shell">
       <Sider breakpoint="lg" collapsedWidth={88} width={272} className="app-sider">
         <div className="brand-block">
-          <div className="brand-logo">TA</div>
+          <div className="brand-logo"><BlockOutlined /></div>
           <div>
             <Typography.Text className="brand-title">可信任务日志审计</Typography.Text>
-            <Typography.Text className="brand-subtitle">区块链 · 全栈系统</Typography.Text>
+            <Typography.Text className="brand-subtitle">Blockchain · Audit</Typography.Text>
           </div>
         </div>
 
@@ -44,7 +45,7 @@ export function MainLayout() {
         />
 
         <div className="sider-footer">
-          <div className="sider-footer__label">系统状态</div>
+          <div className="sider-footer__label">SYSTEM STATUS</div>
           <Space wrap>
             <Tag color="success">
               运行中
@@ -59,10 +60,12 @@ export function MainLayout() {
       <Layout>
         <Header className="app-header">
           <div>
-            <Typography.Title level={4} style={{ margin: 0, color: '#0f172a' }}>
+            <Typography.Title level={4} style={{ margin: 0, color: '#e2e8f0' }}>
               区块链可信日志审计平台
             </Typography.Title>
-            <Typography.Text type="secondary">日志采集 → 链下存储 → 链上存证 → 审计核验 → 异常告警</Typography.Text>
+            <Typography.Text style={{ color: '#4a6fa5', fontSize: 12 }}>
+              日志采集 → 链下存储 → 链上存证 → 审计核验 → 异常告警
+            </Typography.Text>
           </div>
           <Space wrap>
             <Tag color="success" className="header-tag">
