@@ -126,7 +126,7 @@ export function LogsPage() {
       </Row>
 
       {/* ── Search + Table ── */}
-      <Card className="panel-card" variant="borderless">
+      <Card className="panel-card cyber-card" title={<span className="card-title-icon"><SearchOutlined /> 日志检索</span>} variant="borderless">
         <Space direction="vertical" size="large" style={{ width: '100%' }}>
           <Input
             allowClear

@@ -1,5 +1,5 @@
 import { VIEW_ALERT_LEVELS, VIEW_ALERT_STATUSES } from '@graduation-project/shared';
-import { BellOutlined, WarningOutlined } from '@ant-design/icons';
+import { BellOutlined, FireOutlined, PieChartOutlined, WarningOutlined } from '@ant-design/icons';
 import { Badge, Card, Col, Empty, Row, Statistic, Tag, Timeline, Typography } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { getAlerts } from '../api/dataService';
@@ -74,12 +74,12 @@ export function AlertsPage() {
 
       <Row gutter={[18, 18]}>
         <Col xs={24} xl={8}>
-          <Card className="panel-card" title="异常分布" variant="borderless">
+          <Card className="panel-card cyber-card" title={<span className="card-title-icon"><PieChartOutlined /> 异常分布</span>} variant="borderless">
             <DistributionChart items={distribution} variant="bars" />
           </Card>
         </Col>
         <Col xs={24} xl={16}>
-          <Card className="panel-card" title="告警时间线" variant="borderless">
+          <Card className="panel-card cyber-card" title={<span className="card-title-icon"><FireOutlined /> 告警时间线</span>} variant="borderless">
             {alerts.length === 0 ? (
               <Empty description="暂无告警记录" />
             ) : (
@@ -105,14 +105,14 @@ export function AlertsPage() {
 
       {/* ── Alert Cards ── */}
       {alerts.length === 0 ? (
-        <Card className="panel-card" variant="borderless">
+        <Card className="panel-card cyber-card" variant="borderless">
           <Empty description="暂无告警" />
         </Card>
       ) : (
         <Row gutter={[18, 18]}>
           {alerts.map((item) => (
             <Col xs={24} md={12} xl={8} key={item.id}>
-              <Card className="alert-card" variant="borderless">
+              <Card className="alert-card cyber-card" variant="borderless">
                 <div className="alert-card__top">
                   <div className="alert-card__icon">
                     <BellOutlined />

@@ -2,10 +2,12 @@ import {
   ApartmentOutlined,
   ClockCircleOutlined,
   CopyOutlined,
+  DashboardOutlined,
   FieldTimeOutlined,
   FileTextOutlined,
   FireOutlined,
   RocketOutlined,
+  SendOutlined,
 } from '@ant-design/icons';
 import { Button, Card, Col, Divider, Form, Input, InputNumber, Row, Select, Space, Statistic, Table, Tag, Typography, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
@@ -148,7 +150,7 @@ export function LogGeneratorPage() {
 
       <Row gutter={[18, 18]}>
         <Col xs={24} xl={16}>
-          <Card className="panel-card" variant="borderless">
+          <Card className="panel-card cyber-card" variant="borderless">
             <Space direction="vertical" size="large" style={{ width: '100%' }}>
               <div className="generator-hero">
                 <div>
@@ -254,7 +256,7 @@ export function LogGeneratorPage() {
 
         <Col xs={24} xl={8}>
           <Space direction="vertical" size="large" style={{ width: '100%' }}>
-            <Card className="panel-card" variant="borderless">
+            <Card className="panel-card cyber-card" title={<span className="card-title-icon"><DashboardOutlined /> 参数预览</span>} variant="borderless">
               <Row gutter={[12, 12]}>
                 <Col span={12}>
                   <Statistic title="当前级别" value={preview.logLevel} prefix={<FireOutlined />} />
@@ -271,7 +273,7 @@ export function LogGeneratorPage() {
               </Space>
             </Card>
 
-            <Card className="panel-card" variant="borderless" title="提交结果">
+            <Card className="panel-card cyber-card" title={<span className="card-title-icon"><SendOutlined /> 提交结果</span>} variant="borderless">
               <Space direction="vertical" size="middle" style={{ width: '100%' }}>
                 <div className="soft-note">
                   单条提交会返回新建日志ID；批量生成会统计成功条数和失败详情。

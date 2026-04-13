@@ -1,7 +1,10 @@
 import {
+  BlockOutlined,
   CheckCircleOutlined,
   ClockCircleOutlined,
   ExperimentOutlined,
+  FireOutlined,
+  SafetyCertificateOutlined,
   ThunderboltOutlined,
   WarningOutlined,
 } from '@ant-design/icons';
@@ -136,7 +139,7 @@ export function AuditPage() {
 
       {/* ── Tamper Experiment Result ── */}
       {tamperResult && (
-        <Card className="panel-card experiment-card" variant="borderless" title={<span><ExperimentOutlined style={{ marginRight: 8 }} />篡改实验结果</span>}>
+        <Card className="panel-card cyber-card tamper-result-card" variant="borderless" title={<span className="card-title-icon" style={{ color: '#ff3366' }}><ThunderboltOutlined /> 篡改实验结果</span>}>
           <Row gutter={[24, 16]}>
             <Col xs={24} xl={16}>
               <Steps
@@ -188,17 +191,17 @@ export function AuditPage() {
       {/* ── Charts + Timeline ── */}
       <Row gutter={[18, 18]}>
         <Col xs={24} xl={8}>
-          <Card className="panel-card" title="审计状态分布" variant="borderless">
+          <Card className="panel-card cyber-card" title={<span className="card-title-icon"><SafetyCertificateOutlined /> 审计状态分布</span>} variant="borderless">
             <DistributionChart items={dashboard.statusDistribution} variant="donut" />
           </Card>
         </Col>
         <Col xs={24} xl={10}>
-          <Card className="panel-card" title="日志趋势" extra={<span className="chart-badge">审计驱动</span>} variant="borderless">
+          <Card className="panel-card cyber-card" title={<span className="card-title-icon"><FireOutlined /> 日志趋势</span>} extra={<span className="chart-badge">审计驱动</span>} variant="borderless">
             <LineTrendChart data={dashboard.logTrend} />
           </Card>
         </Col>
         <Col xs={24} xl={6}>
-          <Card className="panel-card" title="审计时间线" variant="borderless">
+          <Card className="panel-card cyber-card" title={<span className="card-title-icon"><BlockOutlined /> 审计时间线</span>} variant="borderless">
             <Timeline items={dashboard.auditTimeline.map((item) => ({ color: item.color, children: item.content }))} />
           </Card>
         </Col>
@@ -206,7 +209,7 @@ export function AuditPage() {
 
       {/* ── Anomalous Logs (if any) ── */}
       {abnormalLogs.length > 0 && (
-        <Card className="panel-card" title={<span style={{ color: '#ff3366' }}><WarningOutlined style={{ marginRight: 8 }} />异常日志记录</span>} variant="borderless">
+        <Card className="panel-card cyber-card" title={<span className="card-title-icon" style={{ color: '#ff3366' }}><WarningOutlined /> 异常日志记录</span>} variant="borderless">
           <Table<LogRecord> rowKey="id" columns={columns} dataSource={abnormalLogs} pagination={false} size="small" />
         </Card>
       )}
@@ -214,12 +217,12 @@ export function AuditPage() {
       {/* ── Full Log Table + Audit Features ── */}
       <Row gutter={[18, 18]}>
         <Col xs={24} xl={16}>
-          <Card className="panel-card" title="最近审计对象" variant="borderless">
+          <Card className="panel-card cyber-card" title={<span className="card-title-icon"><ClockCircleOutlined /> 最近审计对象</span>} variant="borderless">
             <Table<LogRecord> rowKey="id" columns={columns} dataSource={logs} pagination={{ pageSize: 6, showSizeChanger: false }} />
           </Card>
         </Col>
         <Col xs={24} xl={8}>
-          <Card className="panel-card" title="审计能力说明" variant="borderless">
+          <Card className="panel-card cyber-card" title={<span className="card-title-icon"><SafetyCertificateOutlined /> 审计能力说明</span>} variant="borderless">
             <List
               dataSource={[
                 '支持一键批量审计，自动比对链上哈希与链下数据',
