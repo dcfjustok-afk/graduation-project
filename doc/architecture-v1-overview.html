@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>系统总体架构图</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1600px;
+    min-height: 1000px;
+    background: #f0f4f8;
+    font-family: "Microsoft YaHei", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+    padding: 40px;
+  }
+  .title {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 40px;
+  }
+  .main-container {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  .module-box {
+    border-radius: 16px;
+    padding: 24px;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    min-width: 240px;
+  }
+  .module-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .module-subtitle {
+    font-size: 13px;
+    color: rgba(0,0,0,0.5);
+    margin-bottom: 16px;
+  }
+  .tech-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    margin: 2px 3px;
+    background: rgba(255,255,255,0.7);
+  }
+  .inner-box {
+    background: rgba(255,255,255,0.5);
+    border-radius: 10px;
+    padding: 14px;
+    margin-top: 12px;
+  }
+  .inner-box-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .feature-list {
+    list-style: none;
+    padding: 0;
+  }
+  .feature-list li {
+    font-size: 13px;
+    padding: 3px 0;
+    color: #333;
+  }
+  .feature-list li::before {
+    content: "·";
+    margin-right: 6px;
+    font-weight: bold;
+  }
+
+  /* Colors for each module */
+  .agent-box {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+  .agent-box .module-subtitle { color: rgba(255,255,255,0.7); }
+  .agent-box .tech-badge { background: rgba(255,255,255,0.25); color: white; }
+  .agent-box .inner-box { background: rgba(255,255,255,0.15); }
+  .agent-box .inner-box-title { color: white; }
+  .agent-box .feature-list li { color: rgba(255,255,255,0.9); }
+
+  .server-box {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: white;
+    min-width: 360px;
+  }
+  .server-box .module-subtitle { color: rgba(255,255,255,0.7); }
+  .server-box .tech-badge { background: rgba(255,255,255,0.25); color: white; }
+  .server-box .inner-box { background: rgba(255,255,255,0.15); }
+  .server-box .inner-box-title { color: white; }
+  .server-box .feature-list li { color: rgba(255,255,255,0.9); }
+
+  .blockchain-box {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+  }
+  .blockchain-box .module-subtitle { color: rgba(255,255,255,0.7); }
+  .blockchain-box .tech-badge { background: rgba(255,255,255,0.25); color: white; }
+  .blockchain-box .inner-box { background: rgba(255,255,255,0.15); }
+  .blockchain-box .inner-box-title { color: white; }
+  .blockchain-box .feature-list li { color: rgba(255,255,255,0.9); }
+
+  .web-box {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+  }
+  .web-box .module-subtitle { color: rgba(255,255,255,0.7); }
+  .web-box .tech-badge { background: rgba(255,255,255,0.25); color: white; }
+  .web-box .inner-box { background: rgba(255,255,255,0.15); }
+  .web-box .inner-box-title { color: white; }
+  .web-box .feature-list li { color: rgba(255,255,255,0.9); }
+
+  .db-box {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    color: #333;
+    min-width: 200px;
+  }
+  .db-box .tech-badge { background: rgba(255,255,255,0.5); color: #333; }
+  .db-box .inner-box { background: rgba(255,255,255,0.4); }
+
+  /* Arrow connectors */
+  .arrow-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .arrow-line {
+    width: 60px;
+    height: 3px;
+    background: #667eea;
+    position: relative;
+  }
+  .arrow-line::after {
+    content: "";
+    position: absolute;
+    right: -8px;
+    top: -5px;
+    border-left: 10px solid #667eea;
+    border-top: 7px solid transparent;
+    border-bottom: 7px solid transparent;
+  }
+  .arrow-label {
+    font-size: 11px;
+    color: #555;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+
+  /* Bottom data flow */
+  .data-flow-section {
+    margin-top: 40px;
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  }
+  .flow-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .flow-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .flow-step {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 10px 18px;
+    border-radius: 24px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .flow-step:nth-child(4n+2) { background: linear-gradient(135deg, #11998e, #38ef7d); }
+  .flow-step:nth-child(4n+3) { background: linear-gradient(135deg, #f093fb, #f5576c); }
+  .flow-step:nth-child(4n+4) { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+  .flow-arrow {
+    font-size: 20px;
+    color: #999;
+    font-weight: bold;
+  }
+
+  /* Tech stack summary */
+  .tech-summary {
+    margin-top: 30px;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+  }
+  .tech-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    flex: 1;
+    max-width: 350px;
+  }
+  .tech-card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 10px;
+  }
+  .tech-card-content {
+    font-size: 12px;
+    color: #666;
+    line-height: 1.8;
+  }
+  .port-tag {
+    display: inline-block;
+    background: #e8f4fd;
+    color: #2196F3;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: 4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="title">基于区块链的可信任务日志审计系统</div>
+<div class="subtitle">系统总体架构图 — Monorepo 结构 · 四大核心模块</div>
+
+<div class="main-container">
+  <!-- Agent Module -->
+  <div class="module-box agent-box">
+    <div class="module-title">🤖 日志采集 Agent <span class="port-tag" style="background:rgba(255,255,255,0.2);color:white">apps/agent</span></div>
+    <div class="module-subtitle">Node.js + TypeScript</div>
+    <div>
+      <span class="tech-badge">增量采集</span>
+      <span class="tech-badge">偏移持久化</span>
+      <span class="tech-badge">断点续传</span>
+    </div>
+    <div class="inner-box">
+      <div class="inner-box-title">核心功能</div>
+      <ul class="feature-list">
+        <li>监听日志文件变化</li>
+        <li>增量读取新增内容</li>
+        <li>封装标准提交数据</li>
+        <li>失败重试队列 (最多5次)</li>
+        <li>指数退避策略</li>
+        <li>状态心跳上报</li>
+      </ul>
+    </div>
+    <div class="inner-box" style="margin-top: 10px;">
+      <div class="inner-box-title">关键组件</div>
+      <ul class="feature-list">
+        <li>FileReader 偏移读取</li>
+        <li>LogCollector 批量采集</li>
+        <li>RetryQueue 重试队列</li>
+        <li>OffsetStore 状态持久化</li>
+        <li>LogAgent 主流程控制</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Arrow -->
+  <div class="arrow-section">
+    <div class="arrow-label">HTTP POST</div>
+    <div class="arrow-line"></div>
+    <div class="arrow-label" style="font-size:10px;color:#999">/api/logs</div>
+  </div>
+
+  <!-- Server Module -->
+  <div class="module-box server-box">
+    <div class="module-title">⚙️ 后端服务 Server <span class="port-tag" style="background:rgba(255,255,255,0.2);color:white">:3010</span></div>
+    <div class="module-subtitle">Express 5 + TypeScript + SQLite</div>
+    <div>
+      <span class="tech-badge">REST API</span>
+      <span class="tech-badge">SHA-256</span>
+      <span class="tech-badge">Ethers.js</span>
+      <span class="tech-badge">sql.js</span>
+    </div>
+    <div style="display:flex; gap:10px; margin-top:12px;">
+      <div class="inner-box" style="flex:1">
+        <div class="inner-box-title">接口层</div>
+        <ul class="feature-list">
+          <li>日志提交 / 查询</li>
+          <li>审计执行 / 查询</li>
+          <li>告警查询</li>
+          <li>总览统计</li>
+          <li>健康检查</li>
+          <li>日志批量生成</li>
+        </ul>
+      </div>
+      <div class="inner-box" style="flex:1">
+        <div class="inner-box-title">业务层</div>
+        <ul class="feature-list">
+          <li>日志持久化</li>
+          <li>哈希计算 (SHA-256)</li>
+          <li>链上存证写入</li>
+          <li>审计比对核验</li>
+          <li>告警自动生成</li>
+          <li>篡改实验模拟</li>
+        </ul>
+      </div>
+    </div>
+    <div class="inner-box" style="margin-top: 10px;">
+      <div class="inner-box-title">分层架构</div>
+      <ul class="feature-list">
+        <li>Controllers → Routes → Services → Repositories → DB</li>
+        <li>Blockchain 模块 → Ethers 合约客户端封装</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Arrow -->
+  <div class="arrow-section">
+    <div class="arrow-label">ethers.js RPC</div>
+    <div class="arrow-line" style="background:#f5576c"></div>
+    <div class="arrow-label" style="font-size:10px;color:#999">:8545</div>
+  </div>
+
+  <!-- Blockchain Module -->
+  <div class="module-box blockchain-box">
+    <div class="module-title">⛓️ 区块链层 <span class="port-tag" style="background:rgba(255,255,255,0.2);color:white">:8545</span></div>
+    <div class="module-subtitle">Hardhat + Solidity + OpenZeppelin</div>
+    <div>
+      <span class="tech-badge">AccessControl</span>
+      <span class="tech-badge">LogRegistry</span>
+    </div>
+    <div class="inner-box">
+      <div class="inner-box-title">LogRegistry 合约</div>
+      <ul class="feature-list">
+        <li>storeLog(taskId, logHash)</li>
+        <li>getLog(recordId)</li>
+        <li>getLogsByTaskId(taskId)</li>
+        <li>getTaskLogCount(taskId)</li>
+        <li>LOGGER_ROLE 权限控制</li>
+      </ul>
+    </div>
+    <div class="inner-box" style="margin-top: 10px;">
+      <div class="inner-box-title">存证结构</div>
+      <ul class="feature-list">
+        <li>任务 ID (taskId)</li>
+        <li>日志哈希 (bytes32)</li>
+        <li>区块时间戳</li>
+        <li>提交者地址</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Second Row: Web + DB -->
+<div style="display:flex; justify-content:center; gap: 24px; margin-top: 24px;">
+  <!-- Web Module -->
+  <div class="module-box web-box" style="flex:1; max-width:520px;">
+    <div class="module-title">🖥️ 前端展示 Web <span class="port-tag" style="background:rgba(255,255,255,0.2);color:white">:5173</span></div>
+    <div class="module-subtitle">React 19 + TypeScript + Ant Design 5 + Vite</div>
+    <div>
+      <span class="tech-badge">React Router</span>
+      <span class="tech-badge">Ant Design</span>
+      <span class="tech-badge">Vite</span>
+      <span class="tech-badge">Mock/API 切换</span>
+    </div>
+    <div style="display:flex; gap:10px; margin-top:12px;">
+      <div class="inner-box" style="flex:1">
+        <div class="inner-box-title">五大页面</div>
+        <ul class="feature-list">
+          <li>📊 系统总览 Dashboard</li>
+          <li>📝 日志列表 Logs</li>
+          <li>🔍 审计结果 Audit</li>
+          <li>🚨 告警管理 Alerts</li>
+          <li>🔧 日志生成器</li>
+        </ul>
+      </div>
+      <div class="inner-box" style="flex:1">
+        <div class="inner-box-title">API 层</div>
+        <ul class="feature-list">
+          <li>httpClient 基础封装</li>
+          <li>realClient 类型端点</li>
+          <li>dataService 聚合</li>
+          <li>mappers 模型转换</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- DB -->
+  <div class="module-box db-box" style="flex:1; max-width:440px;">
+    <div class="module-title">💾 数据存储层</div>
+    <div class="module-subtitle">SQLite (sql.js) — 5 张核心表</div>
+    <div style="display:flex; gap:10px; margin-top:12px;">
+      <div class="inner-box" style="flex:1">
+        <ul class="feature-list">
+          <li><strong>logs</strong> — 日志原文</li>
+          <li><strong>log_hash_records</strong> — 哈希存证</li>
+          <li><strong>audit_records</strong> — 审计记录</li>
+        </ul>
+      </div>
+      <div class="inner-box" style="flex:1">
+        <ul class="feature-list">
+          <li><strong>alerts</strong> — 异常告警</li>
+          <li><strong>agent_states</strong> — Agent 状态</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Data Flow -->
+<div class="data-flow-section">
+  <div class="flow-title">📋 核心数据流</div>
+  <div class="flow-steps">
+    <div class="flow-step">📄 日志文件</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">🤖 Agent 增量采集</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="background:linear-gradient(135deg, #11998e, #38ef7d)">⚙️ Server 接收</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="background:linear-gradient(135deg, #11998e, #38ef7d)">💾 SQLite 持久化</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="background:linear-gradient(135deg, #11998e, #38ef7d)">#️⃣ SHA-256 哈希</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="background:linear-gradient(135deg, #f093fb, #f5576c)">⛓️ 链上存证</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="background:linear-gradient(135deg, #11998e, #38ef7d)">🔍 审计比对</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="background:linear-gradient(135deg, #4facfe, #00f2fe)">🖥️ 前端展示</div>
+  </div>
+</div>
+
+<!-- Tech Stack Summary -->
+<div class="tech-summary">
+  <div class="tech-card">
+    <div class="tech-card-title">🔧 技术栈总结</div>
+    <div class="tech-card-content">
+      前端: React 19 + TypeScript + Ant Design 5 + Vite 7<br>
+      后端: Express 5 + TypeScript + sql.js + ethers.js 6<br>
+      Agent: Node.js + TypeScript (增量轮询)<br>
+      合约: Solidity + Hardhat + OpenZeppelin<br>
+      共享: @graduation-project/shared (类型 + 枚举)
+    </div>
+  </div>
+  <div class="tech-card">
+    <div class="tech-card-title">🌐 端口规划</div>
+    <div class="tech-card-content">
+      前端 Vite Dev Server: <strong>5173</strong><br>
+      后端 Express API: <strong>3010</strong><br>
+      Hardhat 本地链 RPC: <strong>8545</strong><br>
+      通信协议: HTTP REST + JSON<br>
+      链上交互: ethers.js JSON-RPC
+    </div>
+  </div>
+  <div class="tech-card">
+    <div class="tech-card-title">📁 仓库结构</div>
+    <div class="tech-card-content">
+      Monorepo 统一管理<br>
+      apps/web · apps/server · apps/agent<br>
+      packages/contracts · packages/shared<br>
+      storage/sqlite · tests/performance<br>
+      scripts/ (验证 + 压测)
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
