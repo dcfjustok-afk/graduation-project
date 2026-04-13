@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>分层架构图</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1600px;
+    min-height: 1100px;
+    background: linear-gradient(180deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    font-family: "Microsoft YaHei", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+    padding: 40px;
+    color: white;
+  }
+  .title {
+    text-align: center;
+    font-size: 34px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+    letter-spacing: 3px;
+    text-shadow: 0 2px 10px rgba(102,126,234,0.5);
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 15px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 40px;
+  }
+
+  /* Layer Sections */
+  .layer {
+    display: flex;
+    align-items: stretch;
+    margin-bottom: 16px;
+    gap: 16px;
+  }
+  .layer-label {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    background: rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 16px 12px;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 50px;
+    color: rgba(255,255,255,0.7);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .layer-content {
+    flex: 1;
+    display: flex;
+    gap: 16px;
+  }
+  .card {
+    flex: 1;
+    border-radius: 16px;
+    padding: 20px;
+    position: relative;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .card-title {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .card-sub {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 14px;
+  }
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    margin: 2px;
+    background: rgba(255,255,255,0.15);
+  }
+  .items {
+    margin-top: 12px;
+  }
+  .item {
+    font-size: 13px;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.85);
+  }
+  .item:last-child { border-bottom: none; }
+  .item-icon { margin-right: 6px; }
+
+  /* Color themes */
+  .c-blue { background: linear-gradient(135deg, rgba(79,172,254,0.3), rgba(0,242,254,0.15)); }
+  .c-green { background: linear-gradient(135deg, rgba(17,153,142,0.3), rgba(56,239,125,0.15)); }
+  .c-purple { background: linear-gradient(135deg, rgba(102,126,234,0.3), rgba(118,75,162,0.15)); }
+  .c-red { background: linear-gradient(135deg, rgba(240,147,251,0.3), rgba(245,87,108,0.15)); }
+  .c-orange { background: linear-gradient(135deg, rgba(250,112,154,0.3), rgba(254,225,64,0.15)); }
+  .c-teal { background: linear-gradient(135deg, rgba(67,206,162,0.3), rgba(24,90,157,0.15)); }
+
+  /* Arrow between layers */
+  .layer-arrow {
+    text-align: center;
+    margin: 6px 0;
+    font-size: 28px;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 40px;
+    margin-left: 60px;
+  }
+
+  /* Bottom info */
+  .bottom-info {
+    margin-top: 30px;
+    display: flex;
+    gap: 16px;
+  }
+  .info-card {
+    flex: 1;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 20px;
+  }
+  .info-card-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: rgba(255,255,255,0.9);
+  }
+  .info-item {
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    padding: 3px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot-blue { background: #4facfe; }
+  .dot-green { background: #38ef7d; }
+  .dot-purple { background: #667eea; }
+  .dot-red { background: #f5576c; }
+  .dot-orange { background: #fee140; }
+</style>
+</head>
+<body>
+
+<div class="title">基于区块链的可信任务日志审计系统</div>
+<div class="subtitle">分层架构图 — 展示层 · 接口层 · 业务层 · 数据层 · 区块链层</div>
+
+<!-- Layer 1: Presentation -->
+<div class="layer">
+  <div class="layer-label" style="border-color: rgba(79,172,254,0.3);">展示层</div>
+  <div class="layer-content">
+    <div class="card c-blue">
+      <div class="card-title">🖥️ Web 前端应用</div>
+      <div class="card-sub">React 19 + TypeScript + Ant Design 5 + Vite 7 — 端口 5173</div>
+      <div>
+        <span class="badge">React Router v7</span>
+        <span class="badge">Ant Design Icons</span>
+        <span class="badge">Mock/API 切换</span>
+      </div>
+      <div class="items">
+        <div class="item"><span class="item-icon">📊</span>Dashboard — 系统总览统计、审计时间线、指标概览</div>
+        <div class="item"><span class="item-icon">📝</span>Logs — 日志列表、状态指示器、哈希显示</div>
+        <div class="item"><span class="item-icon">🔍</span>Audit — 执行审计、查看结果、审计时间线</div>
+        <div class="item"><span class="item-icon">🚨</span>Alerts — 完整性告警、严重级别、处理状态</div>
+        <div class="item"><span class="item-icon">🔧</span>Log Generator — 批量生成测试日志</div>
+      </div>
+    </div>
+    <div class="card c-blue" style="max-width:300px;">
+      <div class="card-title">📱 API 客户端</div>
+      <div class="card-sub">前端 HTTP 封装层</div>
+      <div class="items">
+        <div class="item"><span class="item-icon">🔌</span>httpClient — 基础 fetch 封装</div>
+        <div class="item"><span class="item-icon">📡</span>realClient — 类型化端点调用</div>
+        <div class="item"><span class="item-icon">🔄</span>dataService — 业务聚合层</div>
+        <div class="item"><span class="item-icon">🗺️</span>mappers — 数据模型转换</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="layer-arrow">▼ ▼ ▼ ▼</div>
+
+<!-- Layer 2: Interface (API) -->
+<div class="layer">
+  <div class="layer-label" style="border-color: rgba(17,153,142,0.3);">接口层</div>
+  <div class="layer-content">
+    <div class="card c-green">
+      <div class="card-title">🌐 REST API 路由</div>
+      <div class="card-sub">Express 5 — 端口 3010</div>
+      <div class="items">
+        <div class="item"><span class="item-icon">📤</span>POST /api/logs — 提交日志</div>
+        <div class="item"><span class="item-icon">📋</span>GET /api/logs — 日志列表</div>
+        <div class="item"><span class="item-icon">🔍</span>POST /api/audits/run — 执行审计</div>
+        <div class="item"><span class="item-icon">📊</span>GET /api/overview — 总览统计</div>
+      </div>
+    </div>
+    <div class="card c-green">
+      <div class="card-title">🔗 Controllers 控制器</div>
+      <div class="card-sub">请求处理与响应包装</div>
+      <div class="items">
+        <div class="item"><span class="item-icon">📝</span>submitLogController — 日志提交</div>
+        <div class="item"><span class="item-icon">🔍</span>auditController — 审计执行</div>
+        <div class="item"><span class="item-icon">🚨</span>alertController — 告警查询</div>
+        <div class="item"><span class="item-icon">📊</span>overviewController — 总览统计</div>
+        <div class="item"><span class="item-icon">🛠️</span>adminController — 管理操作</div>
+      </div>
+    </div>
+    <div class="card c-green" style="max-width: 220px;">
+      <div class="card-title">🛡️ 中间件</div>
+      <div class="card-sub">Middleware</div>
+      <div class="items">
+        <div class="item"><span class="item-icon">🔄</span>CORS 跨域</div>
+        <div class="item"><span class="item-icon">📦</span>JSON 解析</div>
+        <div class="item"><span class="item-icon">❌</span>错误处理</div>
+        <div class="item"><span class="item-icon">📏</span>参数校验</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="layer-arrow">▼ ▼ ▼ ▼</div>
+
+<!-- Layer 3: Business -->
+<div class="layer">
+  <div class="layer-label" style="border-color: rgba(102,126,234,0.3);">业务层</div>
+  <div class="layer-content">
+    <div class="card c-purple">
+      <div class="card-title">📥 日志处理服务</div>
+      <div class="card-sub">LogService</div>
+      <div class="items">
+        <div class="item"><span class="item-icon">💾</span>日志持久化写入 SQLite</div>
+        <div class="item"><span class="item-icon">#️⃣</span>SHA-256 哈希计算</div>
+        <div class="item"><span class="item-icon">⛓️</span>调用合约 storeLog()</div>
+        <div class="item"><span class="item-icon">📋</span>记录链上交易详情</div>
+      </div>
+    </div>
+    <div class="card c-purple">
+      <div class="card-title">🔍 审计执行服务</div>
+      <div class="card-sub">AuditExecutionService</div>
+      <div class="items">
+        <div class="item"><span class="item-icon">🔄</span>重新计算本地日志哈希</div>
+        <div class="item"><span class="item-icon">📖</span>读取链上存证哈希</div>
+        <div class="item"><span class="item-icon">⚖️</span>三方哈希比对</div>
+        <div class="item"><span class="item-icon">✅</span>生成审计结果 (passed/failed)</div>
+      </div>
+    </div>
+    <div class="card c-purple">
+      <div class="card-title">🚨 告警生成服务</div>
+      <div class="card-sub">AlertService</div>
+      <div class="items">
+        <div class="item"><span class="item-icon">⚠️</span>哈希不匹配告警</div>
+        <div class="item"><span class="item-icon">📊</span>严重级别评定</div>
+        <div class="item"><span class="item-icon">📝</span>告警描述生成</div>
+        <div class="item"><span class="item-icon">🔔</span>状态管理 open/resolved</div>
+      </div>
+    </div>
+    <div class="card c-purple" style="max-width: 200px">
+      <div class="card-title">🤖 Agent 状态</div>
+      <div class="card-sub">AgentService</div>
+      <div class="items">
+        <div class="item"><span class="item-icon">💓</span>心跳接收</div>
+        <div class="item"><span class="item-icon">📊</span>状态同步</div>
+        <div class="item"><span class="item-icon">🔍</span>在线检测</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="layer-arrow">▼ ▼ ▼ ▼</div>
+
+<!-- Layer 4: Data + Blockchain -->
+<div class="layer">
+  <div class="layer-label" style="border-color: rgba(250,112,154,0.3);">数据层</div>
+  <div class="layer-content">
+    <div class="card c-orange">
+      <div class="card-title">💾 SQLite 数据库</div>
+      <div class="card-sub">sql.js (内存 + 文件持久化)</div>
+      <div>
+        <span class="badge">logs</span>
+        <span class="badge">log_hash_records</span>
+        <span class="badge">audit_records</span>
+        <span class="badge">alerts</span>
+        <span class="badge">agent_states</span>
+      </div>
+      <div class="items">
+        <div class="item"><span class="item-icon">📊</span>Repositories 封装读写逻辑</div>
+        <div class="item"><span class="item-icon">🗄️</span>storage/sqlite/app.db</div>
+        <div class="item"><span class="item-icon">🔄</span>支持数据库重置与初始化</div>
+      </div>
+    </div>
+    <div class="card c-red">
+      <div class="card-title">⛓️ Hardhat 本地区块链</div>
+      <div class="card-sub">Hardhat Network — JSON-RPC 端口 8545</div>
+      <div>
+        <span class="badge">Solidity</span>
+        <span class="badge">OpenZeppelin</span>
+        <span class="badge">Ethers.js v6</span>
+      </div>
+      <div class="items">
+        <div class="item"><span class="item-icon">📜</span>LogRegistry 合约</div>
+        <div class="item"><span class="item-icon">🔐</span>AccessControl 权限管理</div>
+        <div class="item"><span class="item-icon">📝</span>storeLog / getLogsByTaskId</div>
+        <div class="item"><span class="item-icon">🔗</span>交易哈希 + 区块号追踪</div>
+      </div>
+    </div>
+    <div class="card c-purple" style="max-width:240px;">
+      <div class="card-title">📦 共享模块</div>
+      <div class="card-sub">packages/shared</div>
+      <div class="items">
+        <div class="item"><span class="item-icon">📋</span>ApiResponse&lt;T&gt; 统一响应</div>
+        <div class="item"><span class="item-icon">📊</span>ServerLogRecord 类型</div>
+        <div class="item"><span class="item-icon">🔍</span>ServerAuditRecord 类型</div>
+        <div class="item"><span class="item-icon">🚨</span>ServerAlertRecord 类型</div>
+        <div class="item"><span class="item-icon">🏷️</span>枚举: Status / Severity</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom info section -->
+<div class="bottom-info">
+  <div class="info-card">
+    <div class="info-card-title">🔄 通信协议</div>
+    <div class="info-item"><div class="dot dot-blue"></div>Agent → Server: HTTP POST /api/logs (JSON)</div>
+    <div class="info-item"><div class="dot dot-green"></div>Server → Blockchain: ethers.js JSON-RPC (:8545)</div>
+    <div class="info-item"><div class="dot dot-purple"></div>Frontend → Server: HTTP REST /api/* (:3010)</div>
+    <div class="info-item"><div class="dot dot-red"></div>Server → SQLite: sql.js 内存读写</div>
+  </div>
+  <div class="info-card">
+    <div class="info-card-title">🔐 安全机制</div>
+    <div class="info-item"><div class="dot dot-red"></div>链上 LOGGER_ROLE 写入权限控制</div>
+    <div class="info-item"><div class="dot dot-orange"></div>SHA-256 哈希校验</div>
+    <div class="info-item"><div class="dot dot-green"></div>三方哈希比对 (本地 / DB / 链上)</div>
+    <div class="info-item"><div class="dot dot-blue"></div>CORS 跨域白名单</div>
+  </div>
+  <div class="info-card">
+    <div class="info-card-title">📊 可信审计闭环</div>
+    <div class="info-item"><div class="dot dot-purple"></div>日志采集 → SHA-256 哈希 → 链上存证</div>
+    <div class="info-item"><div class="dot dot-green"></div>审计重算 → 链上读取 → 三方比对</div>
+    <div class="info-item"><div class="dot dot-red"></div>不一致 → 自动告警 → 前端展示</div>
+    <div class="info-item"><div class="dot dot-blue"></div>篡改实验 → 修改DB → 审计检出</div>
+  </div>
+</div>
+
+</body>
+</html>
