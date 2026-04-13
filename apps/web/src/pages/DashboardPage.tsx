@@ -1,7 +1,9 @@
 import {
+  BlockOutlined,
   ClearOutlined,
   ExperimentOutlined,
   FireOutlined,
+  LinkOutlined,
   RocketOutlined,
   SafetyCertificateOutlined,
   ThunderboltOutlined,
@@ -144,51 +146,106 @@ export function DashboardPage() {
         }
       />
 
-      {/* ── Hero Card ── */}
-      <Card className="hero-card" variant="borderless">
-        <div className="hero-card__grid" />
-        <Row gutter={[24, 24]} align="middle">
-          <Col xs={24} xl={15}>
-            <Space direction="vertical" size={18}>
-              <Tagline />
-              <Typography.Title level={1} className="hero-card__title">
-                可信任务日志审计系统
-              </Typography.Title>
-              <Typography.Paragraph className="hero-card__desc">
-                本系统实现了日志自动采集、链下保存、链上哈希存证、审计核验与异常告警的完整闭环，支持篡改检测与可视化分析。
-              </Typography.Paragraph>
-              <Space wrap>
-                <Button type="primary" size="large" icon={<FireOutlined />} onClick={() => navigate('/logs')}>
-                  查看日志流转
-                </Button>
-                <Button ghost size="large" onClick={() => navigate('/alerts')}>
-                  查看异常告警
-                </Button>
-              </Space>
+      {/* ── Hero Banner with Blockchain Network Visualization ── */}
+      <div className="hero-banner">
+        <div className="hero-banner__content">
+          <div className="hero-banner__text">
+            <div className="hero-badge">
+              <BlockOutlined /> 基于区块链的可信任务日志审计系统
+            </div>
+            <h1 className="hero-banner__title">
+              可信任务日志<span className="gradient-text">审计系统</span>
+            </h1>
+            <p className="hero-banner__desc">
+              日志自动采集 → 链下持久化 → 链上哈希存证 → 智能审计核验 → 异常实时告警
+            </p>
+            <Space wrap size="middle">
+              <Button type="primary" size="large" icon={<FireOutlined />} onClick={() => navigate('/logs')}
+                className="btn-glow">
+                查看日志流转
+              </Button>
+              <Button ghost size="large" onClick={() => navigate('/alerts')}>
+                查看异常告警
+              </Button>
             </Space>
-          </Col>
-          <Col xs={24} xl={9}>
-            <Card className="hero-card__panel" variant="borderless">
-              <Statistic title="系统运行状态" value="正常" valueStyle={{ color: '#00ff88' }} />
-              <Divider style={{ margin: '16px 0' }} />
-              <div className="hero-card__panel-list">
-                <div>
-                  <span>功能模块</span>
-                  <strong>5 个</strong>
-                </div>
-                <div>
-                  <span>区块链网络</span>
-                  <strong>Hardhat 本地链</strong>
-                </div>
-                <div>
-                  <span>审计通过率</span>
-                  <strong>{passRate}%</strong>
-                </div>
-              </div>
-            </Card>
-          </Col>
-        </Row>
-      </Card>
+          </div>
+          <div className="hero-banner__visual">
+            {/* Blockchain network SVG */}
+            <svg viewBox="0 0 260 260" className="hero-network-svg">
+              <defs>
+                <radialGradient id="nodeGlow">
+                  <stop offset="0%" stopColor="#00d4ff" stopOpacity="0.6" />
+                  <stop offset="100%" stopColor="#00d4ff" stopOpacity="0" />
+                </radialGradient>
+              </defs>
+              {/* Connection lines */}
+              <line x1="130" y1="50" x2="50" y2="130" className="network-link" />
+              <line x1="130" y1="50" x2="210" y2="130" className="network-link" />
+              <line x1="50" y1="130" x2="130" y2="210" className="network-link" />
+              <line x1="210" y1="130" x2="130" y2="210" className="network-link" />
+              <line x1="50" y1="130" x2="210" y2="130" className="network-link" />
+              <line x1="130" y1="50" x2="130" y2="210" className="network-link" />
+              {/* Glow circles */}
+              <circle cx="130" cy="50" r="30" fill="url(#nodeGlow)" />
+              <circle cx="50" cy="130" r="25" fill="url(#nodeGlow)" />
+              <circle cx="210" cy="130" r="25" fill="url(#nodeGlow)" />
+              <circle cx="130" cy="210" r="30" fill="url(#nodeGlow)" />
+              {/* Node circles */}
+              <circle cx="130" cy="50" r="12" className="network-node network-node--primary" />
+              <circle cx="50" cy="130" r="10" className="network-node network-node--secondary" />
+              <circle cx="210" cy="130" r="10" className="network-node network-node--secondary" />
+              <circle cx="130" cy="210" r="12" className="network-node network-node--accent" />
+              {/* Node labels */}
+              <text x="130" y="54" textAnchor="middle" className="network-label">区块</text>
+              <text x="50" y="134" textAnchor="middle" className="network-label">Agent</text>
+              <text x="210" y="134" textAnchor="middle" className="network-label">审计</text>
+              <text x="130" y="214" textAnchor="middle" className="network-label">存证</text>
+              {/* Animated data packets */}
+              <circle r="3" className="data-packet">
+                <animateMotion dur="3s" repeatCount="indefinite" path="M130,50 L50,130" />
+              </circle>
+              <circle r="3" className="data-packet data-packet--alt">
+                <animateMotion dur="2.5s" repeatCount="indefinite" path="M210,130 L130,210" />
+              </circle>
+              <circle r="3" className="data-packet">
+                <animateMotion dur="3.5s" repeatCount="indefinite" path="M50,130 L210,130" />
+              </circle>
+            </svg>
+          </div>
+        </div>
+
+        {/* Chain status strip */}
+        <div className="chain-status-strip">
+          <div className="chain-status-strip__item">
+            <span className="chain-status-strip__icon"><LinkOutlined /></span>
+            <div>
+              <span className="chain-status-strip__label">系统运行状态</span>
+              <span className="chain-status-strip__value" style={{ color: '#00ff88' }}>正常</span>
+            </div>
+          </div>
+          <div className="chain-status-strip__item">
+            <span className="chain-status-strip__icon"><BlockOutlined /></span>
+            <div>
+              <span className="chain-status-strip__label">区块链网络</span>
+              <span className="chain-status-strip__value">Hardhat 本地链</span>
+            </div>
+          </div>
+          <div className="chain-status-strip__item">
+            <span className="chain-status-strip__icon"><SafetyCertificateOutlined /></span>
+            <div>
+              <span className="chain-status-strip__label">审计通过率</span>
+              <span className="chain-status-strip__value">{passRate}%</span>
+            </div>
+          </div>
+          <div className="chain-status-strip__item">
+            <span className="chain-status-strip__icon"><RocketOutlined /></span>
+            <div>
+              <span className="chain-status-strip__label">功能模块</span>
+              <span className="chain-status-strip__value">5 个运行中</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* ── Metric Cards ── */}
       <Row gutter={[18, 18]}>
@@ -199,13 +256,13 @@ export function DashboardPage() {
         ))}
       </Row>
 
-      {/* ── Admin Tools: 三栏布局 ── */}
+      {/* ── Admin Tools: 双栏 + 审计摘要 ── */}
       <Row gutter={[18, 18]}>
-        <Col xs={24} xl={8}>
+        <Col xs={24} xl={10}>
           <Card
-            className="panel-card experiment-card"
+            className="panel-card cyber-card"
             variant="borderless"
-            title={<span><ExperimentOutlined style={{ marginRight: 8 }} />篡改检测实验</span>}
+            title={<span className="card-title-icon"><ExperimentOutlined /> 篡改检测实验</span>}
             style={{ height: '100%' }}
           >
             <Typography.Paragraph type="secondary">
@@ -213,20 +270,32 @@ export function DashboardPage() {
             </Typography.Paragraph>
             <div className="experiment-flow">
               <div className="experiment-flow__step">
-                <span className="experiment-flow__num">①</span>
-                <span>创建日志并上链存证</span>
+                <span className="experiment-flow__num">01</span>
+                <div>
+                  <strong>创建日志并上链存证</strong>
+                  <span>生成原始日志并写入智能合约</span>
+                </div>
               </div>
               <div className="experiment-flow__step">
-                <span className="experiment-flow__num">②</span>
-                <span>篡改数据库中日志内容</span>
+                <span className="experiment-flow__num">02</span>
+                <div>
+                  <strong>篡改数据库中日志内容</strong>
+                  <span>模拟恶意修改链下数据</span>
+                </div>
               </div>
               <div className="experiment-flow__step">
-                <span className="experiment-flow__num">③</span>
-                <span>审计引擎比对哈希差异</span>
+                <span className="experiment-flow__num">03</span>
+                <div>
+                  <strong>审计引擎比对哈希差异</strong>
+                  <span>链上哈希与链下记录自动比对</span>
+                </div>
               </div>
               <div className="experiment-flow__step">
-                <span className="experiment-flow__num">④</span>
-                <span>自动生成异常告警</span>
+                <span className="experiment-flow__num">04</span>
+                <div>
+                  <strong>自动生成异常告警</strong>
+                  <span>检测到不一致立即触发告警</span>
+                </div>
               </div>
             </div>
             <Button
@@ -237,43 +306,35 @@ export function DashboardPage() {
               loading={tamperLoading}
               onClick={() => void handleTamper()}
               block
-              style={{ marginTop: 16 }}
+              className="btn-danger-glow"
             >
               执行篡改实验
             </Button>
           </Card>
         </Col>
-        <Col xs={24} xl={8}>
+        <Col xs={24} xl={7}>
           <Card
-            className="panel-card reset-card"
+            className="panel-card cyber-card"
             variant="borderless"
-            title={<span><ClearOutlined style={{ marginRight: 8 }} />数据重置</span>}
+            title={<span className="card-title-icon"><ClearOutlined /> 数据重置</span>}
             style={{ height: '100%' }}
           >
             <Typography.Paragraph type="secondary">
               清空数据库，恢复初始状态。链上存证不受影响。
             </Typography.Paragraph>
             <div className="reset-tables reset-tables--compact">
-              <div className="reset-table-item">
-                <span>logs</span>
-                <Typography.Text type="secondary">日志记录</Typography.Text>
-              </div>
-              <div className="reset-table-item">
-                <span>log_hash_records</span>
-                <Typography.Text type="secondary">哈希存证</Typography.Text>
-              </div>
-              <div className="reset-table-item">
-                <span>audit_records</span>
-                <Typography.Text type="secondary">审计记录</Typography.Text>
-              </div>
-              <div className="reset-table-item">
-                <span>alerts</span>
-                <Typography.Text type="secondary">告警记录</Typography.Text>
-              </div>
-              <div className="reset-table-item">
-                <span>agent_states</span>
-                <Typography.Text type="secondary">Agent 状态</Typography.Text>
-              </div>
+              {[
+                { name: 'logs', desc: '日志记录' },
+                { name: 'log_hash_records', desc: '哈希存证' },
+                { name: 'audit_records', desc: '审计记录' },
+                { name: 'alerts', desc: '告警记录' },
+                { name: 'agent_states', desc: 'Agent 状态' },
+              ].map((item) => (
+                <div className="reset-table-item" key={item.name}>
+                  <span>{item.name}</span>
+                  <Typography.Text type="secondary">{item.desc}</Typography.Text>
+                </div>
+              ))}
             </div>
             <Button
               danger
@@ -288,19 +349,19 @@ export function DashboardPage() {
             </Button>
           </Card>
         </Col>
-        <Col xs={24} xl={8}>
-          <Card className="panel-card" title="审计摘要" variant="borderless" style={{ height: '100%' }}>
+        <Col xs={24} xl={7}>
+          <Card className="panel-card cyber-card" title={<span className="card-title-icon"><SafetyCertificateOutlined /> 审计摘要</span>} variant="borderless" style={{ height: '100%' }}>
             <Table<SummaryRow> columns={columns} dataSource={summaryRows} pagination={false} size="small" />
           </Card>
         </Col>
       </Row>
 
-      {/* ── Tamper Experiment Result (展开式) ── */}
+      {/* ── Tamper Experiment Result ── */}
       {tamperResult && (
         <Card
           className="panel-card tamper-result-card"
           variant="borderless"
-          title={<span><ThunderboltOutlined style={{ marginRight: 8 }} />篡改实验结果</span>}
+          title={<span className="card-title-icon" style={{ color: '#ff3366' }}><ThunderboltOutlined /> 篡改实验结果</span>}
         >
           <Steps
             direction="horizontal"
@@ -337,20 +398,20 @@ export function DashboardPage() {
         </Card>
       )}
 
-      {/* ── Charts ── */}
+      {/* ── Charts: 数据可视化 ── */}
       <Row gutter={[18, 18]}>
         <Col xs={24} xl={10}>
-          <Card className="panel-card" title="日志趋势图" extra={<span className="chart-badge">最近 7 个时间片</span>} variant="borderless">
+          <Card className="panel-card cyber-card" title={<span className="card-title-icon"><FireOutlined /> 日志趋势图</span>} extra={<span className="chart-badge">最近 7 个时间片</span>} variant="borderless">
             <LineTrendChart data={data.logTrend} />
           </Card>
         </Col>
-        <Col xs={24} md={12} xl={8}>
-          <Card className="panel-card" title="审计状态分布" variant="borderless">
+        <Col xs={24} md={12} xl={7}>
+          <Card className="panel-card cyber-card" title={<span className="card-title-icon"><SafetyCertificateOutlined /> 审计状态分布</span>} variant="borderless">
             <DistributionChart items={data.statusDistribution} variant="donut" />
           </Card>
         </Col>
-        <Col xs={24} md={12} xl={6}>
-          <Card className="panel-card" title="异常等级分布" variant="borderless">
+        <Col xs={24} md={12} xl={7}>
+          <Card className="panel-card cyber-card" title={<span className="card-title-icon"><WarningOutlined /> 异常等级分布</span>} variant="borderless">
             <DistributionChart items={data.alertDistribution} variant="bars" />
           </Card>
         </Col>
@@ -359,12 +420,12 @@ export function DashboardPage() {
       {/* ── Timeline & Modules ── */}
       <Row gutter={[18, 18]}>
         <Col xs={24} xl={10}>
-          <Card className="panel-card" title="审计流程时间线" variant="borderless">
+          <Card className="panel-card cyber-card" title={<span className="card-title-icon"><BlockOutlined /> 审计流程时间线</span>} variant="borderless">
             <Timeline items={data.auditTimeline.map((item) => ({ color: item.color, children: item.content }))} />
           </Card>
         </Col>
         <Col xs={24} xl={14}>
-          <Card className="panel-card" title="模块建设进度" variant="borderless">
+          <Card className="panel-card cyber-card" title={<span className="card-title-icon"><RocketOutlined /> 模块建设进度</span>} variant="borderless">
             <Space direction="vertical" size="large" style={{ width: '100%' }}>
               {data.systemModules.map((module) => (
                 <div key={module.name} className="progress-item">
@@ -377,7 +438,7 @@ export function DashboardPage() {
                         {module.description}
                       </Typography.Paragraph>
                     </div>
-                    <strong>{module.progress}%</strong>
+                    <strong className="progress-item__pct">{module.progress}%</strong>
                   </div>
                   <Progress percent={module.progress} showInfo={false} strokeColor={{ from: '#00d4ff', to: '#00ff88' }} />
                 </div>
@@ -388,8 +449,4 @@ export function DashboardPage() {
       </Row>
     </div>
   );
-}
-
-function Tagline() {
-  return <div className="hero-badge">基于区块链的可信任务日志审计系统</div>;
 }
