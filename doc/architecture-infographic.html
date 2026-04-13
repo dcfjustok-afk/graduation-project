@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>系统架构图 - Infographic</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { display: flex; flex-direction: column; align-items: center; min-height: 100vh; background: #f0f2f5; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    h1.page-title { font-size: 28px; color: #1a1a2e; margin-bottom: 8px; letter-spacing: 2px; }
+    p.page-subtitle { font-size: 14px; color: #666; margin-bottom: 36px; }
+    .section-label { font-size: 18px; font-weight: 600; color: #333; margin: 32px 0 16px; padding-left: 12px; border-left: 4px solid #1565c0; }
+    .infographic-container { width: 100%; max-width: 1400px; }
+    .export-btn { position: fixed; top: 20px; right: 20px; padding: 10px 20px; background: #1565c0; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+    .export-btn:hover { background: #1976d2; }
+    .divider { width: 100%; max-width: 1400px; height: 1px; background: #e0e0e0; margin: 40px 0; }
+  </style>
+</head>
+<body>
+  <button class="export-btn" onclick="exportAll()">导出 SVG</button>
+
+  <h1 class="page-title">基于区块链的可信任务日志审计系统</h1>
+  <p class="page-subtitle">Blockchain-based Trusted Task Log Audit System — 系统架构总览</p>
+
+  <p class="section-label">核心模块架构</p>
+  <div id="container-modules" class="infographic-container"></div>
+
+  <div class="divider"></div>
+
+  <p class="section-label">Agent 采集模块</p>
+  <div id="container-agent" class="infographic-container"></div>
+
+  <div class="divider"></div>
+
+  <p class="section-label">Server 三层架构</p>
+  <div id="container-server" class="infographic-container"></div>
+
+  <div class="divider"></div>
+
+  <p class="section-label">完整数据流水线</p>
+  <div id="container-flow" class="infographic-container"></div>
+
+  <script src="https://unpkg.com/@antv/infographic@latest/dist/infographic.min.js"></script>
+  <script>
+    const svgTextCache = new Map();
+    const pendingRequests = new Map();
+
+    AntVInfographic.registerResourceLoader(async (config) => {
+      const { data, scene } = config;
+      try {
+        const key = `${scene}::${data}`;
+        let svgText;
+        if (svgTextCache.has(key)) {
+          svgText = svgTextCache.get(key);
+        } else if (pendingRequests.has(key)) {
+          svgText = await pendingRequests.get(key);
+        } else {
+          const fetchPromise = (async () => {
+            try {
+              let url;
+              if (scene === 'icon') {
+                url = `https://api.iconify.design/${data}.svg`;
+              } else if (scene === 'illus') {
+                url = `https://raw.githubusercontent.com/balazser/undraw-svg-collection/refs/heads/main/svgs/${data}.svg`;
+              } else return null;
+              if (!url) return null;
+              const response = await fetch(url, { referrerPolicy: 'no-referrer' });
+              if (!response.ok) return null;
+              const text = await response.text();
+              if (!text || !text.trim().startsWith('<svg')) return null;
+              svgTextCache.set(key, text);
+              return text;
+            } catch (e) { return null; }
+          })();
+          pendingRequests.set(key, fetchPromise);
+          svgText = await fetchPromise;
+          pendingRequests.delete(key);
+        }
+        return svgText || null;
+      } catch (e) { return null; }
+    });
+
+    // === 1. Top-level Module Overview ===
+    const modulesInfographic = new AntVInfographic.Infographic({
+      container: document.getElementById('container-modules'),
+      width: '100%',
+      height: '100%',
+    });
+
+    const modulesSyntax = `infographic list-grid-badge-card
+theme
+  palette #2e7d32 #1565c0 #e65100 #c62828 #6a1b9a
+data
+  title 五大核心模块
+  desc Monorepo 架构，模块职责清晰，数据链路完整可信
+  items
+    - label 日志采集 Agent
+      desc Node.js + TypeScript，增量文件读取，偏移量持久化，指数退避重试，断点续传，HTTP 批量上报
+      icon mdi/robot-outline
+    - label 后端服务 Server
+      desc Express 5 + TypeScript，10 个 RESTful API，业务层 SHA-256 哈希计算与审计比对，Repository Pattern 数据访问
+      icon mdi/server
+    - label 以太坊区块链
+      desc Hardhat 本地网络，LogRegistry 智能合约 (Solidity 0.8.24)，OpenZeppelin AccessControl 权限控制，不可篡改存证
+      icon mdi/link-variant
+    - label SQLite 数据库
+      desc 5 张核心数据表 (logs / log_hash_records / audit_records / alerts / agent_states)，5 个优化索引
+      icon mdi/database
+    - label 前端 Web 界面
+      desc React 19 + Ant Design 5 + Vite 7，Dashboard 总览、日志中心、审计管理、预警管理、日志生成器 五大页面
+      icon mdi/monitor-dashboard`;
+
+    modulesInfographic.render(modulesSyntax);
+
+    // === 2. Agent Module Detail ===
+    const agentInfographic = new AntVInfographic.Infographic({
+      container: document.getElementById('container-agent'),
+      width: '100%',
+      height: '100%',
+    });
+
+    const agentSyntax = `infographic list-row-horizontal-icon-arrow
+theme
+  palette #2e7d32 #43a047 #66bb6a #81c784 #a5d6a7
+data
+  title Agent 采集流程
+  desc 日志文件 → 增量读取 → 批量采集 → HTTP上报 → 失败重试
+  items
+    - label FileReader
+      desc 按偏移量增量读取日志文件新增内容
+      icon mdi/file-search-outline
+    - label LogCollector
+      desc 组织批量采集逻辑，封装日志数据
+      icon mdi/text-box-search-outline
+    - label HTTP 上报
+      desc POST /api/logs 批量提交至后端
+      icon mdi/upload
+    - label RetryQueue
+      desc 网络异常时指数退避自动重试
+      icon mdi/refresh-circle
+    - label OffsetStore
+      desc 偏移量本地持久化，支持断点续传
+      icon mdi/content-save-outline`;
+
+    agentInfographic.render(agentSyntax);
+
+    // === 3. Server Architecture ===
+    const serverInfographic = new AntVInfographic.Infographic({
+      container: document.getElementById('container-server'),
+      width: '100%',
+      height: '100%',
+    });
+
+    const serverSyntax = `infographic sequence-ascending-stairs-3d-underline-text
+theme
+  palette #1565c0 #1976d2 #1e88e5
+data
+  title Server 三层分离架构
+  desc 接口层 → 业务层 → 数据层，职责清晰，易于维护
+  items
+    - label API 接口层
+      desc 10 个 RESTful 接口，统一响应结构，路由分发
+    - label 业务逻辑层
+      desc SHA-256 哈希计算，Ethers.js 合约调用，审计三方比对，自动告警生成
+    - label 数据访问层
+      desc Repository Pattern 封装 SQLite 读写，5 张表 CRUD 操作`;
+
+    serverInfographic.render(serverSyntax);
+
+    // === 4. Data Flow Sequence ===
+    const flowInfographic = new AntVInfographic.Infographic({
+      container: document.getElementById('container-flow'),
+      width: '100%',
+      height: '100%',
+    });
+
+    const flowSyntax = `infographic sequence-color-snake-steps-horizontal-icon-line
+theme
+  palette #2e7d32 #1565c0 #e65100 #c62828 #6a1b9a #00838f #37474f
+data
+  title 完整数据链路
+  desc 从日志产生到可视化展示的七步可信流水线
+  items
+    - label 日志文件产生
+      desc 业务系统输出 .log 文件
+      icon mdi/file-document-outline
+    - label Agent 增量采集
+      desc 按偏移量读取，断点续传
+      icon mdi/robot-outline
+    - label Server 接收入库
+      desc REST API → SQLite 持久化
+      icon mdi/server
+    - label SHA-256 哈希上链
+      desc 计算哈希，写入智能合约
+      icon mdi/link-variant
+    - label 审计三方比对
+      desc 重算 vs 库中 vs 链上校验
+      icon mdi/clipboard-check-outline
+    - label 异常自动告警
+      desc 不一致则标记 TAMPERED
+      icon mdi/alert-circle-outline
+    - label 前端可视化
+      desc Dashboard 展示全部结果
+      icon mdi/monitor-dashboard`;
+
+    flowInfographic.render(flowSyntax);
+
+    // === Export ===
+    async function exportAll() {
+      const svgDataUrl = await modulesInfographic.toDataURL({ type: 'svg' });
+      const a = document.createElement('a');
+      a.href = svgDataUrl;
+      a.download = '系统架构图-模块总览.svg';
+      a.click();
+    }
+  </script>
+</body>
+</html>
