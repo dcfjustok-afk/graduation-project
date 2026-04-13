@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>可信任务日志审计系统 - 手绘架构图</title>
+  <style>
+    :root {
+      --paper: #f7f0df;
+      --ink: #2d241d;
+      --muted: #6f6257;
+      --green: #5f9b68;
+      --green-soft: #dfeeda;
+      --blue: #5f8fb8;
+      --blue-soft: #dfe9f5;
+      --orange: #cb8954;
+      --orange-soft: #f9ead9;
+      --red: #bf7068;
+      --red-soft: #f5dedb;
+      --purple: #8a71af;
+      --purple-soft: #ece2f7;
+      --teal: #5e9d97;
+      --teal-soft: #def1ee;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.38), transparent 18%),
+        radial-gradient(circle at 80% 15%, rgba(255,255,255,0.24), transparent 20%),
+        repeating-linear-gradient(0deg, rgba(80,60,40,0.018), rgba(80,60,40,0.018) 2px, transparent 2px, transparent 8px),
+        var(--paper);
+      color: var(--ink);
+      font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+      padding: 24px;
+    }
+
+    .toolbar {
+      position: sticky;
+      top: 16px;
+      z-index: 10;
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 16px;
+    }
+
+    .toolbar button {
+      border: 0;
+      background: #2f6db3;
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(47, 109, 179, 0.28);
+    }
+
+    .stage-wrap {
+      width: min(100%, 1680px);
+      margin: 0 auto;
+      padding: 12px;
+    }
+
+    #stage {
+      position: relative;
+      width: 1600px;
+      height: 1440px;
+      margin: 0 auto;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.62), rgba(255,255,255,0.24)),
+        var(--paper);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 18px 44px rgba(64, 44, 24, 0.12);
+    }
+
+    #rough-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .paper-note {
+      position: absolute;
+      z-index: 3;
+      text-align: center;
+      width: 100%;
+      left: 0;
+      top: 30px;
+    }
+
+    .paper-note h1 {
+      margin: 0;
+      font-size: 42px;
+      letter-spacing: 0.5px;
+      font-weight: 800;
+    }
+
+    .paper-note .headline-cn {
+      margin: 8px 0 0;
+      font-size: 16px;
+      color: #6b5f55;
+    }
+
+    .paper-note .headline-en {
+      margin: 6px 0 0;
+      font-size: 11px;
+      letter-spacing: 0.3px;
+      color: rgba(111, 98, 87, 0.58);
+    }
+
+    .header-note {
+      position: absolute;
+      right: 52px;
+      top: 48px;
+      z-index: 4;
+      color: rgba(107, 95, 85, 0.72);
+      font-size: 12px;
+      transform: rotate(-2deg);
+      background: rgba(255,255,255,0.38);
+      padding: 8px 12px;
+      border-radius: 14px;
+    }
+
+    .diagram-area {
+      position: absolute;
+      left: 58px;
+      top: 150px;
+      width: 1484px;
+      height: 1080px;
+      z-index: 2;
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.06));
+    }
+
+    .diagram-area-label {
+      position: absolute;
+      left: 84px;
+      top: 126px;
+      z-index: 4;
+      font-size: 13px;
+      font-weight: 700;
+      color: rgba(96, 81, 67, 0.7);
+      background: rgba(255,255,255,0.42);
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    .block {
+      position: absolute;
+      z-index: 4;
+      padding: 18px 20px;
+      border-radius: 18px;
+      transform: rotate(var(--rotate, 0deg));
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      background: rgba(255,255,255,0.64);
+    }
+
+    .title {
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--muted);
+    }
+
+    .mini-grid,
+    .mini-stack,
+    .web-row,
+    .db-row,
+    .api-row {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .mini-grid,
+    .api-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .db-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .web-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .mini-stack { grid-template-columns: 1fr; }
+
+    .mini-card {
+      background: rgba(255,255,255,0.74);
+      border-radius: 14px;
+      padding: 10px 12px;
+      min-height: 64px;
+      box-shadow: inset 0 0 0 1px rgba(45, 36, 29, 0.08);
+    }
+
+    .mini-card strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 17px;
+      line-height: 1.25;
+    }
+
+    .mini-card span {
+      display: block;
+      font-size: 12px;
+      line-height: 1.45;
+      color: #554a41;
+    }
+
+    .server-band {
+      margin-top: 16px;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.48);
+      border-radius: 16px;
+    }
+
+    .server-band h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+      line-height: 1.25;
+    }
+
+    .legend {
+      position: absolute;
+      z-index: 4;
+      left: 52px;
+      right: 52px;
+      bottom: 34px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .legend-item {
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.5);
+      border-radius: 18px;
+      color: #53463b;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .legend-item strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 15px;
+    }
+
+    .block-logs { left: 96px; top: 200px; width: 220px; }
+    .block-agent { left: 96px; top: 384px; width: 360px; }
+    .block-shared { left: 96px; top: 738px; width: 360px; }
+    .block-server { left: 470px; top: 168px; width: 688px; }
+    .block-db { left: 468px; top: 966px; width: 700px; }
+    .block-chain { left: 1184px; top: 168px; width: 300px; }
+    .block-web { left: 1184px; top: 636px; width: 300px; }
+
+    body.export-mode {
+      padding: 0;
+      background: var(--paper);
+    }
+
+    body.export-mode .toolbar {
+      display: none;
+    }
+
+    body.export-mode .stage-wrap {
+      width: 1600px;
+      padding: 0;
+      margin: 0 auto;
+    }
+
+    body.export-mode #stage {
+      border-radius: 0;
+      box-shadow: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <button id="exportBtn" type="button">导出 PNG</button>
+  </div>
+
+  <div class="stage-wrap">
+    <div id="stage">
+      <svg id="rough-layer" width="1600" height="1440" viewBox="0 0 1600 1440" aria-hidden="true"></svg>
+
+      <div class="paper-note">
+        <h1>基于区块链的可信任务日志审计系统</h1>
+        <p class="headline-cn">系统核心：日志可信、存证可信、审计可信</p>
+        <p class="headline-en">Hand-drawn Architecture Overview for Trusted Task Log Auditing</p>
+      </div>
+
+      <div class="diagram-area-label">系统总体架构区域</div>
+      <div class="diagram-area"></div>
+
+      <section class="block block-logs" data-sketch="logs" style="--rotate:-0.4deg;background:var(--paper);">
+        <div class="tag">日志源</div>
+        <div class="title">日志文件</div>
+        <div class="subtitle">业务系统持续产生日志内容，作为可信审计的原始输入。</div>
+      </section>
+
+      <section class="block block-agent" data-sketch="agent" style="--rotate:0.2deg;background:var(--green-soft);">
+        <div class="tag">日志采集 Agent</div>
+        <div class="title">Node.js + TypeScript</div>
+        <div class="subtitle">监听日志变化并增量读取，保证不断点、不丢失、可重试。</div>
+        <div class="mini-grid">
+          <div class="mini-card"><strong>FileReader</strong><span>按偏移量读取新增日志</span></div>
+          <div class="mini-card"><strong>OffsetStore</strong><span>记录位置，支持断点续传</span></div>
+          <div class="mini-card"><strong>LogCollector</strong><span>整理结构并批量提交</span></div>
+          <div class="mini-card"><strong>RetryQueue</strong><span>失败后指数退避重试</span></div>
+        </div>
+      </section>
+
+      <section class="block block-shared" data-sketch="shared" style="--rotate:0deg;background:var(--teal-soft);">
+        <div class="tag">共享类型库</div>
+        <div class="title">Shared</div>
+        <div class="subtitle">统一 TypeScript 类型、接口结构和前后端通用定义。</div>
+      </section>
+
+      <section class="block block-server" data-sketch="server" style="--rotate:0deg;background:var(--blue-soft);">
+        <div class="tag">后端服务 Server</div>
+        <div class="title">Express 5 + TypeScript</div>
+        <div class="subtitle">接收日志、写入 SQLite、计算 SHA-256 哈希、调用合约上链、执行审计并生成告警。</div>
+
+        <div class="server-band">
+          <h3>API 接口层</h3>
+          <div class="api-row">
+            <div class="mini-card"><strong>POST /api/logs</strong><span>接收日志</span></div>
+            <div class="mini-card"><strong>GET /api/overview</strong><span>返回总览统计</span></div>
+            <div class="mini-card"><strong>POST /api/audits/run</strong><span>执行批量审计</span></div>
+            <div class="mini-card"><strong>POST /api/logs/generate</strong><span>生成演示数据</span></div>
+          </div>
+        </div>
+
+        <div class="server-band">
+          <h3>业务逻辑层</h3>
+          <div class="mini-grid">
+            <div class="mini-card"><strong>区块链服务</strong><span>哈希计算与 Ethers.js 调用</span></div>
+            <div class="mini-card"><strong>审计服务</strong><span>本地 / 数据库 / 链上三方比对</span></div>
+            <div class="mini-card"><strong>告警服务</strong><span>异常时自动生成告警</span></div>
+            <div class="mini-card"><strong>总览服务</strong><span>聚合图表、时间线与指标</span></div>
+          </div>
+        </div>
+
+        <div class="server-band">
+          <h3>数据访问层</h3>
+          <div class="mini-grid">
+            <div class="mini-card"><strong>LogRepo</strong><span>日志原文与任务元数据</span></div>
+            <div class="mini-card"><strong>AuditRepo</strong><span>审计结果记录</span></div>
+            <div class="mini-card"><strong>AlertRepo</strong><span>异常告警记录</span></div>
+            <div class="mini-card"><strong>OverviewRepo</strong><span>统计聚合查询</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="block block-db" data-sketch="db" style="--rotate:0deg;background:var(--red-soft);">
+        <div class="tag">SQLite 数据库</div>
+        <div class="title">5 张核心数据表</div>
+        <div class="db-row">
+          <div class="mini-card"><strong>logs</strong><span>日志原文</span></div>
+          <div class="mini-card"><strong>log_hash_records</strong><span>链上存证记录</span></div>
+          <div class="mini-card"><strong>audit_records</strong><span>审计结果</span></div>
+          <div class="mini-card"><strong>alerts</strong><span>告警记录</span></div>
+          <div class="mini-card"><strong>agent_states</strong><span>Agent 状态</span></div>
+        </div>
+      </section>
+
+      <section class="block block-chain" data-sketch="chain" style="--rotate:0.2deg;background:var(--orange-soft);">
+        <div class="tag">以太坊区块链</div>
+        <div class="title">Hardhat / Ethereum</div>
+        <div class="subtitle">通过 LogRegistry 合约完成日志哈希上链存证，保证关键证据不可篡改。</div>
+        <div class="mini-stack">
+          <div class="mini-card"><strong>LogRegistry</strong><span>Solidity 0.8.24 + AccessControl</span></div>
+          <div class="mini-card"><strong>storeLog(taskId, logHash)</strong><span>写入日志哈希</span></div>
+          <div class="mini-card"><strong>getLogsByTaskId(taskId)</strong><span>读取链上存证</span></div>
+          <div class="mini-card"><strong>LOGGER_ROLE</strong><span>限制写入权限</span></div>
+        </div>
+      </section>
+
+      <section class="block block-web" data-sketch="web" style="--rotate:0deg;background:var(--purple-soft);">
+        <div class="tag">前端 Web</div>
+        <div class="title">React 19 + Ant Design 5 + Vite 7</div>
+        <div class="web-row">
+          <div class="mini-card"><strong>Dashboard</strong><span>系统总览</span></div>
+          <div class="mini-card"><strong>日志中心</strong><span>日志列表与搜索</span></div>
+          <div class="mini-card"><strong>审计管理</strong><span>批量审计与时间线</span></div>
+          <div class="mini-card"><strong>预警管理</strong><span>异常告警记录</span></div>
+          <div class="mini-card"><strong>日志生成器</strong><span>快速生成演示数据</span></div>
+          <div class="mini-card"><strong>REST API</strong><span>与后端实时交互</span></div>
+        </div>
+      </section>
+
+      <div class="legend">
+        <div class="legend-item"><strong>主链路</strong> 日志文件 → Agent 采集 → Server 接收 → 数据库存储 / 区块链存证 → 审计比对 → 前端展示</div>
+        <div class="legend-item"><strong>核心创新</strong> 链上存证 + 三方哈希比对 + 自动告警联动，形成可验证的可信日志链路</div>
+        <div class="legend-item"><strong>答辩讲法</strong> 先讲模块职责，再顺着箭头讲数据如何流动，最后落到可发现篡改、可追溯审计</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/roughjs@4.6.6/bundled/rough.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('export') === '1') {
+      document.body.classList.add('export-mode');
+    }
+
+    const svg = document.getElementById('rough-layer');
+    const rc = rough.svg(svg);
+
+    function add(node) {
+      svg.appendChild(node);
+      return node;
+    }
+
+    function line(x1, y1, x2, y2, options = {}) {
+      add(rc.line(x1, y1, x2, y2, {
+        stroke: options.stroke || '#54473c',
+        strokeWidth: options.strokeWidth || 2.6,
+        roughness: options.roughness || 2.1,
+        bowing: options.bowing || 1.6,
+      }));
+    }
+
+    function arrowHead(x, y, angle, color) {
+      const size = 10;
+      const p1 = [x, y];
+      const p2 = [x - size * Math.cos(angle - Math.PI / 6), y - size * Math.sin(angle - Math.PI / 6)];
+      const p3 = [x - size * Math.cos(angle + Math.PI / 6), y - size * Math.sin(angle + Math.PI / 6)];
+      add(rc.polygon([p1, p2, p3], {
+        stroke: color,
+        fill: color,
+        fillStyle: 'solid',
+        roughness: 1.4,
+        strokeWidth: 1.6,
+      }));
+    }
+
+    function label(x, y, textValue, color, size = 17, rotate = 0) {
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.setAttribute('x', x);
+      text.setAttribute('y', y);
+      text.setAttribute('font-size', String(size));
+      text.setAttribute('font-weight', '700');
+      text.setAttribute('fill', color);
+      if (rotate !== 0) {
+        text.setAttribute('transform', `rotate(${rotate} ${x} ${y})`);
+      }
+      text.textContent = textValue;
+      svg.appendChild(text);
+    }
+
+    function arrow(x1, y1, x2, y2, color, textValue, tx, ty, rotate = 0) {
+      line(x1, y1, x2, y2, { stroke: color, strokeWidth: 3.1, roughness: 2.2, bowing: 2.1 });
+      arrowHead(x2, y2, Math.atan2(y2 - y1, x2 - x1), color);
+      if (textValue) {
+        label(tx, ty, textValue, color, 17, rotate);
+      }
+    }
+
+    function polyline(points, color, textValue, tx, ty, rotate = 0) {
+      for (let index = 0; index < points.length - 1; index += 1) {
+        const [x1, y1] = points[index];
+        const [x2, y2] = points[index + 1];
+        line(x1, y1, x2, y2, { stroke: color, strokeWidth: 3.1, roughness: 2.2, bowing: 2.1 });
+      }
+      const last = points[points.length - 1];
+      const prev = points[points.length - 2];
+      arrowHead(last[0], last[1], Math.atan2(last[1] - prev[1], last[0] - prev[0]), color);
+      if (textValue) {
+        label(tx, ty, textValue, color, 17, rotate);
+      }
+    }
+
+    function sketchFrame(selector, color, fill) {
+      const el = document.querySelector(selector);
+      add(rc.rectangle(el.offsetLeft, el.offsetTop, el.offsetWidth, el.offsetHeight, {
+        stroke: color,
+        strokeWidth: 2.4,
+        fill,
+        fillStyle: 'solid',
+        fillWeight: 0.8,
+        roughness: 2,
+        bowing: 1.9,
+        seed: Math.round((el.offsetLeft + el.offsetTop) / 10),
+      }));
+    }
+
+    sketchFrame('.diagram-area', '#b9ab94', 'rgba(255,255,255,0.08)');
+    sketchFrame('.block-logs', '#6c655d', 'rgba(255,255,255,0.14)');
+    sketchFrame('.block-agent', '#4c8b50', 'rgba(223,238,218,0.62)');
+    sketchFrame('.block-shared', '#59938d', 'rgba(222,241,238,0.65)');
+    sketchFrame('.block-server', '#5889b4', 'rgba(223,233,245,0.62)');
+    sketchFrame('.block-db', '#bd6f68', 'rgba(245,222,219,0.64)');
+    sketchFrame('.block-chain', '#cb8a56', 'rgba(249,234,217,0.66)');
+    sketchFrame('.block-web', '#8d72b3', 'rgba(236,226,247,0.66)');
+
+    // Arrows — coordinates are recalculated after removing fixed heights
+    arrow(206, 352, 206, 384, '#4c8b50', '增量读取', 116, 374, -8);
+    polyline([[456, 544], [468, 544], [470, 480]], '#5889b4', 'HTTP POST', 422, 528, 6);
+    polyline([[1158, 430], [1184, 372]], '#cb8a56', '哈希上链', 1084, 386, -12);
+    polyline([[1184, 460], [1108, 530], [998, 600]], '#cb8a56', '链上查询', 1072, 510, 14);
+    arrow(834, 935, 834, 966, '#bd6f68', 'SQL 持久化', 734, 930, 0);
+    polyline([[1184, 800], [1160, 800]], '#8d72b3', 'REST API', 1194, 790, 2);
+    arrow(456, 808, 468, 808, '#59938d', '共享类型定义', 310, 796, 0);
+
+    label(570, 1280, '主数据流：日志 -> 采集 -> 入库 -> 上链 -> 审计 -> 告警 -> 展示', '#6b5e54', 15, 0);
+
+    async function exportStage(previewOnly = false) {
+      const target = document.getElementById('stage');
+      const canvas = await html2canvas(target, {
+        backgroundColor: '#f7f0df',
+        scale: 2,
+        useCORS: true,
+        logging: false,
+      });
+      const dataUrl = canvas.toDataURL('image/png');
+      window.__lastExportMeta = {
+        width: canvas.width,
+        height: canvas.height,
+        dataUrlLength: dataUrl.length,
+      };
+      if (!previewOnly) {
+        const link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = 'architecture-handdrawn.png';
+        link.click();
+      }
+      return window.__lastExportMeta;
+    }
+
+    document.getElementById('exportBtn').addEventListener('click', async () => {
+      await exportStage(false);
+    });
+
+    window.exportStage = exportStage;
+  </script>
+</body>
+</html>
