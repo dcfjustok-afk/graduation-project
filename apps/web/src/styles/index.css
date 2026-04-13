@@ -1549,3 +1549,474 @@ body {
 .ant-select-item-option-selected {
   background: rgba(0, 212, 255, 0.12) !important;
 }
+
+/* ═══════════════════════════════════════════════════
+   NEW: Structural Redesign Classes
+   ═══════════════════════════════════════════════════ */
+
+/* ─── Beacon Animation ─── */
+@keyframes beaconPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.5); }
+  50%      { box-shadow: 0 0 0 6px rgba(0, 255, 136, 0); }
+}
+
+@keyframes dataFlow {
+  0%   { stroke-dashoffset: 20; }
+  100% { stroke-dashoffset: 0; }
+}
+
+/* ─── Header Chain Bar ─── */
+.header-chain-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.header-chain-stat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 10px;
+  background: rgba(0, 212, 255, 0.04);
+  border: 1px solid rgba(0, 212, 255, 0.06);
+  transition: background 200ms ease;
+}
+
+.header-chain-stat:hover {
+  background: rgba(0, 212, 255, 0.08);
+}
+
+.header-chain-stat__icon {
+  color: #00d4ff;
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.header-chain-stat__label {
+  font-size: 11px;
+  color: #4a6fa5;
+  letter-spacing: 0.3px;
+}
+
+.header-chain-stat__value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: #c8d6e5;
+  font-weight: 600;
+}
+
+.header-chain-divider {
+  width: 1px;
+  height: 24px;
+  background: rgba(0, 212, 255, 0.1);
+  margin: 0 4px;
+}
+
+.header-beacon {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: rgba(0, 255, 136, 0.08);
+  border: 1px solid rgba(0, 255, 136, 0.15);
+  font-size: 12px;
+  font-weight: 600;
+  color: #00ff88;
+}
+
+.beacon-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #00ff88;
+  animation: beaconPulse 2s ease-in-out infinite;
+}
+
+.hash-mono {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #4a6fa5;
+  letter-spacing: 0.5px;
+}
+
+/* ─── Brand Logo Ring ─── */
+.brand-logo__ring {
+  position: absolute;
+  inset: -3px;
+  border-radius: 13px;
+  border: 2px solid transparent;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(124, 58, 237, 0.3)) border-box;
+  mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+  animation: neonPulse 3s ease-in-out infinite;
+}
+
+/* ─── Chain Node Mini (sidebar footer) ─── */
+.sider-footer__chain {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chain-node-mini {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: #4a6fa5;
+}
+
+.chain-node-mini__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #334155;
+  flex-shrink: 0;
+}
+
+.chain-node-mini__dot--active {
+  background: #00ff88;
+  box-shadow: 0 0 6px rgba(0, 255, 136, 0.5);
+}
+
+/* ─── Section Header Redesign ─── */
+.section-header__left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.section-header__title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-header__accent-bar {
+  width: 4px;
+  height: 28px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #00d4ff, #7c3aed);
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.3);
+  flex-shrink: 0;
+}
+
+.section-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ─── MetricCard Body Redesign ─── */
+.metric-card__body {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.metric-card__icon-ring {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  color: var(--accent, #00d4ff);
+  background: color-mix(in srgb, var(--accent, #00d4ff) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent, #00d4ff) 15%, transparent);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--accent, #00d4ff) 8%, transparent);
+  flex-shrink: 0;
+  transition: all 300ms ease;
+}
+
+.metric-card:hover .metric-card__icon-ring {
+  box-shadow: 0 0 30px color-mix(in srgb, var(--accent, #00d4ff) 15%, transparent);
+  transform: scale(1.05);
+}
+
+.metric-card__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.metric-card__trend {
+  display: block;
+  font-size: 12px;
+  margin-top: 4px;
+  font-weight: 600;
+  color: #4a6fa5;
+}
+
+/* ─── Hero Banner (Dashboard) ─── */
+.hero-banner {
+  border-radius: 20px;
+  border: 1px solid rgba(0, 212, 255, 0.12);
+  background:
+    linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(124, 58, 237, 0.06) 50%, rgba(0, 255, 136, 0.04) 100%),
+    rgba(10, 16, 30, 0.95);
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.4),
+    0 0 60px rgba(0, 212, 255, 0.06),
+    inset 0 1px 0 rgba(0, 212, 255, 0.1);
+  padding: 36px 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle grid overlay */
+.hero-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+  background-size: 30px 30px;
+  pointer-events: none;
+  mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+}
+
+.hero-banner__content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+  position: relative;
+}
+
+.hero-banner__text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.hero-banner__title {
+  font-family: 'Sora', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+  letter-spacing: -0.5px;
+  line-height: 1.3;
+}
+
+.hero-banner__desc {
+  color: #7c8db5;
+  font-size: 15px;
+  line-height: 1.7;
+  max-width: 520px;
+  margin: 0;
+}
+
+.hero-banner__visual {
+  flex-shrink: 0;
+}
+
+/* ─── Gradient Text ─── */
+.gradient-text {
+  background: linear-gradient(135deg, #00d4ff 0%, #00ff88 50%, #7c3aed 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: heroGradient 4s ease infinite;
+}
+
+/* ─── Glow Buttons ─── */
+.btn-glow {
+  background: linear-gradient(135deg, #00d4ff, #7c3aed) !important;
+  border: none !important;
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.3) !important;
+  font-weight: 600;
+  transition: all 250ms ease;
+}
+
+.btn-glow:hover {
+  box-shadow: 0 0 35px rgba(0, 212, 255, 0.5) !important;
+  transform: translateY(-2px);
+}
+
+.btn-danger-glow {
+  background: linear-gradient(135deg, #ff3366, #ff6b35) !important;
+  border: none !important;
+  color: #fff !important;
+  box-shadow: 0 0 20px rgba(255, 51, 102, 0.25) !important;
+  font-weight: 600;
+}
+
+.btn-danger-glow:hover {
+  box-shadow: 0 0 35px rgba(255, 51, 102, 0.4) !important;
+  transform: translateY(-2px);
+}
+
+/* ─── Hero Network SVG ─── */
+.hero-network-svg {
+  width: 260px;
+  height: 200px;
+}
+
+.network-link {
+  stroke: rgba(0, 212, 255, 0.2);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+  animation: dataFlow 2s linear infinite;
+}
+
+.network-node {
+  transition: filter 300ms ease;
+}
+
+.hero-banner:hover .network-node {
+  filter: drop-shadow(0 0 6px rgba(0, 212, 255, 0.3));
+}
+
+.network-label {
+  fill: #7c8db5;
+  font-size: 10px;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.data-packet {
+  fill: #00d4ff;
+  filter: drop-shadow(0 0 4px rgba(0, 212, 255, 0.6));
+}
+
+.data-packet--alt {
+  fill: #00ff88;
+  filter: drop-shadow(0 0 4px rgba(0, 255, 136, 0.6));
+}
+
+/* ─── Chain Status Strip ─── */
+.chain-status-strip {
+  display: flex;
+  gap: 0;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(0, 212, 255, 0.06);
+  margin-bottom: 4px;
+}
+
+.chain-status-strip__item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 20px;
+  border-right: 1px solid rgba(0, 212, 255, 0.06);
+}
+
+.chain-status-strip__item:last-child {
+  border-right: none;
+}
+
+.chain-status-strip__icon {
+  font-size: 16px;
+  color: #00d4ff;
+  opacity: 0.6;
+}
+
+.chain-status-strip__label {
+  font-size: 11px;
+  color: #4a6fa5;
+  display: block;
+}
+
+.chain-status-strip__value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: #e2e8f0;
+  display: block;
+}
+
+/* ─── Cyber Card ─── */
+.cyber-card {
+  position: relative;
+}
+
+.cyber-card::after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 12px;
+  height: 12px;
+  border-top: 2px solid rgba(0, 212, 255, 0.15);
+  border-right: 2px solid rgba(0, 212, 255, 0.15);
+  pointer-events: none;
+  transition: border-color 300ms ease;
+}
+
+.cyber-card:hover::after {
+  border-color: rgba(0, 212, 255, 0.3);
+}
+
+/* ─── Card Title Icon ─── */
+.card-title-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Sora', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  color: #c8d6e5;
+}
+
+.card-title-icon .anticon {
+  font-size: 16px;
+  color: #00d4ff;
+}
+
+/* ─── Progress Item Percentage ─── */
+.progress-item__pct {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: #00d4ff;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Responsive updates ─── */
+@media (max-width: 992px) {
+  .hero-banner {
+    padding: 24px 20px;
+  }
+
+  .hero-banner__content {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .hero-banner__visual {
+    display: none;
+  }
+
+  .chain-status-strip {
+    flex-wrap: wrap;
+  }
+
+  .chain-status-strip__item {
+    flex: 1 1 45%;
+    padding: 8px 12px;
+    border-right: none;
+  }
+
+  .header-chain-bar {
+    display: none;
+  }
+}
+
+@media (max-width: 576px) {
+  .hero-banner__title {
+    font-size: 22px;
+  }
+
+  .chain-status-strip__item {
+    flex: 1 1 100%;
+  }
+}
