@@ -114,22 +114,22 @@ export function AuditPage() {
       <Row gutter={[18, 18]}>
         <Col xs={24} md={12} xl={6}>
           <Card className="metric-card" variant="borderless">
-            <Statistic title="日志总量" value={dashboard.auditSummary.total} prefix={<ClockCircleOutlined />} valueStyle={{ color: '#0ea5e9' }} />
+            <Statistic title="日志总量" value={dashboard.auditSummary.total} prefix={<ClockCircleOutlined />} valueStyle={{ color: '#00d4ff' }} />
           </Card>
         </Col>
         <Col xs={24} md={12} xl={6}>
           <Card className="metric-card" variant="borderless">
-            <Statistic title="审计通过" value={dashboard.auditSummary.passed} prefix={<CheckCircleOutlined />} valueStyle={{ color: '#16a34a' }} />
+            <Statistic title="审计通过" value={dashboard.auditSummary.passed} prefix={<CheckCircleOutlined />} valueStyle={{ color: '#00ff88' }} />
           </Card>
         </Col>
         <Col xs={24} md={12} xl={6}>
           <Card className="metric-card" variant="borderless">
-            <Statistic title="异常数量" value={dashboard.auditSummary.abnormal} prefix={<WarningOutlined />} valueStyle={{ color: '#ef4444' }} />
+            <Statistic title="异常数量" value={dashboard.auditSummary.abnormal} prefix={<WarningOutlined />} valueStyle={{ color: '#ff3366' }} />
           </Card>
         </Col>
         <Col xs={24} md={12} xl={6}>
           <Card className="metric-card" variant="borderless">
-            <Statistic title="待处理" value={dashboard.auditSummary.pending} prefix={<ClockCircleOutlined />} valueStyle={{ color: '#f59e0b' }} />
+            <Statistic title="待处理" value={dashboard.auditSummary.pending} prefix={<ClockCircleOutlined />} valueStyle={{ color: '#ffaa00' }} />
           </Card>
         </Col>
       </Row>
@@ -152,7 +152,7 @@ export function AuditPage() {
                   {
                     title: tamperResult.alertGenerated ? '告警已生成' : '审计完成',
                     description: tamperResult.alertGenerated ? '检测到篡改行为，异常告警已自动生成' : '审计完成',
-                    icon: tamperResult.alertGenerated ? <WarningOutlined style={{ color: '#ef4444' }} /> : undefined,
+                    icon: tamperResult.alertGenerated ? <WarningOutlined style={{ color: '#ff3366' }} /> : undefined,
                   },
                 ]}
               />
@@ -168,7 +168,7 @@ export function AuditPage() {
                   </div>
                   <div>
                     <Typography.Text type="secondary">篡改后内容</Typography.Text>
-                    <Typography.Paragraph code style={{ margin: '4px 0 0', fontSize: 12, color: '#ef4444' }}>
+                    <Typography.Paragraph code style={{ margin: '4px 0 0', fontSize: 12, color: '#ff3366' }}>
                       {tamperResult.tamperedContent.slice(0, 80)}
                     </Typography.Paragraph>
                   </div>
@@ -187,12 +187,12 @@ export function AuditPage() {
 
       {/* ── Charts + Timeline ── */}
       <Row gutter={[18, 18]}>
-        <Col xs={24} xl={9}>
+        <Col xs={24} xl={8}>
           <Card className="panel-card" title="审计状态分布" variant="borderless">
             <DistributionChart items={dashboard.statusDistribution} variant="donut" />
           </Card>
         </Col>
-        <Col xs={24} xl={9}>
+        <Col xs={24} xl={10}>
           <Card className="panel-card" title="日志趋势" extra={<span className="chart-badge">审计驱动</span>} variant="borderless">
             <LineTrendChart data={dashboard.logTrend} />
           </Card>
@@ -206,7 +206,7 @@ export function AuditPage() {
 
       {/* ── Anomalous Logs (if any) ── */}
       {abnormalLogs.length > 0 && (
-        <Card className="panel-card" title={<span style={{ color: '#ef4444' }}><WarningOutlined style={{ marginRight: 8 }} />异常日志记录</span>} variant="borderless">
+        <Card className="panel-card" title={<span style={{ color: '#ff3366' }}><WarningOutlined style={{ marginRight: 8 }} />异常日志记录</span>} variant="borderless">
           <Table<LogRecord> rowKey="id" columns={columns} dataSource={abnormalLogs} pagination={false} size="small" />
         </Card>
       )}

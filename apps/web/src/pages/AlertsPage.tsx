@@ -33,9 +33,9 @@ export function AlertsPage() {
   }, []);
 
   const distribution = [
-    { label: VIEW_ALERT_LEVELS.HIGH, value: alerts.filter((item) => item.level === VIEW_ALERT_LEVELS.HIGH).length, color: '#ef4444' },
-    { label: VIEW_ALERT_LEVELS.MEDIUM, value: alerts.filter((item) => item.level === VIEW_ALERT_LEVELS.MEDIUM).length, color: '#f59e0b' },
-    { label: VIEW_ALERT_LEVELS.INFO, value: alerts.filter((item) => item.level === VIEW_ALERT_LEVELS.INFO).length, color: '#3b82f6' },
+    { label: VIEW_ALERT_LEVELS.HIGH, value: alerts.filter((item) => item.level === VIEW_ALERT_LEVELS.HIGH).length, color: '#ff3366' },
+    { label: VIEW_ALERT_LEVELS.MEDIUM, value: alerts.filter((item) => item.level === VIEW_ALERT_LEVELS.MEDIUM).length, color: '#ffaa00' },
+    { label: VIEW_ALERT_LEVELS.INFO, value: alerts.filter((item) => item.level === VIEW_ALERT_LEVELS.INFO).length, color: '#00d4ff' },
   ];
 
   const stats = useMemo(() => ({
@@ -52,22 +52,22 @@ export function AlertsPage() {
       <Row gutter={[18, 18]}>
         <Col xs={24} xl={6}>
           <Card className="metric-card" variant="borderless">
-            <Statistic title="告警总数" value={alerts.length} prefix={<BellOutlined />} valueStyle={{ color: '#0ea5e9' }} />
+            <Statistic title="告警总数" value={alerts.length} prefix={<BellOutlined />} valueStyle={{ color: '#00d4ff' }} />
           </Card>
         </Col>
         <Col xs={24} xl={6}>
           <Card className="metric-card" variant="borderless">
-            <Statistic title="待处理" value={stats.open} prefix={<WarningOutlined />} valueStyle={{ color: '#ef4444' }} />
+            <Statistic title="待处理" value={stats.open} prefix={<WarningOutlined />} valueStyle={{ color: '#ff3366' }} />
           </Card>
         </Col>
         <Col xs={24} xl={6}>
           <Card className="metric-card" variant="borderless">
-            <Statistic title="处理中" value={stats.processing} valueStyle={{ color: '#f59e0b' }} />
+            <Statistic title="处理中" value={stats.processing} valueStyle={{ color: '#ffaa00' }} />
           </Card>
         </Col>
         <Col xs={24} xl={6}>
           <Card className="metric-card" variant="borderless">
-            <Statistic title="高危占比" value={stats.highRatio} valueStyle={{ color: '#ef4444' }} />
+            <Statistic title="高危占比" value={stats.highRatio} valueStyle={{ color: '#ff3366' }} />
           </Card>
         </Col>
       </Row>

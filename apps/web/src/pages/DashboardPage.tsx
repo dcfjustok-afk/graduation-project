@@ -169,7 +169,7 @@ export function DashboardPage() {
           </Col>
           <Col xs={24} xl={9}>
             <Card className="hero-card__panel" variant="borderless">
-              <Statistic title="系统运行状态" value="正常" valueStyle={{ color: '#16a34a' }} />
+              <Statistic title="系统运行状态" value="正常" valueStyle={{ color: '#00ff88' }} />
               <Divider style={{ margin: '16px 0' }} />
               <div className="hero-card__panel-list">
                 <div>
@@ -330,7 +330,7 @@ export function DashboardPage() {
                 description: tamperResult.alertGenerated
                   ? '异常告警已自动生成'
                   : '审计完成',
-                icon: tamperResult.alertGenerated ? <WarningOutlined style={{ color: '#ef4444' }} /> : undefined,
+                icon: tamperResult.alertGenerated ? <WarningOutlined style={{ color: '#ff3366' }} /> : undefined,
               },
             ]}
           />
@@ -339,7 +339,7 @@ export function DashboardPage() {
 
       {/* ── Charts ── */}
       <Row gutter={[18, 18]}>
-        <Col xs={24} xl={8}>
+        <Col xs={24} xl={10}>
           <Card className="panel-card" title="日志趋势图" extra={<span className="chart-badge">最近 7 个时间片</span>} variant="borderless">
             <LineTrendChart data={data.logTrend} />
           </Card>
@@ -349,7 +349,7 @@ export function DashboardPage() {
             <DistributionChart items={data.statusDistribution} variant="donut" />
           </Card>
         </Col>
-        <Col xs={24} md={12} xl={8}>
+        <Col xs={24} md={12} xl={6}>
           <Card className="panel-card" title="异常等级分布" variant="borderless">
             <DistributionChart items={data.alertDistribution} variant="bars" />
           </Card>
@@ -379,7 +379,7 @@ export function DashboardPage() {
                     </div>
                     <strong>{module.progress}%</strong>
                   </div>
-                  <Progress percent={module.progress} showInfo={false} strokeColor={{ from: '#4f46e5', to: '#22c55e' }} />
+                  <Progress percent={module.progress} showInfo={false} strokeColor={{ from: '#00d4ff', to: '#00ff88' }} />
                 </div>
               ))}
             </Space>

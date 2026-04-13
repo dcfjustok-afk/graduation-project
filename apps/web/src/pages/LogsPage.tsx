@@ -105,22 +105,22 @@ export function LogsPage() {
       <Row gutter={[18, 18]}>
         <Col xs={24} md={12} xl={6}>
           <Card className="metric-card" variant="borderless">
-            <Statistic title="日志总条数" value={stats.total} prefix={<FileTextOutlined />} valueStyle={{ color: '#0ea5e9' }} />
+            <Statistic title="日志总条数" value={stats.total} prefix={<FileTextOutlined />} valueStyle={{ color: '#00d4ff' }} />
           </Card>
         </Col>
         <Col xs={24} md={12} xl={6}>
           <Card className="metric-card" variant="borderless">
-            <Statistic title="已上链/审计通过" value={stats.chained} prefix={<CheckCircleOutlined />} valueStyle={{ color: '#16a34a' }} />
+            <Statistic title="已上链/审计通过" value={stats.chained} prefix={<CheckCircleOutlined />} valueStyle={{ color: '#00ff88' }} />
           </Card>
         </Col>
         <Col xs={24} md={12} xl={6}>
           <Card className="metric-card" variant="borderless">
-            <Statistic title="待审计" value={stats.pending} prefix={<ClockCircleOutlined />} valueStyle={{ color: '#f59e0b' }} />
+            <Statistic title="待审计" value={stats.pending} prefix={<ClockCircleOutlined />} valueStyle={{ color: '#ffaa00' }} />
           </Card>
         </Col>
         <Col xs={24} md={12} xl={6}>
           <Card className="metric-card" variant="borderless">
-            <Statistic title="异常记录" value={stats.abnormal} prefix={<WarningOutlined />} valueStyle={{ color: '#ef4444' }} />
+            <Statistic title="异常记录" value={stats.abnormal} prefix={<WarningOutlined />} valueStyle={{ color: '#ff3366' }} />
           </Card>
         </Col>
       </Row>
