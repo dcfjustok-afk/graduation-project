@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>经典架构图</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1600px;
+    min-height: 1000px;
+    background: #ffffff;
+    font-family: "Microsoft YaHei", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+    padding: 40px 50px;
+  }
+  .header {
+    text-align: center;
+    margin-bottom: 36px;
+    border-bottom: 3px solid #1565c0;
+    padding-bottom: 16px;
+  }
+  .header h1 {
+    font-size: 30px;
+    color: #1565c0;
+    font-weight: 800;
+    letter-spacing: 3px;
+  }
+  .header .sub {
+    font-size: 14px;
+    color: #777;
+    margin-top: 6px;
+  }
+
+  /* Grid layout to match reference style */
+  .arch-grid {
+    display: grid;
+    grid-template-columns: 240px 100px 340px 100px 260px;
+    grid-template-rows: auto 30px auto;
+    gap: 0;
+    align-items: start;
+    justify-content: center;
+  }
+
+  /* Module containers */
+  .module {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  }
+  .module-header {
+    padding: 14px 18px;
+    font-size: 17px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .module-body {
+    padding: 16px 18px;
+  }
+  .module-tech {
+    padding: 8px 18px;
+    font-size: 12px;
+    font-weight: 600;
+    border-top: 1px solid rgba(0,0,0,0.08);
+  }
+
+  /* Component box inside module */
+  .comp {
+    background: rgba(255,255,255,0.6);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+  .comp:last-child { margin-bottom: 0; }
+  .comp-title {
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+  .comp-list {
+    font-size: 12px;
+    color: rgba(0,0,0,0.7);
+    line-height: 1.6;
+  }
+
+  /* Colors */
+  .m-agent .module-header { background: #5c6bc0; color: white; }
+  .m-agent .module-body { background: #e8eaf6; }
+  .m-agent .module-tech { background: #c5cae9; color: #283593; }
+
+  .m-server .module-header { background: #00897b; color: white; }
+  .m-server .module-body { background: #e0f2f1; }
+  .m-server .module-tech { background: #b2dfdb; color: #004d40; }
+
+  .m-chain .module-header { background: #e53935; color: white; }
+  .m-chain .module-body { background: #ffebee; }
+  .m-chain .module-tech { background: #ffcdd2; color: #b71c1c; }
+
+  .m-web .module-header { background: #1565c0; color: white; }
+  .m-web .module-body { background: #e3f2fd; }
+  .m-web .module-tech { background: #bbdefb; color: #0d47a1; }
+
+  .m-db .module-header { background: #f57f17; color: white; }
+  .m-db .module-body { background: #fff8e1; }
+  .m-db .module-tech { background: #ffecb3; color: #e65100; }
+
+  .m-shared .module-header { background: #6a1b9a; color: white; }
+  .m-shared .module-body { background: #f3e5f5; }
+  .m-shared .module-tech { background: #e1bee7; color: #4a148c; }
+
+  /* Connector arrows */
+  .connector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 4px;
+    padding-top: 60px;
+  }
+  .conn-line {
+    width: 60px;
+    height: 3px;
+    background: #bbb;
+    position: relative;
+  }
+  .conn-line::after {
+    content: "";
+    position: absolute;
+    right: -8px;
+    top: -5px;
+    border-left: 10px solid #bbb;
+    border-top: 7px solid transparent;
+    border-bottom: 7px solid transparent;
+  }
+  .conn-text {
+    font-size: 10px;
+    color: #999;
+    white-space: nowrap;
+    text-align: center;
+    font-weight: 500;
+  }
+
+  /* Second row */
+  .row2 {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 24px;
+  }
+
+  /* Data flow diagram at bottom */
+  .dataflow {
+    margin-top: 32px;
+    border: 2px solid #e0e0e0;
+    border-radius: 14px;
+    padding: 24px;
+    background: #fafafa;
+  }
+  .dataflow-title {
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  .flow-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .flow-node {
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+    white-space: nowrap;
+  }
+  .flow-arrow {
+    font-size: 18px;
+    color: #bbb;
+    font-weight: bold;
+  }
+
+  /* Tech stack box */
+  .tech-row {
+    display: flex;
+    gap: 16px;
+    margin-top: 24px;
+    justify-content: center;
+  }
+  .tech-box {
+    border: 2px solid;
+    border-radius: 12px;
+    padding: 16px 20px;
+    flex: 1;
+    max-width: 360px;
+  }
+  .tech-box-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .tech-line {
+    font-size: 12px;
+    color: #555;
+    padding: 3px 0;
+    line-height: 1.6;
+  }
+  .port { 
+    display: inline-block;
+    background: #e3f2fd;
+    color: #1565c0;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>基于区块链的可信任务日志审计系统 架构图</h1>
+  <div class="sub">Blockchain-Based Trusted Task Log Audit System — Architecture Diagram</div>
+</div>
+
+<!-- Main Architecture Grid -->
+<div class="arch-grid">
+  <!-- Agent -->
+  <div class="module m-agent">
+    <div class="module-header">🤖 日志采集 Agent</div>
+    <div class="module-body">
+      <div class="comp">
+        <div class="comp-title">FileReader</div>
+        <div class="comp-list">按偏移量读取新增日志</div>
+      </div>
+      <div class="comp">
+        <div class="comp-title">LogCollector</div>
+        <div class="comp-list">批量采集 + 封装 JSON</div>
+      </div>
+      <div class="comp">
+        <div class="comp-title">RetryQueue</div>
+        <div class="comp-list">失败重试 (最多5次)<br>指数退避 4s × retryCount</div>
+      </div>
+      <div class="comp">
+        <div class="comp-title">OffsetStore</div>
+        <div class="comp-list">偏移量持久化 + 断点续传</div>
+      </div>
+      <div class="comp">
+        <div class="comp-title">状态心跳</div>
+        <div class="comp-list">轮询间隔 1.5s<br>POST /api/agents/state</div>
+      </div>
+    </div>
+    <div class="module-tech">Node.js + TypeScript</div>
+  </div>
+
+  <!-- Arrow -->
+  <div class="connector">
+    <div class="conn-text">HTTP POST</div>
+    <div class="conn-line"></div>
+    <div class="conn-text">/api/logs</div>
+  </div>
+
+  <!-- Server -->
+  <div class="module m-server">
+    <div class="module-header">⚙️ 后端服务 Server <span class="port">:3010</span></div>
+    <div class="module-body">
+      <div style="display:flex; gap:8px;">
+        <div style="flex:1">
+          <div class="comp">
+            <div class="comp-title">接口层 Routes</div>
+            <div class="comp-list">
+              · POST /api/logs (提交)<br>
+              · GET /api/logs (查询)<br>
+              · POST /api/audits/run<br>
+              · GET /api/alerts<br>
+              · GET /api/overview<br>
+              · GET /api/health
+            </div>
+          </div>
+          <div class="comp">
+            <div class="comp-title">业务层 Services</div>
+            <div class="comp-list">
+              · 日志持久化<br>
+              · SHA-256 哈希计算<br>
+              · 审计执行引擎<br>
+              · 告警自动生成<br>
+              · 篡改实验模拟
+            </div>
+          </div>
+        </div>
+        <div style="flex:1">
+          <div class="comp">
+            <div class="comp-title">控制器 Controllers</div>
+            <div class="comp-list">
+              · submitLogController<br>
+              · auditController<br>
+              · alertController<br>
+              · overviewController<br>
+              · adminController
+            </div>
+          </div>
+          <div class="comp">
+            <div class="comp-title">Blockchain 封装</div>
+            <div class="comp-list">
+              · Ethers.js v6 客户端<br>
+              · storeLog() 写入<br>
+              · getLogsByTaskId() 读取<br>
+              · 交易确认 + 回执
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="comp" style="margin-top:8px">
+        <div class="comp-title">数据访问层 Repositories</div>
+        <div class="comp-list">logs · log_hash_records · audit_records · alerts · agent_states</div>
+      </div>
+    </div>
+    <div class="module-tech">Express 5 + TypeScript + sql.js + Ethers.js</div>
+  </div>
+
+  <!-- Arrow -->
+  <div class="connector">
+    <div class="conn-text">ethers.js</div>
+    <div class="conn-line" style="background: #e53935;"></div>
+    <div class="conn-text">JSON-RPC :8545</div>
+  </div>
+
+  <!-- Blockchain -->
+  <div class="module m-chain">
+    <div class="module-header">⛓️ 区块链层 <span class="port" style="background:#ffcdd2;color:#b71c1c">:8545</span></div>
+    <div class="module-body">
+      <div class="comp">
+        <div class="comp-title">LogRegistry 合约</div>
+        <div class="comp-list">
+          <strong>写入:</strong><br>
+          storeLog(taskId, logHash)<br>
+          → 存储 {taskId, logHash,<br>
+          &nbsp;&nbsp;block.timestamp, msg.sender}<br>
+          → emit LogStored 事件
+        </div>
+      </div>
+      <div class="comp">
+        <div class="comp-title">查询接口</div>
+        <div class="comp-list">
+          getLog(recordId)<br>
+          getLogsByTaskId(taskId)<br>
+          getTaskLogCount(taskId)<br>
+          getLogCount()
+        </div>
+      </div>
+      <div class="comp">
+        <div class="comp-title">权限控制</div>
+        <div class="comp-list">
+          OpenZeppelin AccessControl<br>
+          LOGGER_ROLE 写入权限<br>
+          DEFAULT_ADMIN_ROLE 管理
+        </div>
+      </div>
+    </div>
+    <div class="module-tech">Hardhat + Solidity + OpenZeppelin</div>
+  </div>
+</div>
+
+<!-- Row 2: Web + DB + Shared -->
+<div class="row2">
+  <!-- Web -->
+  <div class="module m-web" style="width: 420px">
+    <div class="module-header">🖥️ 前端展示 Web <span class="port">:5173</span></div>
+    <div class="module-body">
+      <div style="display:flex; gap:8px;">
+        <div style="flex:1">
+          <div class="comp">
+            <div class="comp-title">页面</div>
+            <div class="comp-list">
+              📊 Dashboard 总览<br>
+              📝 Logs 日志列表<br>
+              🔍 Audit 审计结果<br>
+              🚨 Alerts 告警管理<br>
+              🔧 Log Generator
+            </div>
+          </div>
+        </div>
+        <div style="flex:1">
+          <div class="comp">
+            <div class="comp-title">API 层</div>
+            <div class="comp-list">
+              httpClient (fetch 封装)<br>
+              realClient (类型端点)<br>
+              dataService (聚合)<br>
+              mappers (模型转换)
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="module-tech">React 19 + TypeScript + Ant Design 5 + Vite 7</div>
+  </div>
+
+  <!-- DB -->
+  <div class="module m-db" style="width: 360px">
+    <div class="module-header">💾 SQLite 数据库</div>
+    <div class="module-body">
+      <div style="display:flex; gap:8px;">
+        <div style="flex:1">
+          <div class="comp">
+            <div class="comp-list">
+              <strong>logs</strong> — 日志原文与元数据<br>
+              <strong>log_hash_records</strong> — 链上存证记录<br>
+              <strong>audit_records</strong> — 审计核验结果
+            </div>
+          </div>
+        </div>
+        <div style="flex:1">
+          <div class="comp">
+            <div class="comp-list">
+              <strong>alerts</strong> — 异常告警信息<br>
+              <strong>agent_states</strong> — Agent 状态
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="module-tech">sql.js (WebAssembly SQLite) · storage/sqlite/app.db</div>
+  </div>
+
+  <!-- Shared -->
+  <div class="module m-shared" style="width: 260px">
+    <div class="module-header">📦 共享模块</div>
+    <div class="module-body">
+      <div class="comp">
+        <div class="comp-list">
+          · ApiResponse&lt;T&gt; 统一响应<br>
+          · ServerLogRecord 类型<br>
+          · ServerAuditRecord 类型<br>
+          · ServerAlertRecord 类型<br>
+          · ServerAgentStateRecord<br>
+          · 枚举: LogStatus / AuditStatus /<br>
+          &nbsp;&nbsp;AgentRunStatus / AlertSeverity
+        </div>
+      </div>
+    </div>
+    <div class="module-tech">packages/shared · 前后端共用</div>
+  </div>
+</div>
+
+<!-- Data Flow -->
+<div class="dataflow">
+  <div class="dataflow-title">核心数据流（日志采集 → 存证 → 审计 → 告警 完整闭环）</div>
+  <div class="flow-row">
+    <div class="flow-node" style="background:#5c6bc0">📄 日志文件</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node" style="background:#5c6bc0">🤖 Agent 增量读取</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node" style="background:#00897b">⚙️ Server 接收</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node" style="background:#f57f17">💾 SQLite 写入</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node" style="background:#00897b">#️⃣ SHA-256 哈希</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node" style="background:#e53935">⛓️ 链上存证</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node" style="background:#7b1fa2">🔍 审计比对</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node" style="background:#e53935">🚨 异常告警</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node" style="background:#1565c0">🖥️ 前端展示</div>
+  </div>
+</div>
+
+<!-- Tech Stack -->
+<div class="tech-row">
+  <div class="tech-box" style="border-color: #1565c0;">
+    <div class="tech-box-title" style="color:#1565c0">🔧 技术栈总结</div>
+    <div class="tech-line"><strong>FE</strong> (<span class="port">5173</span>) React 19 + TS + Vite 7 + Ant Design 5</div>
+    <div class="tech-line"><strong>BE</strong> (<span class="port">3010</span>) Express 5 + TS + sql.js + Ethers.js v6</div>
+    <div class="tech-line"><strong>Agent</strong> Node.js + TypeScript (增量轮询采集)</div>
+    <div class="tech-line"><strong>Contract</strong> (<span class="port">8545</span>) Solidity + Hardhat + OpenZeppelin</div>
+  </div>
+  <div class="tech-box" style="border-color: #00897b;">
+    <div class="tech-box-title" style="color:#00897b">🔄 通信方式</div>
+    <div class="tech-line">Agent → Server: HTTP POST JSON</div>
+    <div class="tech-line">Server → 区块链: Ethers.js JSON-RPC</div>
+    <div class="tech-line">前端 → Server: HTTP REST API</div>
+    <div class="tech-line">Server → SQLite: sql.js 内存读写</div>
+  </div>
+  <div class="tech-box" style="border-color: #e53935;">
+    <div class="tech-box-title" style="color:#e53935">🔐 安全与可信</div>
+    <div class="tech-line">SHA-256 哈希保证日志完整性</div>
+    <div class="tech-line">区块链不可篡改保证存证可信</div>
+    <div class="tech-line">三方哈希交叉验证 (本地/DB/链上)</div>
+    <div class="tech-line">篡改实验证明系统有效性</div>
+  </div>
+</div>
+
+</body>
+</html>
