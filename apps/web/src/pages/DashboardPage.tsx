@@ -164,7 +164,7 @@ export function DashboardPage() {
                 className="btn-glow">
                 查看日志流转
               </Button>
-              <Button ghost size="large" onClick={() => navigate('/alerts')}>
+              <Button size="large" className="btn-outline-glow" onClick={() => navigate('/alerts')}>
                 查看异常告警
               </Button>
             </Space>
