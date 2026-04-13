@@ -1,12 +1,16 @@
 import {
   AlertOutlined,
+  ApiOutlined,
   BlockOutlined,
-  EditOutlined,
+  CloudServerOutlined,
   DashboardOutlined,
+  EditOutlined,
   FileTextOutlined,
+  LinkOutlined,
+  NumberOutlined,
   SafetyCertificateOutlined,
 } from '@ant-design/icons';
-import { Layout, Menu, Space, Tag, Typography } from 'antd';
+import { Layout, Menu, Space, Tag } from 'antd';
 import type { MenuProps } from 'antd';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
@@ -28,10 +32,13 @@ export function MainLayout() {
     <Layout className="app-shell">
       <Sider breakpoint="lg" collapsedWidth={88} width={272} className="app-sider">
         <div className="brand-block">
-          <div className="brand-logo"><BlockOutlined /></div>
+          <div className="brand-logo">
+            <BlockOutlined />
+            <span className="brand-logo__ring" />
+          </div>
           <div>
-            <Typography.Text className="brand-title">可信任务日志审计</Typography.Text>
-            <Typography.Text className="brand-subtitle">Blockchain · Audit</Typography.Text>
+            <div className="brand-title">可信日志审计</div>
+            <div className="brand-subtitle">BLOCKCHAIN AUDIT</div>
           </div>
         </div>
 
@@ -45,34 +52,63 @@ export function MainLayout() {
         />
 
         <div className="sider-footer">
-          <div className="sider-footer__label">SYSTEM STATUS</div>
-          <Space wrap>
-            <Tag color="success">
-              运行中
-            </Tag>
-            <Tag color="purple">
-              链上存证
-            </Tag>
-          </Space>
+          <div className="sider-footer__label">CHAIN STATUS</div>
+          <div className="sider-footer__chain">
+            <div className="chain-node-mini">
+              <span className="chain-node-mini__dot chain-node-mini__dot--active" />
+              <span>Hardhat</span>
+            </div>
+            <div className="chain-node-mini">
+              <span className="chain-node-mini__dot chain-node-mini__dot--active" />
+              <span>Agent</span>
+            </div>
+            <div className="chain-node-mini">
+              <span className="chain-node-mini__dot chain-node-mini__dot--active" />
+              <span>Audit</span>
+            </div>
+          </div>
         </div>
       </Sider>
 
       <Layout>
         <Header className="app-header">
-          <div>
-            <Typography.Title level={4} style={{ margin: 0, color: '#e2e8f0' }}>
-              区块链可信日志审计平台
-            </Typography.Title>
-            <Typography.Text style={{ color: '#4a6fa5', fontSize: 12 }}>
-              日志采集 → 链下存储 → 链上存证 → 审计核验 → 异常告警
-            </Typography.Text>
+          <div className="header-chain-bar">
+            <div className="header-chain-stat">
+              <NumberOutlined className="header-chain-stat__icon" />
+              <div>
+                <span className="header-chain-stat__label">区块高度</span>
+                <span className="header-chain-stat__value">#127</span>
+              </div>
+            </div>
+            <div className="header-chain-divider" />
+            <div className="header-chain-stat">
+              <CloudServerOutlined className="header-chain-stat__icon" />
+              <div>
+                <span className="header-chain-stat__label">网络节点</span>
+                <span className="header-chain-stat__value">Hardhat Local</span>
+              </div>
+            </div>
+            <div className="header-chain-divider" />
+            <div className="header-chain-stat">
+              <ApiOutlined className="header-chain-stat__icon" />
+              <div>
+                <span className="header-chain-stat__label">功能模块</span>
+                <span className="header-chain-stat__value">5 Active</span>
+              </div>
+            </div>
+            <div className="header-chain-divider" />
+            <div className="header-chain-stat">
+              <LinkOutlined className="header-chain-stat__icon" />
+              <div>
+                <span className="header-chain-stat__label">最新哈希</span>
+                <span className="header-chain-stat__value hash-mono">0x4f3a...8e2b</span>
+              </div>
+            </div>
           </div>
-          <Space wrap>
-            <Tag color="success" className="header-tag">
-              系统运行中
-            </Tag>
-            <Tag color="blue" className="header-tag">
-              Hardhat 本地链
+          <Space>
+            <Tag className="header-beacon">
+              <span className="beacon-dot" />
+              已连接
             </Tag>
           </Space>
         </Header>

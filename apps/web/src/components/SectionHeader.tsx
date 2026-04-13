@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Space, Typography } from 'antd';
+import { Typography } from 'antd';
 
 interface SectionHeaderProps {
   title: string;
@@ -10,13 +10,16 @@ interface SectionHeaderProps {
 export function SectionHeader({ title, subtitle, extra }: SectionHeaderProps) {
   return (
     <div className="section-header">
-      <Space direction="vertical" size={4}>
-        <Typography.Title level={2} className="page-title">
-          {title}
-        </Typography.Title>
+      <div className="section-header__left">
+        <div className="section-header__title-row">
+          <div className="section-header__accent-bar" />
+          <Typography.Title level={2} className="page-title">
+            {title}
+          </Typography.Title>
+        </div>
         <Typography.Paragraph className="page-subtitle">{subtitle}</Typography.Paragraph>
-      </Space>
-      {extra ? <div>{extra}</div> : null}
+      </div>
+      {extra ? <div className="section-header__actions">{extra}</div> : null}
     </div>
   );
 }
