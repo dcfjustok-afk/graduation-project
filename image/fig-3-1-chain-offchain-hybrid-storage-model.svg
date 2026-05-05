@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#2F73B7"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#2E8B57"/>
+    </marker>
+    <marker id="arrow-orange" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#D07A1D"/>
+    </marker>
+    <style>
+      text {
+        font-family: "Microsoft YaHei", "SimHei", "Noto Sans CJK SC", Arial, sans-serif;
+        fill: #1f2937;
+      }
+      .region-title {
+        font-size: 25px;
+        font-weight: 700;
+      }
+      .module-title {
+        font-size: 24px;
+        font-weight: 700;
+      }
+      .card-title {
+        font-size: 19px;
+        font-weight: 700;
+      }
+      .field {
+        font-size: 17px;
+      }
+      .field-small {
+        font-size: 16px;
+      }
+      .tiny {
+        font-size: 14px;
+      }
+      .arrow-label {
+        font-size: 17px;
+        font-weight: 600;
+        fill: #334155;
+      }
+      .audit-title {
+        font-size: 23px;
+        font-weight: 700;
+        fill: #9A5A0A;
+      }
+      .audit-text {
+        font-size: 21px;
+        fill: #3f3428;
+      }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1600" height="900" fill="#FFFFFF"/>
+
+  <g id="diagram" transform="translate(0,-22)">
+
+  <!-- 链下存储区域 -->
+  <rect x="50" y="88" width="530" height="620" rx="10" fill="#F4F9FF" stroke="#2F73B7" stroke-width="2.5"/>
+  <path d="M50 98 Q50 88 60 88 H570 Q580 88 580 98 V140 H50 Z" fill="#E4F0FF"/>
+  <text class="region-title" x="315" y="124" text-anchor="middle" fill="#1D5E9E">链下存储 SQLite</text>
+
+  <text class="field-small" x="315" y="151" text-anchor="middle" fill="#1D5E9E">日志原文 -&gt; SQLite logs</text>
+
+  <g id="source-log">
+    <path d="M76 166 H145 L164 185 V220 H76 Z" fill="#FFFFFF" stroke="#2F73B7" stroke-width="2"/>
+    <path d="M145 166 V185 H164" fill="none" stroke="#2F73B7" stroke-width="2"/>
+    <text class="tiny" x="120" y="197" text-anchor="middle" fill="#1D5E9E">日志原文</text>
+  </g>
+
+  <g id="table-logs">
+    <rect x="198" y="158" width="335" height="84" rx="8" fill="#FFFFFF" stroke="#8AB7E6" stroke-width="2"/>
+    <rect x="198" y="158" width="335" height="31" rx="8" fill="#2F73B7"/>
+    <path d="M198 181 H533 V189 H198 Z" fill="#2F73B7"/>
+    <text class="card-title" x="218" y="180" fill="#FFFFFF">logs</text>
+    <text class="field-small" x="218" y="213">日志原文、来源路径、日志级别、采集时间</text>
+  </g>
+
+  <g id="table-log-hash-records">
+    <rect x="88" y="256" width="445" height="102" rx="8" fill="#FFFFFF" stroke="#8AB7E6" stroke-width="2"/>
+    <rect x="88" y="256" width="445" height="32" rx="8" fill="#2F73B7"/>
+    <path d="M88 280 H533 V288 H88 Z" fill="#2F73B7"/>
+    <text class="card-title" x="110" y="279" fill="#FFFFFF">log_hash_records</text>
+    <text class="field" x="110" y="313">日志哈希、合约地址、交易哈希、区块号</text>
+    <text class="field" x="110" y="339">上链状态</text>
+  </g>
+
+  <g id="table-audit-records">
+    <rect x="88" y="372" width="445" height="88" rx="8" fill="#FFFFFF" stroke="#8AB7E6" stroke-width="2"/>
+    <rect x="88" y="372" width="445" height="32" rx="8" fill="#2F73B7"/>
+    <path d="M88 396 H533 V404 H88 Z" fill="#2F73B7"/>
+    <text class="card-title" x="110" y="395" fill="#FFFFFF">audit_records</text>
+    <text class="field" x="110" y="430">审计状态、expectedHash、actualHash、审计时间</text>
+  </g>
+
+  <g id="table-alerts">
+    <rect x="88" y="474" width="445" height="78" rx="8" fill="#FFFFFF" stroke="#8AB7E6" stroke-width="2"/>
+    <rect x="88" y="474" width="445" height="32" rx="8" fill="#2F73B7"/>
+    <path d="M88 498 H533 V506 H88 Z" fill="#2F73B7"/>
+    <text class="card-title" x="110" y="497" fill="#FFFFFF">alerts</text>
+    <text class="field" x="110" y="531">hash_mismatch 告警、关联日志、关联审计</text>
+  </g>
+
+  <g id="table-agent-states">
+    <rect x="88" y="566" width="445" height="86" rx="8" fill="#FFFFFF" stroke="#8AB7E6" stroke-width="2"/>
+    <rect x="88" y="566" width="445" height="32" rx="8" fill="#2F73B7"/>
+    <path d="M88 590 H533 V598 H88 Z" fill="#2F73B7"/>
+    <text class="card-title" x="110" y="589" fill="#FFFFFF">agent_states</text>
+    <text class="field" x="110" y="624">Agent 偏移量、心跳时间、同步状态</text>
+  </g>
+
+  <path d="M164 193 H198" stroke="#2F73B7" stroke-width="2.6" fill="none" marker-end="url(#arrow-blue)"/>
+
+  <!-- Server 与哈希计算区域 -->
+  <g id="server">
+    <rect x="650" y="158" width="300" height="124" rx="8" fill="#F8FAFC" stroke="#475569" stroke-width="2.5"/>
+    <rect x="650" y="158" width="300" height="42" rx="8" fill="#E2E8F0"/>
+    <path d="M650 192 H950 V200 H650 Z" fill="#E2E8F0"/>
+    <text class="module-title" x="800" y="187" text-anchor="middle">Server 后端服务</text>
+    <text class="field" x="680" y="228">读取 logs.log_content</text>
+    <text class="field" x="680" y="255">写入链下记录与链上存证</text>
+  </g>
+
+  <g id="sha">
+    <rect x="680" y="338" width="240" height="86" rx="8" fill="#FFF4E5" stroke="#D07A1D" stroke-width="2.5"/>
+    <text class="module-title" x="800" y="374" text-anchor="middle" fill="#9A5A0A">SHA-256</text>
+    <text class="field" x="800" y="402" text-anchor="middle" fill="#9A5A0A">哈希计算</text>
+  </g>
+
+  <g id="loghash">
+    <rect x="700" y="480" width="200" height="54" rx="27" fill="#FFF8ED" stroke="#D07A1D" stroke-width="2.5"/>
+    <text class="module-title" x="800" y="516" text-anchor="middle" fill="#9A5A0A">logHash</text>
+  </g>
+
+  <g id="tx-receipt">
+    <rect x="625" y="598" width="370" height="74" rx="10" fill="#FFFFFF" stroke="#8AB7E6" stroke-width="2"/>
+    <text class="field-small" x="810" y="625" text-anchor="middle" fill="#2F73B7">transaction_hash、block_number</text>
+    <text class="field-small" x="810" y="649" text-anchor="middle" fill="#2F73B7">contract_address -&gt; log_hash_records</text>
+  </g>
+
+  <!-- 链上存证区域 -->
+  <rect x="1020" y="88" width="530" height="620" rx="10" fill="#F2FBF5" stroke="#2E8B57" stroke-width="2.5"/>
+  <path d="M1020 98 Q1020 88 1030 88 H1540 Q1550 88 1550 98 V140 H1020 Z" fill="#E1F5E8"/>
+  <text class="region-title" x="1285" y="124" text-anchor="middle" fill="#1F7A46">链上存证 LogRegistry</text>
+
+  <g id="contract">
+    <rect x="1088" y="166" width="394" height="250" rx="8" fill="#FFFFFF" stroke="#56B87A" stroke-width="2.5"/>
+    <rect x="1088" y="166" width="394" height="46" rx="8" fill="#2E8B57"/>
+    <path d="M1088 202 H1482 V212 H1088 Z" fill="#2E8B57"/>
+    <text class="module-title" x="1285" y="199" text-anchor="middle" fill="#FFFFFF">LogRegistry 智能合约</text>
+    <line x1="1128" y1="268" x2="1442" y2="268" stroke="#D8EEE0" stroke-width="2"/>
+    <line x1="1128" y1="313" x2="1442" y2="313" stroke="#D8EEE0" stroke-width="2"/>
+    <line x1="1128" y1="358" x2="1442" y2="358" stroke="#D8EEE0" stroke-width="2"/>
+    <text class="field" x="1148" y="246" fill="#1F7A46">taskId</text>
+    <text class="field" x="1148" y="291" fill="#1F7A46">logHash</text>
+    <text class="field" x="1148" y="336" fill="#1F7A46">createdAt</text>
+    <text class="field" x="1148" y="381" fill="#1F7A46">submitter</text>
+  </g>
+
+  <g id="blocks" opacity="0.95">
+    <rect x="1116" y="526" width="92" height="66" rx="6" fill="#E8F7EE" stroke="#56B87A" stroke-width="2"/>
+    <rect x="1239" y="526" width="92" height="66" rx="6" fill="#E8F7EE" stroke="#56B87A" stroke-width="2"/>
+    <rect x="1362" y="526" width="92" height="66" rx="6" fill="#E8F7EE" stroke="#56B87A" stroke-width="2"/>
+    <line x1="1208" y1="559" x2="1239" y2="559" stroke="#2E8B57" stroke-width="3"/>
+    <line x1="1331" y1="559" x2="1362" y2="559" stroke="#2E8B57" stroke-width="3"/>
+    <circle cx="1162" cy="559" r="11" fill="#56B87A"/>
+    <circle cx="1285" cy="559" r="11" fill="#56B87A"/>
+    <circle cx="1408" cy="559" r="11" fill="#56B87A"/>
+    <text class="field-small" x="1285" y="628" text-anchor="middle" fill="#1F7A46">区块链存证结构</text>
+  </g>
+
+  <!-- 数据流箭头 -->
+  <path d="M533 200 C585 200 600 218 650 218" stroke="#2F73B7" stroke-width="3" fill="none" marker-end="url(#arrow-blue)"/>
+
+  <path d="M800 282 V338" stroke="#D07A1D" stroke-width="3" fill="none" marker-end="url(#arrow-orange)"/>
+  <text class="arrow-label" x="822" y="318" fill="#D07A1D">log_content</text>
+
+  <path d="M800 424 V480" stroke="#D07A1D" stroke-width="3" fill="none" marker-end="url(#arrow-orange)"/>
+  <text class="arrow-label" x="822" y="459" fill="#D07A1D">logHash</text>
+
+  <path d="M900 507 C980 507 1000 303 1088 303" stroke="#D07A1D" stroke-width="3" fill="none" marker-end="url(#arrow-orange)"/>
+  <rect x="926" y="340" width="88" height="52" rx="8" fill="#FFFFFF"/>
+  <text class="tiny" x="970" y="362" text-anchor="middle" fill="#D07A1D">logHash -&gt;</text>
+  <text class="tiny" x="970" y="384" text-anchor="middle" fill="#D07A1D">LogRegistry</text>
+
+  <path d="M700 507 C622 500 614 325 533 325" stroke="#2F73B7" stroke-width="3" fill="none" marker-end="url(#arrow-blue)"/>
+  <rect x="590" y="432" width="206" height="30" rx="6" fill="#FFFFFF"/>
+  <text class="field-small" x="693" y="453" text-anchor="middle" fill="#2F73B7">logHash 写入链下记录</text>
+
+  <path d="M1088 416 H1000 V635 H995" stroke="#2F73B7" stroke-width="3" stroke-dasharray="9 7" fill="none" marker-end="url(#arrow-blue)"/>
+  <path d="M625 635 H600 V307 H533" stroke="#2F73B7" stroke-width="3" stroke-dasharray="9 7" fill="none" marker-end="url(#arrow-blue)"/>
+
+  <!-- 审计说明 -->
+  <g id="audit">
+    <rect x="50" y="735" width="1500" height="120" rx="10" fill="#FFF8ED" stroke="#D07A1D" stroke-width="2.5"/>
+    <rect x="75" y="760" width="126" height="44" rx="22" fill="#FFE8C2" stroke="#D07A1D" stroke-width="2"/>
+    <text class="audit-title" x="138" y="789" text-anchor="middle">审计阶段</text>
+    <text class="audit-text" x="230" y="782">
+      actualHash = 重新计算日志原文；expectedHash = 数据库哈希；onChainHash = 链上哈希；
+    </text>
+    <text class="audit-text" x="230" y="819">
+      三方一致则 passed，不一致则 failed
+    </text>
+  </g>
+  </g>
+</svg>

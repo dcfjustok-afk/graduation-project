@@ -1,0 +1,197 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <title>三方哈希比对流程</title>
+  <defs>
+    <marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#2563EB"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#16A34A"/>
+    </marker>
+    <marker id="arrow-red" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#DC2626"/>
+    </marker>
+    <marker id="arrow-amber" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#B45309"/>
+    </marker>
+    <filter id="card-shadow" x="-6%" y="-12%" width="112%" height="130%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#0F172A" flood-opacity="0.10"/>
+    </filter>
+    <style>
+      text {
+        font-family: "Microsoft YaHei", "SimHei", "Noto Sans CJK SC", Arial, sans-serif;
+        fill: #1E293B;
+      }
+      .section-label {
+        font-size: 18px;
+        font-weight: 700;
+        fill: #475569;
+      }
+      .card-title {
+        font-size: 24px;
+        font-weight: 700;
+        fill: #0F172A;
+      }
+      .card-subtitle {
+        font-size: 17px;
+        font-weight: 700;
+        fill: #334155;
+      }
+      .body {
+        font-size: 17px;
+        fill: #334155;
+      }
+      .body-small {
+        font-size: 16px;
+        fill: #334155;
+      }
+      .code {
+        font-family: Consolas, "Microsoft YaHei", monospace;
+        font-size: 17px;
+        fill: #1E293B;
+      }
+      .code-small {
+        font-family: Consolas, "Microsoft YaHei", monospace;
+        font-size: 15px;
+        fill: #334155;
+      }
+      .label {
+        font-size: 15px;
+        font-weight: 700;
+        fill: #64748B;
+      }
+      .badge {
+        font-size: 16px;
+        font-weight: 700;
+        fill: #FFFFFF;
+      }
+      .result-title {
+        font-size: 25px;
+        font-weight: 800;
+      }
+      .result-label {
+        font-size: 16px;
+        font-weight: 700;
+      }
+      .alert-title {
+        font-size: 22px;
+        font-weight: 800;
+        fill: #991B1B;
+      }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1600" height="900" fill="#FFFFFF"/>
+
+  <rect x="68" y="48" width="1464" height="276" rx="10" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text class="section-label" x="96" y="79">三方独立输入来源</text>
+
+  <!-- 数据库哈希 -->
+  <g id="expected-hash" filter="url(#card-shadow)">
+    <rect x="96" y="106" width="416" height="178" rx="8" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/>
+    <rect x="96" y="106" width="416" height="54" rx="8" fill="#DBEAFE"/>
+    <rect x="96" y="152" width="416" height="8" fill="#DBEAFE"/>
+    <circle cx="128" cy="133" r="16" fill="#2563EB"/>
+    <text class="badge" x="128" y="138" text-anchor="middle">1</text>
+    <text class="card-title" x="154" y="140">数据库哈希 expectedHash</text>
+    <text class="label" x="126" y="192">来源</text>
+    <text class="code" x="184" y="192">log_hash_records.log_hash</text>
+    <text class="label" x="126" y="234">说明</text>
+    <text class="body" x="184" y="234">日志提交阶段生成并保存</text>
+  </g>
+
+  <!-- 重算哈希 -->
+  <g id="actual-hash" filter="url(#card-shadow)">
+    <rect x="592" y="106" width="416" height="178" rx="8" fill="#ECFEFF" stroke="#0891B2" stroke-width="2"/>
+    <rect x="592" y="106" width="416" height="54" rx="8" fill="#CFFAFE"/>
+    <rect x="592" y="152" width="416" height="8" fill="#CFFAFE"/>
+    <circle cx="624" cy="133" r="16" fill="#0891B2"/>
+    <text class="badge" x="624" y="138" text-anchor="middle">2</text>
+    <text class="card-title" x="650" y="140">重算哈希 actualHash</text>
+    <text class="label" x="622" y="192">来源</text>
+    <text class="code" x="680" y="192">审计时读取 logs.log_content</text>
+    <text class="label" x="622" y="234">说明</text>
+    <text class="body" x="680" y="234">对当前日志原文重新计算 SHA-256</text>
+  </g>
+
+  <!-- 链上哈希 -->
+  <g id="onchain-hash" filter="url(#card-shadow)">
+    <rect x="1088" y="106" width="416" height="178" rx="8" fill="#F5F3FF" stroke="#7C3AED" stroke-width="2"/>
+    <rect x="1088" y="106" width="416" height="54" rx="8" fill="#EDE9FE"/>
+    <rect x="1088" y="152" width="416" height="8" fill="#EDE9FE"/>
+    <circle cx="1120" cy="133" r="16" fill="#7C3AED"/>
+    <text class="badge" x="1120" y="138" text-anchor="middle">3</text>
+    <text class="card-title" x="1146" y="140">链上哈希 onChainHash</text>
+    <text class="label" x="1118" y="192">来源</text>
+    <text class="code-small" x="1176" y="192">LogRegistry.getLog 或 getLogsByTaskId</text>
+    <text class="label" x="1118" y="234">说明</text>
+    <text class="body" x="1176" y="234">链上保存的日志哈希摘要</text>
+  </g>
+
+  <!-- 输入汇聚 -->
+  <path d="M304 284 V348 C304 376 386 390 520 390" fill="none" stroke="#2563EB" stroke-width="3" marker-end="url(#arrow-blue)"/>
+  <path d="M800 284 V351" fill="none" stroke="#0891B2" stroke-width="3" marker-end="url(#arrow-blue)"/>
+  <path d="M1296 284 V348 C1296 376 1214 390 1080 390" fill="none" stroke="#7C3AED" stroke-width="3" marker-end="url(#arrow-blue)"/>
+
+  <!-- 哈希比对器 -->
+  <g id="hash-comparator" filter="url(#card-shadow)">
+    <rect x="520" y="351" width="560" height="154" rx="10" fill="#FFFFFF" stroke="#0F172A" stroke-width="2.5"/>
+    <rect x="546" y="371" width="154" height="34" rx="17" fill="#0F172A"/>
+    <text class="badge" x="623" y="394" text-anchor="middle">系统审计核心</text>
+    <text class="card-title" x="800" y="403" text-anchor="middle">哈希比对器</text>
+    <line x1="560" y1="423" x2="1040" y2="423" stroke="#CBD5E1" stroke-width="1.5"/>
+    <text class="card-subtitle" x="800" y="453" text-anchor="middle">三方比对：数据库记录、日志原文、链上存证</text>
+    <text class="code" x="800" y="482" text-anchor="middle">expectedHash  ⇔  actualHash  ⇔  onChainHash</text>
+  </g>
+
+  <!-- 结果分支 -->
+  <path d="M800 505 V546" fill="none" stroke="#475569" stroke-width="3"/>
+  <path d="M800 546 H304 V583" fill="none" stroke="#16A34A" stroke-width="3" marker-end="url(#arrow-green)"/>
+  <path d="M800 546 V583" fill="none" stroke="#DC2626" stroke-width="3" marker-end="url(#arrow-red)"/>
+  <path d="M800 546 H1296 V583" fill="none" stroke="#B45309" stroke-width="3" marker-end="url(#arrow-amber)"/>
+
+  <!-- passed -->
+  <g id="passed-result" filter="url(#card-shadow)">
+    <rect x="96" y="583" width="416" height="154" rx="8" fill="#F0FDF4" stroke="#16A34A" stroke-width="2.2"/>
+    <rect x="116" y="603" width="104" height="36" rx="18" fill="#16A34A"/>
+    <text class="badge" x="168" y="627" text-anchor="middle">passed</text>
+    <text class="result-title" x="250" y="628" fill="#166534">一致通过</text>
+    <text class="result-label" x="126" y="669" fill="#166534">条件：</text>
+    <text class="code-small" x="184" y="669">expectedHash = actualHash = onChainHash</text>
+    <text class="result-label" x="126" y="704" fill="#166534">说明：</text>
+    <text class="body-small" x="184" y="704">日志内容、数据库记录、链上存证一致</text>
+  </g>
+
+  <!-- failed -->
+  <g id="failed-result" filter="url(#card-shadow)">
+    <rect x="592" y="583" width="416" height="154" rx="8" fill="#FEF2F2" stroke="#DC2626" stroke-width="2.2"/>
+    <rect x="612" y="603" width="96" height="36" rx="18" fill="#DC2626"/>
+    <text class="badge" x="660" y="627" text-anchor="middle">failed</text>
+    <text class="result-title" x="738" y="628" fill="#991B1B">比对失败</text>
+    <text class="result-label" x="622" y="669" fill="#991B1B">条件：</text>
+    <text class="body-small" x="680" y="669">任意哈希不一致</text>
+    <text class="result-label" x="622" y="704" fill="#991B1B">说明：</text>
+    <text class="body-small" x="680" y="696">生成 failed 审计记录</text>
+    <text class="body-small" x="680" y="722">触发 hash_mismatch 告警</text>
+  </g>
+
+  <!-- pending -->
+  <g id="pending-result" filter="url(#card-shadow)">
+    <rect x="1088" y="583" width="416" height="154" rx="8" fill="#FFFBEB" stroke="#B45309" stroke-width="2.2"/>
+    <rect x="1108" y="603" width="108" height="36" rx="18" fill="#B45309"/>
+    <text class="badge" x="1162" y="627" text-anchor="middle">pending</text>
+    <text class="result-title" x="1250" y="628" fill="#92400E">待确认</text>
+    <text class="result-label" x="1118" y="669" fill="#92400E">条件：</text>
+    <text class="body-small" x="1176" y="669">链上记录缺失、合约不可用或证据不完整</text>
+    <text class="result-label" x="1118" y="704" fill="#92400E">说明：</text>
+    <text class="body-small" x="1176" y="704">审计结论待确认</text>
+  </g>
+
+  <!-- 告警节点 -->
+  <path d="M800 737 V773" fill="none" stroke="#DC2626" stroke-width="3" marker-end="url(#arrow-red)"/>
+  <g id="hash-mismatch-alert" filter="url(#card-shadow)">
+    <rect x="604" y="773" width="392" height="54" rx="8" fill="#FEE2E2" stroke="#DC2626" stroke-width="2.2"/>
+    <circle cx="636" cy="800" r="15" fill="#DC2626"/>
+    <text class="badge" x="636" y="806" text-anchor="middle">!</text>
+    <text class="alert-title" x="800" y="808" text-anchor="middle">alerts 表：hash_mismatch</text>
+  </g>
+</svg>
