@@ -5,10 +5,14 @@ import { AuditPage } from '../pages/AuditPage';
 import { DashboardPage } from '../pages/DashboardPage';
 import { LogGeneratorPage } from '../pages/LogGeneratorPage';
 import { LogsPage } from '../pages/LogsPage';
+import { ThesisAuditAlertPage } from '../pages/ThesisAuditAlertPage';
+import { ThesisDashboardPage } from '../pages/ThesisDashboardPage';
 
 export function AppRouter() {
   return (
     <Routes>
+      <Route path="/thesis-dashboard" element={<ThesisDashboardPage />} />
+      <Route path="/thesis-audit-alert" element={<ThesisAuditAlertPage />} />
       <Route element={<MainLayout />}>
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/dashboard" element={<DashboardPage />} />
