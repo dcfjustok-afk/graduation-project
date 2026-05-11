@@ -9,3 +9,4 @@ __pycache__/
 *.py[cod]
 output/mcp-*.err
 output/mcp-*.out
+.codex-run/
