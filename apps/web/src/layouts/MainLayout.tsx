@@ -44,7 +44,6 @@ export function MainLayout() {
 
         <Menu
           mode="inline"
-          theme="dark"
           selectedKeys={[location.pathname]}
           items={menuItems}
           className="side-menu"

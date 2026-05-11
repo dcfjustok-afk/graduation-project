@@ -86,12 +86,12 @@ export function LineTrendChart({ data }: LineTrendChartProps) {
       >
         <defs>
           <linearGradient id={`grad-primary-${uid}`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#00d4ff" stopOpacity="0.28" />
-            <stop offset="100%" stopColor="#00d4ff" stopOpacity="0.02" />
+            <stop offset="0%" stopColor="#2563eb" stopOpacity="0.18" />
+            <stop offset="100%" stopColor="#2563eb" stopOpacity="0.02" />
           </linearGradient>
           <linearGradient id={`grad-danger-${uid}`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#ff3366" stopOpacity="0.2" />
-            <stop offset="100%" stopColor="#ff3366" stopOpacity="0.01" />
+            <stop offset="0%" stopColor="#ef4444" stopOpacity="0.16" />
+            <stop offset="100%" stopColor="#ef4444" stopOpacity="0.01" />
           </linearGradient>
           <filter id={`glow-p-${uid}`}>
             <feGaussianBlur stdDeviation="2" result="blur" />

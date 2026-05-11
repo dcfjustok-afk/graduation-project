@@ -117,29 +117,29 @@ export function AuditPage() {
       <Row gutter={[18, 18]}>
         <Col xs={24} md={12} xl={6}>
           <Card className="metric-card" variant="borderless">
-            <Statistic title="日志总量" value={dashboard.auditSummary.total} prefix={<ClockCircleOutlined />} valueStyle={{ color: '#00d4ff' }} />
+            <Statistic title="日志总量" value={dashboard.auditSummary.total} prefix={<ClockCircleOutlined />} valueStyle={{ color: '#2563eb' }} />
           </Card>
         </Col>
         <Col xs={24} md={12} xl={6}>
           <Card className="metric-card" variant="borderless">
-            <Statistic title="审计通过" value={dashboard.auditSummary.passed} prefix={<CheckCircleOutlined />} valueStyle={{ color: '#00ff88' }} />
+            <Statistic title="审计通过" value={dashboard.auditSummary.passed} prefix={<CheckCircleOutlined />} valueStyle={{ color: '#10b981' }} />
           </Card>
         </Col>
         <Col xs={24} md={12} xl={6}>
           <Card className="metric-card" variant="borderless">
-            <Statistic title="异常数量" value={dashboard.auditSummary.abnormal} prefix={<WarningOutlined />} valueStyle={{ color: '#ff3366' }} />
+            <Statistic title="异常数量" value={dashboard.auditSummary.abnormal} prefix={<WarningOutlined />} valueStyle={{ color: '#ef4444' }} />
           </Card>
         </Col>
         <Col xs={24} md={12} xl={6}>
           <Card className="metric-card" variant="borderless">
-            <Statistic title="待处理" value={dashboard.auditSummary.pending} prefix={<ClockCircleOutlined />} valueStyle={{ color: '#ffaa00' }} />
+            <Statistic title="待处理" value={dashboard.auditSummary.pending} prefix={<ClockCircleOutlined />} valueStyle={{ color: '#f59e0b' }} />
           </Card>
         </Col>
       </Row>
 
       {/* ── Tamper Experiment Result ── */}
       {tamperResult && (
-        <Card className="panel-card cyber-card tamper-result-card" variant="borderless" title={<span className="card-title-icon" style={{ color: '#ff3366' }}><ThunderboltOutlined /> 篡改实验结果</span>}>
+        <Card className="panel-card cyber-card tamper-result-card" variant="borderless" title={<span className="card-title-icon" style={{ color: '#ef4444' }}><ThunderboltOutlined /> 篡改实验结果</span>}>
           <Row gutter={[24, 16]}>
             <Col xs={24} xl={16}>
               <Steps
@@ -155,7 +155,7 @@ export function AuditPage() {
                   {
                     title: tamperResult.alertGenerated ? '告警已生成' : '审计完成',
                     description: tamperResult.alertGenerated ? '检测到篡改行为，异常告警已自动生成' : '审计完成',
-                    icon: tamperResult.alertGenerated ? <WarningOutlined style={{ color: '#ff3366' }} /> : undefined,
+                    icon: tamperResult.alertGenerated ? <WarningOutlined style={{ color: '#ef4444' }} /> : undefined,
                   },
                 ]}
               />
@@ -171,7 +171,7 @@ export function AuditPage() {
                   </div>
                   <div>
                     <Typography.Text type="secondary">篡改后内容</Typography.Text>
-                    <Typography.Paragraph code style={{ margin: '4px 0 0', fontSize: 12, color: '#ff3366' }}>
+                    <Typography.Paragraph code style={{ margin: '4px 0 0', fontSize: 12, color: '#ef4444' }}>
                       {tamperResult.tamperedContent.slice(0, 80)}
                     </Typography.Paragraph>
                   </div>
@@ -209,7 +209,7 @@ export function AuditPage() {
 
       {/* ── Anomalous Logs (if any) ── */}
       {abnormalLogs.length > 0 && (
-        <Card className="panel-card cyber-card" title={<span className="card-title-icon" style={{ color: '#ff3366' }}><WarningOutlined /> 异常日志记录</span>} variant="borderless">
+        <Card className="panel-card cyber-card" title={<span className="card-title-icon" style={{ color: '#ef4444' }}><WarningOutlined /> 异常日志记录</span>} variant="borderless">
           <Table<LogRecord> rowKey="id" columns={columns} dataSource={abnormalLogs} pagination={false} size="small" />
         </Card>
       )}

@@ -174,8 +174,8 @@ export function DashboardPage() {
             <svg viewBox="0 0 260 260" className="hero-network-svg">
               <defs>
                 <radialGradient id="nodeGlow">
-                  <stop offset="0%" stopColor="#00d4ff" stopOpacity="0.6" />
-                  <stop offset="100%" stopColor="#00d4ff" stopOpacity="0" />
+                  <stop offset="0%" stopColor="#2563eb" stopOpacity="0.22" />
+                  <stop offset="100%" stopColor="#2563eb" stopOpacity="0" />
                 </radialGradient>
               </defs>
               {/* Connection lines */}
@@ -220,7 +220,7 @@ export function DashboardPage() {
             <span className="chain-status-strip__icon"><LinkOutlined /></span>
             <div>
               <span className="chain-status-strip__label">系统运行状态</span>
-              <span className="chain-status-strip__value" style={{ color: '#00ff88' }}>正常</span>
+              <span className="chain-status-strip__value" style={{ color: '#10b981' }}>正常</span>
             </div>
           </div>
           <div className="chain-status-strip__item">
@@ -361,7 +361,7 @@ export function DashboardPage() {
         <Card
           className="panel-card tamper-result-card"
           variant="borderless"
-          title={<span className="card-title-icon" style={{ color: '#ff3366' }}><ThunderboltOutlined /> 篡改实验结果</span>}
+          title={<span className="card-title-icon" style={{ color: '#ef4444' }}><ThunderboltOutlined /> 篡改实验结果</span>}
         >
           <Steps
             direction="horizontal"
@@ -391,7 +391,7 @@ export function DashboardPage() {
                 description: tamperResult.alertGenerated
                   ? '异常告警已自动生成'
                   : '审计完成',
-                icon: tamperResult.alertGenerated ? <WarningOutlined style={{ color: '#ff3366' }} /> : undefined,
+                icon: tamperResult.alertGenerated ? <WarningOutlined style={{ color: '#ef4444' }} /> : undefined,
               },
             ]}
           />
@@ -440,7 +440,7 @@ export function DashboardPage() {
                     </div>
                     <strong className="progress-item__pct">{module.progress}%</strong>
                   </div>
-                  <Progress percent={module.progress} showInfo={false} strokeColor={{ from: '#00d4ff', to: '#00ff88' }} />
+                  <Progress percent={module.progress} showInfo={false} strokeColor={{ from: '#2563eb', to: '#10b981' }} />
                 </div>
               ))}
             </Space>
