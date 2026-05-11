@@ -8,7 +8,7 @@
     "test": "tests"
   },
   "scripts": {
-    "dev": "npx concurrently \"npm --prefix packages/contracts run node\" \"npm --prefix apps/server run dev\" \"npm --prefix apps/agent run dev\" \"npm --prefix apps/web run dev\"",
+    "dev": "node scripts/dev-local.js",
     "chain:deploy": "npm --prefix packages/contracts run deploy:local",
     "verify:contracts": "npm --prefix packages/contracts test",
     "verify:server": "node scripts/verify-server.js",
@@ -21,5 +21,8 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
 }

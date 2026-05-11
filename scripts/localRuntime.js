@@ -131,6 +131,21 @@ function killProcess(child) {
       return;
     }
 
+    if (isWindows && child.pid) {
+      const killer = spawn('taskkill', ['/PID', String(child.pid), '/T', '/F'], {
+        stdio: 'ignore',
+        windowsHide: true,
+      });
+
+      killer.once('exit', () => resolve());
+      killer.once('error', () => {
+        child.kill('SIGTERM');
+        resolve();
+      });
+
+      return;
+    }
+
     child.once('exit', () => resolve());
     child.kill('SIGTERM');
 
@@ -185,4 +200,5 @@ module.exports = {
   runNpm,
   startHardhatNode,
   startServer,
+  waitForHttp,
 };
