@@ -1,0 +1,58 @@
+                                                                                                                                                  15
+
+
+                                           TABLE V: Real case of transfer event spoofing attack transac-an application, which interacts with a database to insert logs
+                                                                        tions.and with a smart contract on the blockchain to emit events.
+However, inconsistencies can arise between the database logs                                                                             Sender     Transfer From    Transfer To            Token
+and the blockchain transaction logs due to discrepancies in
+                                                                    1   Victim     Victim          0x734659...50Ca79F7   USDT
+logging practices. Attackers can exploit this by directly calling
+the record function, potentially creating mismatches between     2   Attacker   Victim         0x73435A..2Bca79F7   FAKE USDT
+the application’s internal log records and the blockchain’s    3   Victim     Victim          0x73435A...2Bca79F7  USDT
+transaction logs.
+
+                                                                    vulnerabilities in wallets and blockchain explorers that parse
+                                                        and display transfer events. As shown in Table V, after a user
+                                                                   sent funds to a legitimate address (0x734. . . a79F7), the attacker
+                                                             forged a transfer event, making it appear as though the funds
+                                                       were sent to a similar address controlled by the attacker. Due
+                                                                     to the way certain wallets and explorers processed these events,
+                         (a) Blended Event Attack                      the fake transfer was displayed as legitimate, leading the user
+                                                                   to mistakenly send additional funds to the attacker’s address,
+                                                                    resulting in significant financial losses [49].
+
+
+
+
+
+                      (b) Mimicry Contract Attack
+
+            Fig. 9: Two type of Contract imitation
+
+   Figure 9 illustrates two types of contract imitation attacks.
+In the Blended Event Attack, a malicious contract interacts
+with an authentic contract, and logs from both contracts are
+recorded in the same transaction, which may mislead validators.
+In the Mimicry Contract Attack, the attacker deploys a contract
+that imitates a real contract, generating deceptive logs that
+appear to originate from the authentic contract, creating further
+confusion for validators.
+
+
+C. Case of Transfer Event Spoofing
+
+   Figure 10 illustrates an example of a Transfer Event Spoofing
+attack, where the attacker forges the event sender, causing
+blockchain explorers and wallets to incorrectly display it as a
+successful transfer. This misrepresentation can deceive users
+and is used as a social engineering tactic to exploit trust in
+these interfaces.
+  The Transfer Spoofing attack on 9 February 2024, where an
+attacker successfully executed a Transfer Event Spoofing attack,
+resulting in a loss of $1.04 million USD. This attack exploited
+
+
+
+
+
+               Fig. 10: Airdrop event spoofing.

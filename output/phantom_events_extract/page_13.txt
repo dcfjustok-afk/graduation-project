@@ -1,0 +1,80 @@
+                                                                                                                                                  13
+
+
+                   IX. CONCLUSION                              [23] L. Li, Y. Liang, Z. Liu, and Z. Yu, “Understanding Solidity Event
+                                                                        Logging Practices in the Wild”, in Proc. 31st ACM Joint European
+   In this work, we conducted an in-depth analysis of vulnera-        Software Engineering Conference and Symposium on the Foundations of
+bilities associated with phantom events in blockchain systems.        Software Engineering, 2023, pp. 300–312.
+Our approach involved developing a multi-level detection    [24]  J. Zhang, J. Gao, Y. Li, Z. Chen, Z. Guan, and Z. Chen, “Xscope: Hunting
+                                                                                          for cross-chain bridge attacks”, in Proc. 37th IEEE/ACM International
+framework that integrates bytecode-level, source code-level,        Conference on Automated Software Engineering, 2022, pp. 1–4.
+and transaction-level analyses to address issues such as Event    [25]  F. Cernera, M. La Morgia, A. Mei, and F. Sassi, “Token Spammers,
+Counterfeiting, Inconsistent Logging, and Contract Imitation.      Rug Pulls, and Sniper Bots: An Analysis of the Ecosystem of Tokens
+                                                                                         in Ethereum and in the Binance Smart Chain (BNB)”, in Proc. 32nd
+Furthermore, we identified real-world cases for each of the      USENIX Security Symposium (USENIX Security 23), 2023, pp. 3349–
+proposed attack vectors, underscoring the critical need for        3366.
+mitigation of these threats in blockchain ecosystems.              [26] M. Pasqua, A. Benini, F. Contro, M. Crosara, M. Dalla Preda, and
+                                                             M. Ceccato, “Enhancing Ethereum smart-contracts static analysis by
+                  REFERENCES                                  computing a precise Control-Flow Graph of Ethereum bytecode”, Journal
+                                                                                           of Systems and Software, vol. 200, pp. 111653, 2023.
+ [1]  Bitquery, “Bitquery”, 2023. [Online]. Available: https://explorer.bitquery.   [27] Consensys, “Mythril”, 2023. [Online]. Available: https://github.com/Con
+       io/. [Accessed: Dec. 15, 2023].                                                  senSys/mythril/. [Accessed: Dec. 15, 2023].
+ [2] Tokenview, “Tokenview”, 2023. [Online]. Available: https://bsc.tokenvie    [28] R. Behnke, “EXPLAINED: THE PNETWORK HACK (SEPTEMBER
+      w.io/. [Accessed: Dec. 15, 2023].                                              2021)”, 2023. [Online]. Available: https://www.halborn.com/blog/post/ex
+ [3] Chainlink, “Chainlink”, 2023. [Online]. Available: https://chain.link/.        plained-the-pnetwork-hack-september-2021. [Accessed: Dec. 15, 2023].
+     [Accessed: Dec. 15, 2023].                                               [29] N. Semczuk, “What is a rug pull?”, 2023. [Online]. Available: https:
+ [4] S.-W. Lin, P. Tolmach, Y. Liu, and Y. Li, “SolSEE: a source-level         //www.bankrate.com/investing/what-is-a-rug-pull/. [Accessed: Dec. 15,
+     symbolic execution engine for Solidity”, in Proc. 30th ACM Joint         2023].
+     European Software Engineering Conference and Symposium on the    [30] C. Dannen, Introducing Ethereum and Solidity, vol. 1, Springer, 2017.
+     Foundations of Software Engineering, 2022, pp. 1687–1691.              [31] Vyperlang, “Vyper”, 2023. [Online]. Available: https://github.com/vyper
+ [5] C. Zhu, Y. Liu, X. Wu, and Y. Li, “Identifying Solidity Smart Contract         lang/vyper. [Accessed: Dec. 15, 2023].
+    API Documentation Errors”, in Proc. 37th IEEE/ACM International    [32] N. Grech, S. Lagouvardos, I. Tsatiris, and Y. Smaragdakis, “Elipmoc:
+     Conference on Automated Software Engineering, 2022, pp. 1–13.            Advanced decompilation of Ethereum smart contracts”, Proceedings of
+ [6] H. Kamarul, “‘Spoof’ Tokens on Ethereum”, 2022. [Online]. Available:         the ACM on Programming Languages, vol. 6, no. OOPSLA1, pp. 1–27,
+     https://medium.com/etherscan-blog/spoof-tokens-on-ethereum-c2ad882        2022.
+      d9cf6. [Accessed: Dec. 15, 2023].                                        [33]  J. Feist, G. Grieco, and A. Groce, “Slither: a static analysis framework
+ [7] L. De Moura and N. Bjørner, “Z3: An efficient SMT solver”, in Proc.         for smart contracts”, in 2019 IEEE/ACM 2nd International Workshop
+      International Conference on Tools and Algorithms for the Construction        on Emerging Trends in Software Engineering for Blockchain (WETSEB),
+     and Analysis of Systems, 2008, pp. 337–340.                                2019, pp. 8–15.
+ [8] Halborn, “Thorchain Incident Analysis”, 2023. [Online]. Available: https:   [34]  S. Tikhomirov, E. Voskresenskaya,  I.  Ivanitskiy, R. Takhaviev, E.
+     //github.com/HalbornSecurity/PublicReports/blob/master/IncidentRepor        Marchenko, and Y. Alexandrov, “SmartCheck: Static analysis of Ethereum
+        ts/. [Accessed: Dec. 15, 2023].                                             smart contracts”, in Proceedings of the 1st International Workshop on
+ [9] PeckShield, “PeckShieldAlert on X”, 2023. [Online]. Available: https:       Emerging Trends in Software Engineering for Blockchain, 2018, pp.
+     //twitter.com/PeckShieldAlert/status/1551630862600527874?t=pAmAE        9–16.
+    TpV2jpmLAgU23QD9w&s=05. [Accessed: Dec. 15, 2023].               [35]  F. Ma, Z. Xu, M. Ren, Z. Yin, Y. Chen, L. Qiao, B. Gu, H. Li, Y. Jiang,
+[10] B. Guidi and A. Michienzi, “Delving NFT vulnerabilities, a sleepminting        and J. Sun, “Pluto: Exposing vulnerabilities in inter-contract scenarios”,
+      prevention system”, Multimedia Tools and Applications, pp. 1–20, 2023.       IEEE Transactions on Software Engineering, vol. 48, no. 11, pp. 4380–
+[11] Oklink, “OKLINK”, 2023. [Online]. Available: https://www.oklink.com/.        4396, 2021.
+     [Accessed: Dec. 15, 2023].                                               [36] M. Mossberg, F. Manzano, E. Hennenfent, A. Groce, G. Grieco, J. Feist,
+[12] Bsctrace, “Bsctrace”, 2023. [Online]. Available: https://bsctrace.com/.         T. Brunson, and A. Dinaburg, “Manticore: A user-friendly symbolic
+     [Accessed: Dec. 15, 2023].                                                  execution framework for binaries and smart contracts”, in 2019 34th
+[13]  I. Ilascu, “OpenSea NFT platform bugs let hackers steal crypto wallets”,       IEEE/ACM International Conference on Automated Software Engineering
+     2022. [Online]. Available: https://www.bleepingcomputer.com/news/        (ASE), 2019, pp. 1186–1189.
+     security/opensea-nft-platform-bugs-let-hackers-steal-crypto-wallets/.   [37] Coinware, “Beware of the LayerZero Token Scam: Stay Informed and
+     [Accessed: Dec. 15, 2023].                                                 Stay Safe”, 2022. [Online]. Available: https://coinwire.com/beware-of-t
+[14] B. Mueller, “Rektosaurus”, 2023. [Online]. Available: https://github.com         he-layerzero-scam-stay-informed-and-safe/. [Accessed: Dec. 15, 2023].
+      /muellerberndt/rektosaurus. [Accessed: Dec. 15, 2023].                    [38]  Tangtj, “BSC Contract Database”, 2023. [Online]. Available: https:
+[15]  I. Visconti, A. Vitaletti, and M. Zecchini, “Preventing Content Cloning         //github.com/tangtj/bsc-contract-database. [Accessed: Dec. 15, 2023].
+      in NFT Collections”, in Proc. International Conference on Applied    [39] SvenMeyer, “Compiling 16 Files with 0.7.6 CompilerError”, 2023.
+     Cryptography and Network Security, 2023, pp. 84–99.                          [Online]. Available: https://github.com/ethereum/solidity/issues/11638.
+[16] Bscscan, “BNB Smart Chain (BNB) Blockchain Explorer”, 2023.        [Accessed: Dec. 15, 2023].
+      [Online]. Available: https://bscscan.com/. [Accessed: Dec. 15, 2023].      [40] N. Lu, B. Wang, Y. Zhang, W. Shi, and C. Esposito, “NeuCheck: A
+[17] Knownsec 404 Blockchain Security Research Team, “Blockwell.ai KYC        more practical Ethereum smart contract security analysis tool”, Software:
+     Casper Token ’Psoriasis Advertising’ Event Analysis”, 2023. [Online].         Practice and Experience, vol. 51, no. 10, pp. 2065–2084, 2021.
+      Available: https://paper.seebug.org/709/. [Accessed: Dec. 15, 2023].       [41]  Forta, “Forta Network”, 2023. [Online]. Available: https://forta.org/.
+[18] GiorgioHerbie, “Macchina virtuale Ethereum (EVM)”, 2022. [Online].        [Accessed: Dec. 15, 2023].
+      Available: https://ethereum.org/it/developers/docs/evm/. [Accessed: Dec.   [42] V. Buterin et al., “A next-generation smart contract and decentralized
+     15, 2023].                                                                        application platform”, White Paper, vol. 3, no. 37, pp. 2–1, 2014.
+[19] B. B¨unz, L. Kiffer, L. Luu, and M. Zamani, “Flyclient: Super-light clients    [43] X. Tang, Z. Jia, and W. Yang, “Blockchain Application Status and
+      for cryptocurrencies”, in Proc. IEEE Symposium on Security and Privacy         Ecology”, in Blockchain Application Guide: Methodology and Practice,
+      (SP), 2020, pp. 928–946.                                                       pp. 35–48, Springer, 2022.
+[20] A. M. Antonopoulos and G. Wood, Mastering Ethereum: Building Smart    [44] R. Behnke, “EXPLAINED: THE QUBIT HACK (JANUARY 2022)”,
+     Contracts and Dapps, O’Reilly Media, 2018.                                2022. [Online]. Available: https://www.halborn.com/blog/post/explaine
+[21] N. Ivanov, J. Lou, T. Chen, J. Li, and Q. Yan, “Targeting the weakest         d-the-qubit-hack-january-2022. [Accessed: Dec. 15, 2023].
+      link: Social engineering attacks in Ethereum smart contracts”, in Proc.   [45] R. Behnke, “EXPLAINED: THE METER.IO HACK (FEBRUARY
+   ACM Asia Conference on Computer and Communications Security, 2021,        2022)”, 2022. [Online]. Available: https://www.halborn.com/blog/p
+      pp. 787–801.                                                              ost/explained-the-meter-io-hack-february-2022. [Accessed: Dec. 15,
+[22] Polygonscan, “ethAddress.io (ethAddress.io) Token Tracker — Polygon-        2023].
+     Scan”, 2022. [Online]. Available: https://mumbai.polygonscan.com/token    [46] B. Guidi and A. Michienzi, “Sleepminting, the brand new frontier of Non
+     /0x325f188ce09f94bd8ea7bf395019cd146780ba20?a=0x888888888888        Fungible Tokens fraud”, in Proceedings of the 2022 ACM Conference
+     8888888888888888888888888888. [Accessed: Dec. 15, 2023].               on Information Technology for Social Good, 2022, pp. 75–81.

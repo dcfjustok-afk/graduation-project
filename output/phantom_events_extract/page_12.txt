@@ -1,0 +1,86 @@
+                                                                                                                                                  12
+
+
+  supplementary materials.                                   B. Smart Contract Events
+                                                                 Generally, logging messages enhances program compre-
+                                                          hension and reduces maintenance  costs, but research on
+D. Threats to Validity                                           Solidity event logging and security  is  still limited. Li  et
+                                                                                 al. [23] conducted the first empirical study on Solidity event
+  The internal validity threats primarily stem from potential
+                                                              logging and developing a tool to identify the event that causes
+inaccuracies introduced during the manual data labeling process.
+                                                          unnecessary gas usage. Zhang et  al. [24] designed a tool
+To improve the accuracy of data labeling, we adopted a three-
+                                                 named Xscope which finds security violation events in cross-
+tier approach, where two authors independently labeled the
+                                                            chain bridges. Cernera et al. [25] tracked the tokens created
+data and a third author reviewed their labels. This method
+                                                    by internal transactions by scanning the logs looking for
+involved a thorough review at three distinct levels to enhance
+                                                              Transfer events. Additionally, Guidi et al. [46] analyzed the
+the precision of our dataset categorization.
+                                                  phenomenon of sleepminting and explored the use of Forta
+  To ensure external validity, we diversified the types and
+                                                                   for tracking and alerting about suspicious events. Zhu et
+sources of datasets used in our experiments. In addition to the
+                                                                                al. [5] proposed a technique called DocCon, which detects
+bridge-focused data provided by SmartAxe and XGuard, we
+                                                                inconsistencies between Solidity code and its corresponding
+expanded our dataset to include a broader range of scenarios.
+                                                           documentations. These inconsistencies include documented
+Furthermore, we avoided using smart contracts with high
+                                                             event emissions which do not appear in code, or vice versa.
+similarity to improve the diversity and validity of our analysis.
+                                                       TokenScope [59] contributed to the detection of inconsistencies
+                                                                     in token behaviors by monitoring ERC-20 events. Despite these
+                                                            advancements, most research has only considered issues related
+                  VII. RELATED WORK
+                                                                     to events in specific scenarios and has not fully addressed the
+                                                                  generality of attacks caused by phantom events.A. Smart Contract Security Analysis
+
+                                                                          VIII. MITIGATION STRATEGIES  In recent years, a large number of techniques have been
+proposed to analyze the security of smart contracts.              Mitigating vulnerabilities caused by phantom events re-
+                                                                quires a comprehensive approach, addressing smart contract
+Static Analysis. Tikhomirov et al. [34] designed SmartCheck,
+                                                          development, ecosystem infrastructure, and attack detection
+a system translating Solidity source code to XML and detecting
+                                                       mechanisms. From the perspective of contract development,
+bugs via xPath patterns. Grech et al. [32] proposed a static
+                                                             developers should implement strict validation mechanisms to
+analysis framework termed Gigahorse that translates the stack-
+                                                             ensure that event parameters are verified before emission and
+based bytecode to the register-based intermediate representation.
+                                                              access control mechanisms for the functions. It is essential to
+A similar tool named Slither [33] was proposed by Fesit that
+                                                               enforce proper state transitions to prevent mismatches between
+targets solidity source code. Lu et al. [40] design a smart
+                                                              emitted events and the actual contract state.
+contracts security analysis tool named NeuCheck which is based
+                                                        At the ecosystem level, off-chain systems like blockchain ex-
+on syntax tree parsing. Ghaleb et al. [63] proposed eTainter,
+                                                                       plorers, wallets, and DApps must adopt more robust validation
+a static analysis tool that detects gas-related vulnerabilities in
+                                                               techniques to distinguish legitimate events from phantom events.
+smart contracts by applying taint tracking to bytecode.
+                                                          Event emitter validation, where the source of the event is cross-
+Symbolic Execution. Luu et al. [19] proposed Oyente, a pio-  checked with the contract address, helps ensure that events
+neering symbolic execution tool for Ethereum smart contracts   originate from authorized contracts. Furthermore, improving
+to detect bugs. Lin et al. [4] presented SolSEE, the first source-  data sanitization processes in off-chain applications is critical
+level symbolic execution engine for Solidity smart contracts.   to prevent vulnerabilities such as cross-site scripting (XSS) and
+Ma et al. [35] introduced Pluto for detecting security bugs by  SQL injection (SQLi). Enhanced cross-chain security protocols
+reconstructing inter-contract CFGs. Pasqua et al. [26] proposed   are necessary for cross-chain bridges, ensuring that events on
+a method based on the symbolic execution of EVM operands for   both the source and destination chains are validated to prevent
+precise CFG construction and improved vulnerability detection.  event forgery and manipulation.
+Ruaro et al. [61] implement CRUSH, which leverages symbolic     In terms of security attack detection, continuous real-time
+execution and program slicing to detect storage collisions   monitoring of on-chain transactions and events is essential to
+among such contract groups.  Gritti  et  al. [62] developed   detect and flag suspicious activities, such as Transfer Event
+JACKAL, which performs symbolic execution based on control   Spoofing or Contract Imitation. Defining detailed detection
+flow graphs (CFG) and function call graphs (FCG) to detect   rules, both for on-chain contract behavior and off-chain event
+confused contract vulnerability. In addition, industry solutions   handling, allows for more comprehensive identification of
+such as Mytrhil [27] and Manticore [36] have become standard   vulnerabilities. Additionally, regular security audits of both
+tools for smart contract audits.                               smart contracts and off-chain systems should be conducted to
+  Our approach involves developing a detection framework   identify potential weaknesses, particularly focusing on event
+that combines multiple techniques, including bytecode-level   emission logic, access controls, and transaction validation.
+analysis, source code analysis, transaction-level monitoring,  Through a combination of these strategies, the risk posed by
+and symbolic execution, but the issues addressed in this paper  phantom events can be significantly reduced, improving the
+cannot be captured by any existing vulnerability patterns.       security and reliability of blockchain systems.

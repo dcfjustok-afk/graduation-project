@@ -1,0 +1,84 @@
+                                                                                                                                                   7
+
+
+
+
+
+                       Transaction-level
+                                                                 extract      Authentic Event                            analysis
+                                                                                Specification
+
+                                                  Official Documents
+                                                                                                    Authentic Events
+
+                                                                 historic event logs
+                                    Blockchain
+                                    Transactions                                              Contract Imitation
+                                                                            Detector
+
+                      Bytecode-level analysis
+
+                                             IR                  ICFG   Backward Taint                                           Event Issues
+                               Decompiling                                                                           result
+                                                                                           Analysis
+                                                   ICFG                                                                Vulnerability      Event Counterfeting
+                                                           Construction                                                           Validation        Inconsistent Logging
+                                                                        event control
+      Smart Contract                                        AST                   flow paths    Symbolic     constraints          result                          AST Parsing                                                                     Solver
+                                                                                     Execution
+
+                   Source code-level analysis
+
+
+                                         Fig. 6: The architecture of PEVENTCATCHER.
+
+
+Imitation attacks. By establishing domain-specific rules based  Algorithm 1 Detecting Inconsistent Logging and Event Coun-
+on the expected behavior of smart contracts, we systematically   terfeiting via Backward Taint Analysis
+verify whether transactions adhere to correct logic and identify   Input: IR, an intermediate representation of smart contract bytecode via
+                                                                             decompilation.
+any signs of malicious activity that may indicate phantom                                                                   Output: Ev, a set of vulnerable events.
+events or unauthorized interactions.                                       1: Ev = ∅.
+  This analysis involves parsing transaction data and applying     2: construct ICFG out of IR.
+a set of rules to validate key aspects of events, including: (1)     3: extract LogOps, i.e., event log operations, from IR.   ▷Each operation
+                                                                                   contains a event signature and a set of logging data variables
+ensuring that the emitted event has the correct signature; (2)     4: Vars = ∅,
+verifying that the event emitter matches the expected contract     5: for logOp ∈LogOps do
+address; (3) checking that the function execution path aligns     6:     Vars ←Vars ∪vars(logOp)    ▷Record all logging data variables
+                                                                                      7:     Slices ←BACKWARDSLICING(logOp, ICFG)    ▷Each slice is a
+with the expected logic; and (4) confirming that the event        reverse execution flow path from logOp to function entry point
+parameter values match the expected ones.                             8:     extract Paths, i.e., inter-functional paths based on Slices and ICFG
+  By enforcing these rules, we can detect anomalies that may     9:     taintedPaths ←∅
+                                                                              10:     for p ∈Paths do
+indicate Contract Imitation attacks. If an attack transaction is    11:       sourceop ←TAINTANALYSIS(p, Vars)
+detected, further analysis is performed to confirm its impact,   12:           if sourceop ̸= null then
+such as causing unauthorized fund transfers or state changes.    13:                if sstore(p[:sourceop]) = ∅then
+                                                                              14:          Ev ←Ev ∪event(logOp)    ▷No storage operations
+  For example, in the pNetwork attack Table II, a Redeem event
+                                                                              15:            taintedPaths ←taintedPaths ∪{event(logOp)}
+was emitted by a malicious contract with an unexpected contract    16:         else
+address on the source chain. Applying these transaction-level    17:                if HasExternalCall(p) ∧not HasJumpi(p) then
+                                                                              18:          Ev ←Ev ∪event(logOp)        ▷No constraintsrules allowed us to detect the attack. Subsequent monitoring
+                                                                              19:       if ||taintedPaths|| > 1 then
+of the destination chain transaction confirmed that the attack                                                                              20:      Ev ←Ev ∪event(logOp)    ▷A event logging action has
+succeeded with unauthorized fund transfers.                             multiple tainted paths
+                                                                              21: return Ev
+                                                                              22: procedure TAINTANALYSIS(path, taintVars)
+C. Smart-Contract-Level Detection                                   23:    entry = path[−1]   ▷Function entry point is the last item of this
+  At the smart-contract level, we detect vulnerabilities specifi-       reverse execution path
+                                                                              24:     for instr ∈path do
+cally related to Event Counterfeiting and Inconsistent Logging    25:           if vars(instr) ∩taintV ars ̸= ∅then
+through a multi-tiered analysis approach consisting of two    26:             taintVars ←taintVars ∪vars(instr)    ▷Taint propagation
+parts: (1) identifying potential phantom events through inter-   27:       if vars(entry) ∩taintV ars ̸= ∅then
+procedural backward taint tracking at the bytecode level, and    28:        return entry
+                                                                              29:     else
+(2) confirming vulnerabilities by validating event parameter    30:        return null
+constraints at the source-code level. This dual-method approach
+allows us to analyze different representations of the contract
+to identify vulnerabilities that may not be visible at a single
+                                                               (IR) of the smart contract bytecode. The algorithm identifieslevel of abstraction.
+  1) Phantom Event Identification Through Interprocedural   vulnerable events Ev by analyzing the flow of data from
+Backward Taint Tracking: At the bytecode level, as described   event log operations to their sources and checking for specific
+in Alg. 1, the detection of vulnerabilities related to Event   conditions that indicate vulnerability.
+Counterfeiting and Inconsistent Logging is performed through    The algorithm begins by initializing an empty set Ev to store
+backward taint analysis using an intermediate representation   vulnerable events (line 1). It constructs an inter-procedural

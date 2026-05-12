@@ -1,0 +1,70 @@
+                                                                                                                                                   4
+
+
+counterfeit event EDeposit with an untruthful amount. Since   1 function depositETH(uint destinationChainId)
+both the authentic event and the counterfeit event were recorded         external payable {
+under the same transaction TXdeposit, the relayer processed the   2   require(msg.value > 0, "Deposit amount must be
+                                                                greater than 0");
+counterfeit event as if  it were legitimate. This allowed the                                                                  3   ethBalances[msg.sender] += msg.value;
+attacker to transfer unauthorized funds to the destination chain   4   emit Deposit(msg.sender, msg.value, address(0),
+by exploiting the inability of the system to differentiate between            destinationChainId);
+                                                                  5 }
+the two events.                                                                  6
+  In the Qubit Bridge attack, the attacker exploits a flaw in   7 function deposit(address token, uint amount, uint
+the deposit function of the victim contract, as illustrated in          destinationChainId) external {
+                                                                  8   require(amount > 0, "Deposit amount must be
+Fig. 4. The relayer transfers assets on the destination chain           greater than 0");
+by retrieving the token address and amount from the event   9   safeTransfer(token, address(this), amount);
+emitted on the source chain. However, the attacker exploited  10   tokenBalances[msg.sender][token] += amount;
+                                                                 11   emit Deposit(msg.sender, amount, token,
+this by using the deposit function to emit an event that           destinationChainId);
+should only be emitted by the depositETH function, allowing  12 }
+them to trigger a transfer of ETH on the destination chain  13
+                                                                 14 function safeTransfer(address token, address to,
+without actually depositing any ETH on the source chain, thus                                                              uint value) internal {
+bypassing the relayer’s checks and profiting from the attack.   15   (bool success, bytes memory data) = token.call(
+                                                                abi.encodeWithSelector(0xa9059cbb, to,
+Idea of PEVENTCATCHER. Motivated by these real-world           value));
+examples, we apply customized detection methods for various  16   require(success && (data.length == 0 || abi.
+types of vulnerabilities. The phantom events may arise from           decode(data, (bool))), "!safeTransfer");
+                                                                 17 }
+issues in smart contract logic or from flaws in off-chain
+processors. To address this, we designed a smart contract-
+                                                                 Fig. 4: Proof of concept for the event counterfeiting attack,
+level approach, which  identifies vulnerabilities that could
+                                                     where deposit and depositETH could emit the same
+lead to phantom events. Additionally, we developed an on-
+                                                                   event.
+chain approach for transaction data, inspecting transactions
+for patterns or anomalies that may indicate attacks. These
+approaches complement each other and enable a comprehensive                                                                     for ERC-20 tokens. However, the deposit function can also
+detection framework that addresses both contract-based and                                                             emit an event with address(0), mimicking an ETH deposit.
+transaction-based origins of phantom events.                                            An attacker could exploit this by calling the deposit
+                                                              function and forging the third parameter as address(0),
+         IV. ATTACK TAXONOMY AND ANALYSIS            without actually transferring any ETH. This creates a phantom
+  In this section, we present our taxonomy of attacks caused  Deposit event that resembles a real ETH deposit. Off-chain
+by phantom events and provide detailed explanations as well   validation systems, which rely on event logs for transaction
+as detection rules for each attack.                                 verification, may mistakenly treat this event as a legitimate
+  We relied on industry reports, academic literature, and real-  ETH deposit, allowing the attacker to fraudulently claim large
+world smart contract audits to construct a taxonomy of relatively  sums on the destination chain due to the flawed event validation
+new and understudied phantom event  attacks. We model   process.
+five distinct attack scenarios, which are classified into two   Detection Method. This vulnerability occurs when different
+categories based on their origins: (1) on-chain (smart contract)   functions or execution paths emit the same event with identical
+vulnerabilities and (2) off-chain weaknesses. These attacks are   parameters, even though each function imposes different con-
+summarized in our attack classification table (Table I).            straints. Off-chain systems often treat these events as authentic
+  Detailed demonstrations of these attacks are available in the   without verifying the parameter constraints. If a function emits
+supplementary materials.1                                   a value that is expected to be constrained or validated by
+                                                               another function, it is considered a potential vulnerability. The
+A. Attack Vectors and Detection Rules                          detection rule checks for cases where identical parameter values
+                                                                are emitted along different execution paths, even when those  This section introduces five attacks related to phantom events
+                                                                paths should enforce distinct constraints, and flags such eventsand proposes corresponding detection rules. Examples of these
+                                                               as potential vulnerabilities.attacks can be found in Sect. A-A.
+                                                     The formalized detection rule is expressed as follows.  1) Event Counterfeiting: This attack takes advantage of
+legitimate contracts that emit the same event from multiple                     V (f, e) ∩V (g, e) ̸= ∅and
+functions or execution paths (MT S). In the provided code ex-         EC =  e ∈E | ∃f, g ∈F(e)                         (1)
+ample Fig. 4, both the depositETH and deposit functions
+                                                                   • E is the set of emitted events, and e ∈E represents anemit a Deposit event, where the third parameter signifies
+                                                                       individual event.the token type. While depositETH uses address(0) to
+                                                                   • F is the set of all function paths in the contract that canrepresent ETH, the deposit function uses the token address
+                                                                 emit events, and f, g ∈F are specific function paths that
+  1https://github.com/PhantomEvent/Event-attack-demo                       emit the same event e.

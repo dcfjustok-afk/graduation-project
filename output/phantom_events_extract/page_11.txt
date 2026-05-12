@@ -1,0 +1,70 @@
+                                                                                                                                                  11
+
+
+              TABLE IV: Tools Comparison for Event Counterfeiting and Inconsistent Logging
+
+                                                Event Counterfeiting            Inconsistent Logging
+                  Tool
+                                                   Precision   Recall     F1     Precision   Recall     F1
+
+                 SmartAxe                    40.50%   25.12%   31.01%    N/A     N/A     N/A
+                XGuard                     87.75%   55.12%   67.70%   64.71%   91.75%   75.82%
+               PEVENTCATCHER (Bytecode)    84.0%    100%   91.30%   62.50%   16.12%   39.31%
+              PEVENTCATCHER (Source)     90.83%   86.51%   88.62%   90.30%    100%   94.90%
+
+
+
+validation, leading to a lower precision as it may flag events that     2) Result:  In our experiments, we identified a Transfer
+lack sufficient evidence of forgery. However, at the source code   Event Spoofing transaction in which a fake transfer appeared
+level, PEVENTCATCHER performs comprehensive constraint   to move tokens from the address 0x8888...8888 to the victim’s
+checks, improving precision significantly. For Inconsistent   wallet. Despite no actual token transfer occurring, at least
+Logging, PEVENTCATCHER ’s bytecode analysis is limited   five major blockchain explorers—BscScan, OKLink, Bitquery,
+to indexed parameters only, which reduces recall as it cannot   Tokenview, and Bsctrace [1], [2], [11], [12], [16]—incorrectly
+identify issues related to non-indexed parameters. With source   recognized this spoofed event as a legitimate transaction. This
+code access, PEVENTCATCHER can analyze both indexed   highlights the widespread vulnerability in off-chain systems,
+and non-indexed parameters, thus achieving higher  recall.  which struggle to differentiate between genuine and phantom
+In  contrast, SmartAxe and XGuard have inherent design   events.
+limitations; SmartAxe only detects whether two functions emit     Additionally, we successfully replicated the “sleepminting”
+the same event without considering constraint validation within   attack on testnet environments for two leading NFT mar-
+call paths, while XGuard focuses on constraints within single   ketplaces, Opensea and Rarible. Despite the existence of
+functions and lacks inter-function analysis. By analyzing both   monitoring solutions designed to detect such attacks, fully
+function interactions and call paths, PEVENTCATCHER detects   mitigating these vulnerabilities remains an ongoing challenge.
+vulnerabilities that the other tools miss, achieving superior     Moreover, during our security audits, we discovered critical
+results in both Event Counterfeiting and Inconsistent Logging   vulnerabilities in six cryptocurrency wallets, which we reported
+detection.                                                           to the respective project teams or through bug bounty platforms.
+  3) Limitations: The false positives and false negatives in   Four of these vulnerabilities were confirmed, with one resulting
+our evaluation revealed two main limitations of our approach.   in a $600 bounty from the project team.
+First, when dealing with incomplete contract code, such as     In our audit of several blockchain bridges, we identified
+interface calls in certain functions, our computed constraints   vulnerabilities in off-chain code that left them exposed to the
+may not always be precise, leading to weaker constraints and  Mimicry Contract Attack. In this attack, malicious contracts
+thus false positives. Second, compilation errors occurred with   emit forged events that are incorrectly processed as legitimate
+some smart contracts that were verified by blockchain explorers  by off-chain systems. One vulnerable system we uncovered
+but failed to compile with our tool for analysis [39], due to  was forked and deployed by a public blockchain project with a
+Solidity compile bugs. Addressing these limitations will be a   market capitalization exceeding $250 million as of October 9,
+focus of our future work.                                    2024. These vulnerabilities have been reported to the respective
+                                                                   project teams for remediation.
+                                                                     Additionally, we identified a display issue with event data in
+  Answer to RQ2: PEVENTCATCHER has proven highly
+                                                                  the popular blockchain explorer Blockscout [60], which could
+   effective in detecting phantom event vulnerabilities, sur-
+                                                    compromise the accuracy of transaction records. This flaw
+  passing current state-of-the-art tools in precision, recall,
+                                                           could potentially lead to user misinterpretation of blockchain
+  and F1 score.
+                                                                     data, undermining trust in transaction history.
+                                                                   In our audit of multiple active smart contract projects, we also
+C. Real-World Attack Feasibility (RQ3)
+                                                        found that three DeFi projects and one GameFi project were
+   1) Methodology: We applied our tool to conduct testing on                                                              vulnerable to the Inconsistent Logging attack, a vulnerability
+various blockchain platforms, aiming to identify vulnerabilities                                                                                     first proposed in this paper (see IV-A2). The highest affected
+related to phantom event attacks in smart contracts. Beyond                                                         market capitalization in this set of projects was $169,688.
+on-chain testing, we also audited various off-chain applications,
+including blockchain explorers, NFT marketplaces, and cryp-
+tocurrency wallets. These audits focused on evaluating security    Answer to RQ3: Our research demonstrates that phantom
+protocols and identifying potential vulnerabilities that could     event  attacks are  feasible on real-world blockchain
+be exploited by phantom events, ensuring a comprehensive      platforms, specifically targeting blockchain explorers, NFT
+analysis of both on-chain and off-chain components.              marketplaces, DeFi, GameFi, and cryptocurrency wallets.
+  All identified phantom event vulnerabilities were tested     This emphasizes the urgent need for improved security
+in a controlled local environment using simulated scenarios     measures within  the blockchain ecosystem. Detailed
+to ensure no disruption or harm to real-world blockchain     reports and confirmation cases are available in the
+platforms.

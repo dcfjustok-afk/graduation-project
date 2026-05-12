@@ -1,0 +1,62 @@
+                                                                                                                                                             1
+
+    Phantom Events: Demystifying the Issues of Log
+                 Forgery in Blockchain
+
+
+          Yixuan Liu   , Yuxin Dong   , Ye Liu   , Xiapu Luo   , Senior Member, IEEE, and Yi Li   , Member, IEEE
+
+
+
+
+           Abstract—With the rapid development of blockchain technology,   in specific domains, such as cross-chain bridges [24], [53],
+         transaction logs play a central role in various applications,   [54], NFT ownership [46], code inconsistencies [5], and token
+         including decentralized exchanges, wallets, cross-chain bridges,                                                                        behaviors [59], a comprehensive study on event forgery across
+        and other third-party services. However, these logs, particularly
+                                                                       multiple applications remains absent. This paper addresses         those based on smart contract events, are highly susceptible
+          to manipulation and forgery, creating substantial security risks   this gap by introducing Phantom Events, a new class of
+          across the ecosystem. To address this issue, we present the first   vulnerabilities that reveal the widespread risks of log forgery on2025
+         in-depth security analysis of transaction log forgery in EVM-   the blockchain. Unlike previous studies on isolated scenarios,
+         based blockchains, a phenomenon we term Phantom Events.                                                                     our work systematically summarizes event misuse across decen-
+      We systematically model five types of attacks and propose a
+                                                                                  tralized applications and explores distinct detection methods toFeb   tool designed to detect event forgery vulnerabilities in smart
+          contracts. Our  evaluation demonstrates  that our approach   identify phantom events. In prior studies, detection tools such as
+         outperforms  existing  tools  in  identifying  potential phantom  XScope [24] and XGuard [54] operate at the source code level,19          events. Furthermore, we have successfully identified real-world   limiting detection when only bytecode is available. Conversely,
+          instances for all five types of attacks across multiple decentralized                                                             SmartAxe [53] and TokenScope [59] analyze bytecode but their
+          applications. Finally, we call on community developers to take
+                                                                      bytecode-only approach misses event parameter details. Guidi et          proactive steps to address these critical security vulnerabilities.
+                                                                                               al. [46], which focuses solely on transaction logs, experiences
+                                                                   high false-positive rates due to limited contextual analysis.
+                                        I. INTRODUCTION                   Our tool combines bytecode, source code (when available),[cs.CR]
+          Blockchain  is a decentralized digital ledger technology  and transaction data, enabling comprehensive detection across
+          that securely records and verifies transactions across multiple   multiple vulnerabilities while reducing the false positives that
+        computers, ensuring data  integrity and transparency  [47].   affect single-layer analysis methods.
+         Bitcoin (BTC), the most prominent token in the blockchain    Phantom events are subtle manipulations within blockchain
+        ecosystem, reached a remarkable market capitalization of   systems that turn normal contract events into hidden channels
+        $1,800 billion in November 2024, demonstrating the impact   for unauthorized actions. These events compromise trust in
+        and success of this technology [48].                          blockchain transactions, enabling unauthorized activities that
+           Building on blockchain technology, Decentralized Appli-  bypass typical security checks. They either mimic or slightly
+         cations (DApps) have emerged as a key innovation [42].   alter smart contract events to mislead event listeners, user
+        These applications run on smart contracts deployed across   interfaces, and blockchain analysis tools. This exploitation
+         various blockchain networks, such as Ethereum, Polygon, and  damages data integrity and can lead to substantial financial and
+        Binance Smart Chain (BSC). The expansion of DApps reflects a   reputational losses. For example, on 9 February 2024, attackers
+           shift toward decentralized application development, providing   caused a 1.04 million USD loss by forging transfer events [49].
+         diverse services such as Decentralized Finance (DeFi) and    Our research focuses on understanding and categorizingarXiv:2502.13513v1  Gamefi. This evolving ecosystem  is supported by a wide   the various types of phantom events. We conducted a com-
+          infrastructure, including cryptocurrency wallets and blockchain   prehensive survey of recent blockchain security reports and
+          explorers, which contribute to the dynamism of the blockchain   articles to gather real-world attacks that exploit vulnerabilities
+         landscape [43].                                                   related to phantom events. Furthermore, we audited multiple
+          Smart contract events and transaction logs are essential for   active smart contracts and developed a security model to
+         tracking actions within blockchain applications, supporting   process blockchain events (Sect.  III), which serves as the
+          functionalities in cross-chain bridges, wallets, and NFT market-  foundation for analyzing and categorizing the collected attack
+          places. Falsifying these logs can undermine security, leading   scenarios (Sect. IV). Furthermore, we developed a tool named
+          to asset theft, fraud, and interoperability issues that threaten  PEVENTCATCHER, designed to detect vulnerabilities related
+         user trust. While past research has examined vulnerabilities   to phantom events (Sect. V). Designing PEVENTCATCHER
+                                                                        presented several challenges: (1) many contracts exist only as
+            Yixuan Liu and Yi Li are with College of Computing and Data Science,   bytecode, lacking event semantics, which complicates analysis;
+         Nanyang Technological University, Singapore.
+            Yuxin Dong is with School of Software and Microelectronics, Peking   (2) phantom events mimic the format of legitimate events,
+            University, Beijing, China.                                    making them hard to discern; and (3) understanding the business
+           Ye Liu is with School of Computing and Information Systems, Singapore   logic of contracts is necessary to determine the presence of
+         Management University, Singapore.
+            Xiapu Luo  is with the Department of Computing, The Hong Kong   irregularities.
+           Polytechnic University, Hong Kong.                                 Using our security model and detection tool, we identified nu-

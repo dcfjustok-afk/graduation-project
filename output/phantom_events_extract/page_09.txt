@@ -1,0 +1,74 @@
+                                                                                                                                                   9
+
+
+Algorithm 2 Finding Inconsistent Logging and Event Coun-
+terfeiting via Symbolic Execution
+
+    Input: SC, the source code of smart contracts.
+    Output: Ev, a set of phantom events.
+ 1: Ev = ∅
+ 2: extract E, i.e., all events from SC.
+ 3: for event ∈E do
+ 4:   Paths ←SEARCHPATHS(event, SC) ▷Get all paths reaching the
+    event
+ 5:     for p ∈Paths do
+ 6:       constraints ←SYMBOLICEXEC(p)
+ 7:           if CHECKLOGGINGINCONSISTENCY(constraints) then
+ 8:        Ev ←Ev ∪{event}
+ 9:     for p1, p2 ∈Paths do
+10:       constraints1 ←SYMBOLICEXEC(p1)
+11:       constraints2 ←SYMBOLICEXEC(p2)
+12:           if SMT-SOLVE(constraints1 ∧constraints2) then                                                                                                                 (a) BSC
+13:        Ev ←Ev ∪{event}
+14: return Ev
+
+
+
+by comparing constraints for all parameters (both indexed
+and non-indexed). This function is similar to the bytecode
+analysis, it will detect vulnerabilities by checking for missing
+constraints on variables, unchecked external calls, or missing
+storage operations. If inconsistencies are detected, the event is
+added to Ev as potentially vulnerable to Inconsistent Logging.
+  Next, the tool performs Event Counterfeiting detection by
+considering all pairs of distinct paths (p1, p2) in Paths which
+have the same event. For each pair,  it performs symbolic
+execution to obtain constraints constraints1 and constraints2
+                                                                                                           (b) ETH
+for each path. Using an SMT solver, it checks if the conjunction
+constraints1 ∧constraints2 is satisfiable. If the solver finds
+a solution, this indicates that there is an overlap in parameter
+values between the two paths, making it difficult for validators
+to distinguish between events emitted from different paths. In
+such cases, the event is added to Ev as potentially susceptible
+to Event Counterfeiting.
+   Finally, the tool returns the set Ev, which contains events
+flagged for potential vulnerabilities. For example, consider the
+Deposit event from Fig. 4, which is emitted by the functions
+deposit and depositETH. The tool identifies these functions in
+the AST of the contract, then analyzes their respective execution
+paths to extract the constraints for the event parameters. For
+depositETH, the constraint is msg.value > 0, while for deposit,
+                                                                                                               (c) Polygon
+the constraint is bool(token.call(signature)) ∧(amount > 0).
+Using an SMT solver, the tool evaluates these constraints to   Fig. 7: Analysis of ERC-20 transfer phantom events across
+check for any overlapping parameter values. If an intersection   different platforms for 9 addresses.
+exists,  this suggests  potential Event Counterfeiting, as a
+validator may be unable to distinguish between emissions
+from these two functions, leading the tool to flag the event as   detailed analysis on event emissions and parameter constraints.
+forgeable for further review.                      We employ the Z3 [7] as our constraint solver to handle
+                                                           symbolic execution and eliminate infeasible paths. Additionally,
+        VI. IMPLEMENTATION AND EXPERIMENTS            the tool includes a transaction-level off-chain monitoring system
+                                                                     that parses on-chain data and applies custom rules to detect
+  Our tool  is implemented in Python and supports both
+                                                          anomalies and verify the success of attack transactions. All
+bytecode-level and source code-level analysis for smart con-
+                                                        major components, including the bytecode analysis engine,
+tracts, as well as transaction-level monitoring. For bytecode-
+                                                            source code symbolic executor, and transaction monitoring
+level analysis, we use the Gigahorse framework to construct
+                                                            system, were developed by us. The implementation is based
+the ICFG from compiled bytecode. At the source code level,
+                                                                    in Python and includes over 5,000 lines of code.
+our tool supports all versions of Solidity compatible with
+Slither [33], allowing us to extract the ASTs and perform      • RQ1 How  prevalent are phantom  events on major

@@ -1,0 +1,66 @@
+                                                                                                                                                  10
+
+
+                                         TABLE  III: Number of detected  attack  transactions and     blockchain platforms, and how does PEVENTCATCHER
+                                                                successful attacks by tools.    perform in transaction-level detection? We aim to under-
+     stand the need for validators to verify the origins of events                                                                              Project         XScope        PEVENTCATCHER
+     through contract addresses and source functions.
+                                                                                           Attacks   Attack Trans.   Successful Attacks
+   • RQ2 How effective is PEVENTCATCHER in detecting po-
+      tential phantom events from smart contract? We developed     THORChain #1         9              9                  9
+                                                             THORChain #2        41             48                 41
+    PEVENTCATCHER and constructed a custom benchmark      pNetwork             3              5                  3
+     to evaluate its effectiveness.                                       Qubit Bridge          20             20                 20
+                                                                                     meter.io           N/A              5                  5   • RQ3 How feasible  is  it to perform such attacks in
+                                                             CENNZnet         N/A              1                  1
+     real world? We aim to validate whether the identified
+     vulnerabilities can be performed in real-world scenarios.
+
+                                                 Answer to RQ1: Our analysis reveals a significant
+A. Prevalence of Phantom Events (RQ1)
+                                                              presence of phantom events across Ethereum, BSC, and
+  Tools like TokenScope [59] have contributed to detecting     Polygon, based on just nine addresses. Furthermore, our
+inconsistencies in token behavior, and Guoyi Ye et al. [51]     detection rules demonstrated effectiveness compared to
+have demonstrated the prevalence of forged user addresses for      state-of-the-art tools.
+transfer events. We aim to explore two specific aspects: the
+prevalence of suspicious addresses in phantom event attacks,
+                                                             B. Phantom Event Detection from Code (RQ2)and whether such attacks are common in cross-chain bridges.
+   1) Methodology: To better understand the real-world occur-     1) Datasets: SmartAxe [53] and XGuard [54] are currently
+rence of phantom events, we conduct two separate experiments   the two known tools for detecting cross-chain vulnerabilities,
+using blockchain transaction data.                             with SmartAxe focusing on bytecode-level analysis and XGuard
+  In the  first experiment, we focused on nine particular   providing source code-level analysis.
+forged addresses, specifically from 0x1111...1111 through     In our analysis of the SmartAxe dataset, we identified that
+0x9999...9999, as these addresses are highly unlikely to be   only 8 of the 20 attacks were caused by Event Counterfeiting,
+generated or used in normal transactions. We examined the   with vulnerable function path pairs existing within bridge
+transactions up to October 21, 2024, on the Ethereum, BSC, and   contracts. We re-labeled these 8 attacks and added 29 more
+Polygon blockchains, looking for ERC-20 token movements   function path pairs affected by Event Counterfeiting from the
+originating from these addresses. This approach helps measure  129 bridges analyzed by SmartAxe. To complement this, we
+the prevalence of phantom events across different blockchain   selected 500 BSC smart contracts with low similarity (using
+platforms.                                                       the TF-IDF algorithm) from the 452,666 verified contracts in
+  In the second experiment, we created detection rules for  BSC [38] and manually annotated them. After deduplication,
+cross-chain bridges based on our transaction-level analysis,  we identified 80 additional function pairs affected by Event
+given that bridges are highly vulnerable to phantom event   Counterfeiting.
+attacks. We compared our findings with those of XScope [24],    By combining SmartAxe and XGuard datasets, along with
+the only existing tool for detecting bridge attack transactions,  manually annotated function pairs, we assembled a comprehen-
+using its associated dataset.                                      sive data set containing 117 function pairs affected by Event
+   2) Result: In our first experiment, focusing on nine specific   Counterfeiting for evaluating our detection tool.
+addresses, we identified a significant occurrence of phantom    To detect Inconsistent Logging, we used a dataset of 28
+events in ERC-20 token transfers, as shown in Fig. 7. We   manually audited cases of Inconsistent Logging parameters,
+found 18,099 such events on Ethereum, 1,245,125 on BSC, and  which were identified during our audits.
+436,407 on Polygon. Such events, if not properly verified, could     2) Result: In our experiments, PEVENTCATCHER signif-
+lead to security exploits. This significant presence from just nine   icantly outperformed SmartAxe and XGuard in detecting
+addresses highlights the critical need for rigorous transaction   both Event Counterfeiting and Inconsistent Logging vulner-
+verification to maintain the security and trustworthiness of   abilities, as shown in Table IV. For Event Counterfeiting,
+blockchain operations.                                 SmartAxe achieved an F1 score of 31.01% with a precision
+  In the second experiment (the result shown in Table III),   of 40.50% and a recall of 25.12%, while XGuard reached an
+we detected all transactions reported by XScope and identified  F1 score of 67.70% with a precision of 87.75% and a recall
+additional attack transactions. XScope only records transactions   of 55.12%. In comparison, PEVENTCATCHER demonstrated
+where attacks have already taken place, indicated by a fund   superior performance, achieving an F1 score of 91.30% at
+transfer on the destination chain. In contrast, we were able   the bytecode level and 88.62%  at the source code  level.
+to detect attacks before a transfer occurred, helping project   For Inconsistent Logging detection, PEVENTCATCHER also
+teams identify attackers proactively. We also detected attack   outperformed XGuard, achieving an F1 score of 94.9% with
+transactions on meter.io [45], which XScope mentioned in   perfect recall, compared to XGuard’s 75.82%.
+its attack incident list but did not analyze. Additionally, we    The difference in performance metrics for PEVENTCATCHER
+discovered an attack transaction on CENNZnet, which resulted   ’s bytecode and source code implementations highlights specific
+in a loss of 150 ETH. This incident had not been previously   limitations in each approach. In Event Counterfeiting detection,
+disclosed or reported by any other tools or security companies.  PEVENTCATCHER ’s bytecode-level analysis lacks constraint

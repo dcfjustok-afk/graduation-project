@@ -1,0 +1,65 @@
+                                                                                                                                                   8
+
+
+                        TABLE II: Transaction logs of the pNetwork attack.
+
+  Events    Parameters                                       Emitters           Parameter Values
+
+  Burned     operator, from, amount, data, operatorData         pBTC                 (Attacker, Attacker, 0, ,    )
+
+   Transfer   from, to, amount                          pBTC                 (Attacker, address(0), 0)
+
+  Redeem    redeemer, value, underlyingAssetRecipient, userData  pBTC                 (Attacker, 0, Attacker Bitcoin address,   )
+
+  Redeem    redeemer, value, underlyingAssetRecipient, userData   Malicious Contract    (Attacker, 274[...]144, Attacker Bitcoin address,   )
+
+
+control flow graph (ICFG) from the IR (line 2) and extracts all    is added to Ev as vulnerable to Event Counterfeiting (line 16).
+event log operations (LogOps) from the IR (line 3). Each log     After analyzing all paths for a log operation, the algorithm
+operation consists of an event signature and a set of event data   checks  if multiple tainted paths exist for the same event
+variables. The algorithm then initializes an empty set Vars to   (line 18). If so, the event is flagged as susceptible to Event
+record the event variables (line 4).                              Counterfeiting due to the presence of multiple emission paths
+  The construction of the ICFG involves recovering function-   (line 19).
+level information, such as function names and event signatures,    By analyzing the tainted data flow and identifying conditions
+by matching hashed identifiers in the bytecode with entries   such as missing constraints, unchecked external calls, and
+in a signature database. A control flow graph (CFG) is then   the absence of storage operations, the algorithm effectively
+constructed using basic blocks that represent possible execution   detects vulnerabilities. Events flagged in Ev are susceptible
+paths within each function. These basic blocks are connected   to either Event Counterfeiting, where the same event may
+by directed edges based on control flow instructions and   be misleadingly emitted from multiple paths, or Inconsistent
+jump targets, forming the CFG. To capture interactions across   Logging, where logged data may lack of control.
+functions, interprocedural calls are identified, and edges are     2) Source-Code-Level Validation of Event Parameter Con-
+added between caller and callee functions, thereby extending   straints: Bytecode-level analysis is limited as it only reveals
+the CFG into an ICFG.                                      indexed event parameters, without access to the full semantics
+  For each log operation in LogOps, the algorithm updates   of events. Consequently, bytecode-level analysis can only
+Vars with the variables involved in the log operation (line 6). It   detect potential Inconsistent Logging issues by identifying
+then performs a BACKWARDSLICING analysis on the ICFG to   inconsistencies in indexed parameters, and it cannot address
+extract slices representing the reverse execution flow from the   non-indexed parameters. To achieve complete validation, source
+log operation to the function entry point (line 7). These slices   code analysis is necessary. At the source code level, we gain
+are used to derive inter-functional paths (Paths) for further   access to both indexed and non-indexed parameters, enabling a
+analysis (line 8).                                           comprehensive evaluation of potential vulnerabilities, including
+  For each path p in Paths, the algorithm performs taint   both Event Counterfeiting and Inconsistent Logging, which
+analysis using the TAINTANALYSIS function (line 9). This   bytecode-level analysis alone cannot fully uncover.
+function evaluates whether tainted data propagates from the    To address these challenges, we rely on the full semantic
+log operation to the path entry point. Starting from the log   context of the contract source code to trace event-related
+operation, tainted variables are tracked by propagating taint   call paths and apply symbolic execution to verify parameter
+through instructions in the reverse execution path. Specifically,   constraints. This ensures that events are emitted with consistent
+if an instruction interacts with tainted variables, its associated   values across all paths, aligning both indexed and non-indexed
+variables are added to the set of tainted variables. The process   parameters with the intended contract logic. Additionally, Event
+continues until reaching the path entry point, which serves as   Counterfeiting detection at the source-code level involves
+the source of the taint. If tainted variables are found at the path   analyzing multiple execution paths to verify that events are
+entry, the function returns the entry point as the (sourceop);   not improperly used across functions, providing a depth of
+otherwise, it returns null.                                       validation that cannot be achieved with bytecode analysis alone.
+   If a source of tainted data (sourceop)  is identified, the    At the source-code level, as detailed in Alg. 2, the tool begins
+algorithm checks if there are any storage operations (sstore)  by initializing an empty set Ev to store potentially vulnerable
+in the portion of the path leading to the source (line 11).   events. Then extracts all events E from the smart contract
+Additionally, it verifies whether the variables involved in these   source code SC. For each event in E, the tool performs the
+sstore operations are subject to constraints (e.g., conditional   following steps:
+jumps like jumpi). If no sstore operations are found, or if      First, the tool extracts all execution paths Paths in SC that
+the sstore operations lack constraints on their variables, the   lead to the emission of the event using the SEARCHPATHS
+corresponding event is added to Ev as potentially vulnerable   function. This involves traversing the contract’s call graph to
+to Inconsistent Logging (line 12). The event is also recorded in   capture all inter-procedural paths from user-callable functions
+a separate set of tainted paths for further evaluation (line 13).   to the event-emitting statements. For each path p ∈Paths,
+   If no source of tainted data is identified, the algorithm   the tool performs symbolic execution using SYMBOLICEXEC
+checks if the path contains an external call (call) without   to extract the path constraints related to the event parameters.
+corresponding  constraints  (e.g.,  conditional branches  like  The tool then applies the CHECKLOGGINGINCONSISTENCY
+jumpi) (line 15). If such conditions are found, the event   function to verify if any path shows inconsistencies in logging

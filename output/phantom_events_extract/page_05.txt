@@ -1,0 +1,71 @@
+                                                                                                                                                   5
+
+
+                TABLE I: Mapping relationship between attack vectors and related modules.
+
+      Level       Attacks                 Descriptions                                                        Related Modules
+
+                    event counterfeiting     Use existing contracts to emit Phantom events             MT S, MO      On-chain
+                     inconsistent logging       Inconsistencies between database and blockchain event emissions      MSC, MT S, MD
+
+                     contract imitation        Deploy a malicious contract to emit Phantom events             MSC, MT S, MO
+      Off-chain
+                      transfer event spoofing   Emit Phantom events with social engineering attack             MSC, MT S, MO
+
+                    event handling error      Incorrect display/ insertion/storage due to faulty event processing      MD, MO
+
+
+1 function requestWithdraw(uint256 _type, uint256         • Constraint(f): The  access  control mechanism  for
+       _amount) external {                                      function  f  or  constraint  for  event  parameters.  If
+2   require(WITHDRAW_ALLOWED, "TroyEmpire:                Constraint(f) =  ∅, there are no access controls or
+         Withdrawal is disabled for now");
+                                                                          constraints.3   emit WithdrawalRequested(_msgSender(), _type,
+         _amount);                                              • Sread(f) and Swrite(f): The storage variables read and
+4 }                                                                  written by the function f.
+
+                                                                   3) Contract Imitation: This attack involves the deployment
+ Fig. 5: Proof of concept for the inconsistent logging attack.
+                                                                 of a malicious contract to exploit or imitate an existing contract
+                                              (MSC). We classify this attack into two subtypes based on its
+                                                                        characteristics. The first subtype, called Blended Event Attack,
+   • V (f, e) and V (g, e) represent the range of values that the
+                                                            occurs when a malicious contract interacts with a legitimate
+     parameters of event e can take along function paths f and
+                                                                      contract, causing events from both contracts to be logged within
+     g.
+                                                                  the same transaction. This blending of events makes it difficult
+  2) Inconsistent Logging: Many DApps adopt a hybrid   to distinguish between legitimate and fraudulent activity. The
+logging model  that uses both blockchain and  traditional   second subtype, named Mimicry Contract Attack, involves an
+databases to record critical operations. For example, DeFi   attacker deploying a forged contract that imitates the behavior
+platforms record financial transactions, such as deposits and   of a legitimate contract, allowing the attacker to manipulate
+withdrawals, while GameFi platforms track user operations.  event logs and transaction details.
+Our analysis revealed that numerous projects not only rely on                                            An authentic contract typically records logs from its own
+database records, but also emit logs on the blockchain.                                                                 functions. However, most contracts permit external calls, al-
+   Specifically, poorly designed smart contracts may allow   lowing malicious contracts to invoke their functions, leading to
+attackers to emit forged events, leading to inconsistencies   logs from both contracts being recorded in a single transaction
+between the blockchain and the database logs. For example, (MT S). This scenario, termed the Blended Event  attack,
+a financial platform might use both blockchain and off-chain   introduces a security risk when the log emitter is not verified.
+databases to log withdrawal requests. If the smart contract                                                      The Mimicry Contract attack exploits transparency practices,
+lacks proper access controls, attackers could arbitrarily generate                                                              as many DApp teams publish their contract source code to
+withdrawal events on the blockchain, creating a mismatch with                                                      promote trust. This allows attackers to modify and redeploy
+the database records, as shown in Fig. 5.                                                              code, creating malicious contracts that mimic legitimate ones
+Detection Method. This vulnerability occurs when smart   and emit event logs that can be freely manipulated (MT S). For
+contracts emit events without proper access control or validation  ERC-20 tokens or NFTs, this manipulation enables attackers
+against stored data. Specifically, some contracts lack necessary   to forge transaction records, such as minting or transferring
+constraints, allowing any user to trigger critical events such   tokens or NFTs, which can include falsifying the sender to
+as withdrawals without validating the event parameters against  make an NFT appear as though it was issued by a well-known
+the contract’s state. To detect this, we analyze the contract’s    artist.
+functions for two key aspects: (1) the presence of access control                                                            Detection Method. To detect this, we analyze the transaction
+mechanisms or event parameter validation (e.g., require                                                                      logs. Specifically, we check whether the same event signature
+statements) that restrict who can emit events, and (2) whether   (Topics0) appears multiple times in the same transaction, but
+the function interacts with storage (i.e., reads from or writes                                                                              is emitted by different contracts. If the event signature is
+to storage variables) when emitting events to ensure that                                                            emitted by both the authentic contract and a forged contract
+parameters are validated against previously stored values. If                                                              within the same transaction, it is flagged as a potential attack
+a function emits an event without adequate access control                                                                     transaction. This detection rule helps identify cases where the
+or does not interact with storage, it is flagged as a potential                                                             event signatures match but are emitted by different emitters,
+vulnerability.                                                                  indicating a Blended Event Attack.
+  The formalized detection rule is expressed as follows.
+                                              Topicsi0 = Topicsj0 and 
+                                                                          Constraint(f) = ∅or                       BE =   Lhash | Siaddress = Sauth and                (3)
+       IL =  f ∈F |                                             (2)
+                     (Sread(f) = ∅and Swrite(f) = ∅)                    Sjaddress = Sforge   

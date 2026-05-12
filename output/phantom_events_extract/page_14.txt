@@ -1,0 +1,75 @@
+                                                                                                                                                  14
+
+
+
+[47]  S. Nakamoto, “Bitcoin: A peer-to-peer electronic cash system”, 2008.
+[48] CoinMarketCap, “Bitcoin price today, BTC to USD live price, marketcap
+     and chart — CoinMarketCap”, 2024. [Online]. Available: https://coinma
+      rketcap.com/currencies/bitcoin/. [Accessed: Dec. 15, 2023].
+[49] Scam Sniffer, “Zero Transfer Scam”. [Online]. Available: https://twitter.
+     com/realScamSniffer/status/1755862295224459675. [Accessed: Oct. 15,
+      2024].
+[50] Dune, “How Users React”. [Online]. Available: https://dune.com/kimichi
+      /how-users-react. [Accessed: Oct. 15, 2024].
+[51] G. Ye et al., “Interface Illusions: Uncovering the Rise of Visual Scams
+      in Cryptocurrency Wallets”, Proceedings of the ACM on Web Conference
+     2024, 2024.
+[52] N. Grech, L. Brent, B. Scholz, et al., “Gigahorse: Thorough, declarative
+      decompilation of smart contracts”, in 2019 IEEE/ACM 41st International
+                                                                        Fig. 8: The overview of Inconsistent logging apps.     Conference on Software Engineering (ICSE), IEEE, 2019, pp. 1176–1186.
+[53] Z. Liao, Y. Nan, H. Liang, et al., “Smartaxe: Detecting cross-chain
+      vulnerabilities in bridge smart contracts via fine-grained static analysis”,
+     Proceedings of the ACM on Software Engineering, vol. 1, no. FSE, pp.  unauthorized transactions that emit phantom events. Although
+     249–270, 2024.
+[54] K. Wang, Y. Li, C. Wang, et al., “XGuard: Detecting Inconsistency   user permissions for the other three projects were unclear, we
+     Behaviors of Crosschain Bridges”, in Companion Proceedings of the   can simulate to call their functions and arbitrarily generate
+     32nd ACM International Conference on the Foundations of Software   withdrawal events, confirming the existence of these issues.
+     Engineering, 2024, pp. 612–616.
+[55] BscScan, “TroyEmpire”, 2024. [Online]. Available: https://bscscan.co  Contract Imitation. For Contract Imitation attack, the most
+     m/address/0xb48200ed722e7e86a78d04245bf743d047289e95#code.
+                                                                notable instance is the attack on pNetwork, which resulted in a     [Accessed: Jun. 7, 2024].
+[56] BscScan, “SecondLive”, 2024. [Online]. Available: https://bscscan.co   loss of $12.7 million. This has already been briefly introduced
+     m/address/0x260e69ab6665b9ef67b60674e265b5d21c88cb45#code.   in Sect. III-C. Similarly, THORChain experienced a loss of $8
+     [Accessed: Jun. 7, 2024].
+                                                               million due to an error handler issue [8]. As for mimicry[57] BscScan, “TTGame”, 2024. [Online]. Available: https://bscscan.com/ad
+     dress/0x7192611537108231ce07ac20ddf40c850a00ef6a#code. [Accessed:   contract attack, a representative case is the “sleepminting”
+      Jun. 7, 2024].                                                      attack, which gained attention for generating an NFT valued at
+[58] BscScan, “WalletLocking”, 2024. [Online]. Available: https://bscscan.
+                                                      $69 million and listing it on a platform. This incident has been     com/address/0xb89cb9297c29ca0b4ae1d2f0b68089c9f39017ce#code.
+     [Accessed: Jun. 7, 2024].                                   widely studied in the academic community [10], [15], [46].
+[59]  T. Chen, Y. Zhang, Z. Li, et al., “TokenScope: Automatically detecting   According to recent information from the Forta platform [41],
+      inconsistent behaviors  of cryptocurrency tokens  in Ethereum”,  in
+                                                                  there were 8,130 sleepminting alerts generated in just 7 days,     Proceedings of the 2019 ACM SIGSAC Conference on Computer and
+     Communications Security, 2019, pp. 1503–1520.                  from December 3 to December 9, 2023.
+[60] Our Team, “Error in displaying msg.sender in Transaction Logs”, 2024.
+      [Online]. Available: https://github.com/blockscout/blockscout/issues/9879.  Transfer Event Spoofing. Our analysis of on-chain data
+     [Accessed: Jun. 7, 2024].                                        revealed numerous instances of Transfer Event Spoofing, where
+[61] Ruaro, Nicola and Gritti, Fabio and McLaughlin, et al., “Not your Type!  ERC-20 token and NFT events had altered sender addresses.
+      Detecting Storage Collision Vulnerabilities in Ethereum Smart Contracts”,
+      in Netw. Distrib. Syst. Security Symp, 2024.                     These included forged addresses resembling celebrities, well-
+[62]  Gritti, Fabio and Ruaro, Nicola and McLaughlin, et al., “Confusum  known exchanges, and other eye-catching entities. Several of
+      contractum: confused deputy vulnerabilities in ethereum smart contracts”,   these cases have led to significant financial losses [9], [22],
+      in 32nd USENIX Security Symposium (USENIX Security 23), pp. 1793–
+     1810, 2023.                                                      [37], [49], [51].
+[63] Ghaleb, Asem and Rubin, Julia and Pattabiraman, et  al., “eTainter:  Event Handling Error. A well-known example of Event
+      detecting gas-related vulnerabilities in smart contracts”, in Proceedings
+      of the 31st ACM SIGSOFT International Symposium on Software Testing  Handling Error involves the misinformation case experienced
+     and Analysis, pp. 728–739, 2022.                           by Rarible and OpenSea, caused by sleepminting. Blockchain
+                                                                  explorers like Etherscan and Bscscan, as well as various wallets,
+                  APPENDIX A                           often treat forged transfer events as legitimate transactions. An-
+         REAL-WORLD ATTACK EXAMPLES                other instance involves blockwell.ai, where wallets mistakenly
+A. Examples of the Five Attack Vectors in Our Taxonomy       identified a phantom event from a spoofed token as a valid ERC-
+                                                      20 transfer [17]. Similar vulnerabilities have been observed in
+Event Counterfeiting. Two well-known instances of Event                                                                 the ERC-721 and ERC-1155 tokens.
+Counterfeiting are the attacks on Qubit Bridge [28] and Meter                                                                   In addition, OpenSea, the largest NFT marketplace, has faced
+Bridge [45], which resulted in losses of $80 million and $4.3                                                                   similar issues. The attackers manipulated the metadata of the
+million, respectively.                                              NFTs displayed by OpenSea, embedding malicious payloads
+Inconsistent Logging. Many of these issues were discovered   that triggered unwanted wallet behaviors, ultimately allowing
+from the 25 most active smart contracts on the BSC chain on   attackers to profit. Similar attacks have been found in ERC-
+1 April 2024. Specifically, the contracts for TroyEmpire [55],  20 projects, highlighting the widespread difficulty in securely
+SecondLive [56], WalletLocking [58], and TTGameEvents [57]   handling event data across the blockchain ecosystem [13], [14].
+were found to have these issues. For example, TTGame project
+generates an address for users’ registration and transfers a
+                                                               B. Framework of Inconsistent Logging and Contract Imitationcertain amount of BNB to the address as gas fees for future
+automatic  calls. By identifying authorized user addresses      Figure 8 provides an overview of Inconsistent Logging
+from the historical transactions, we can find the remaining   in applications. In this framework, a user operates through

@@ -1,0 +1,61 @@
+                                                                                                                                                   2
+
+
+merous vulnerabilities and potential risks in various blockchain                          Source Chain                                    Destination Chain
+applications (details reported in Sect. VI). Our results reveal             Cross-Chain               Bridge                    Token
+                                                                                         Token Transfer             Events       Off-Chain      Transfer
+that phantom event vulnerabilities are widespread and affect a                                                      Relayer
+variety of applications in the blockchain ecosystem. Through                          Bridge Contract                                 Router Contract
+our auditing  efforts, we discovered previously unreported
+instances of inconsistent logging vulnerabilities, where on-      Fig. 1: The basic architecture of a cross-chain bridge.
+chain issues resulted in discrepancies with off-chain records.
+Furthermore, our tool identified historical event issues on chain
+                                                       be indexed  (stored  in  topics)  or non-indexed  (stored  inthat had gone undetected, underscoring the effectiveness of the
+                                                                  data).  For  example,  in  the  event Deposit(addresstool in uncovering past incidents. In contract-level analysis, our
+                                            indexed account, uint256 amount, uint256tool outperformed existing solutions, demonstrating superior ac-
+                                              timestamp);,  the account  is an indexed  parameter,curacy in detecting phantom event vulnerabilities. Furthermore,
+                                                       which means it will be included in the event’s topics, enablingwe identified security issues in multiple real-world applications,
+                                                  more efficient searching and filtering in the event logs. Theincluding cryptocurrency wallets, blockchain explorers, and
+                                            amount and timestamp parameters are not indexed, butcross-chain bridges, and reported these findings to project
+                                                              they still provide valuable information about the transaction.teams, claiming bounties for responsible disclosure. Finally,
+we propose mitigation strategies to address these vulnerabilities   Listener. An external system (e.g., a DApp or wallet) that
+in Sect. VIII.                                               monitors specific events by subscribing to logs through RPC
+   In short, we make the following contributions in this paper:  methods.
+   • Novel Attack Taxonomy. We are among the  first to   Transaction. A transaction TXhash represents an action on the
+     systematically analyze and categorize attacks related to   blockchain, such as invoking a function fname within a smart
+     the forgery of blockchain transaction logs. We propose   contract. It includes the sender’s and recipient’s addresses, the
+    a  security model  that captures  five types of  attack.   transfer amount, and input data defining the function call and
+   We also identified previously unreported inconsistent    its parameters.
+     logging vulnerabilities, where on-chain issues result in                                                          Sender. The sender TXsender is the user address that creates
+     discrepancies with off-chain records.                                                                 the transaction.
+   • Efficient Detection. We developed a detection mechanism
+                                                              Emitter. The emitter Saddress is the smart contract triggering     that surpasses  existing  tools  in  identifying Phantom
+                                                                 the event upon meeting certain conditions.     Events, successfully uncovering previously unreported
+     attack transactions.                                     Transaction Log. A log Lhash = (Topicsi0, Datai, Siaddress)
+   • Practical  Implications. We  identified  real-world  is-   is generated when an event is emitted during smart contract
+     sues across various blockchain applications, including   execution. Topicsi0 represents the event signature for the i-th
+     blockchain explorers, cryptocurrency wallets, GameFi,   log, Datai contains non-indexed parameters, and Siaddress is
+    DeFi, and NFT marketplaces. Notably, we found a   the contract emitting the event. These logs are stored on the
+     vulnerability in a cross-chain relayer, which is also used by   blockchain and referenced for event monitoring.
+     other projects, including one with a market capitalization
+     of over $250 million. To date, we have reported six   B. Token
+     cryptocurrency wallet issues, one blockchain explorer                                                                   In EVM-based blockchains, tokens are implemented as smart
+     issue, and one cross-chain bridge issue to project teams                                                                 contracts adhering to standards like ERC-20 and ERC-721,
+    and bug bounty platforms, with five confirmed and one                                                     which define interfaces and events to ensure compatibility
+     resolved, earning a total of $600 bounty for responsible                                                              across DApps. For instance, ERC-20 specifies events like
+     disclosure.                                            Transfer and Approval for tracking token transfers and
+                                                                  approvals, while ERC-721 defines similar events but is adapted
+                          II. BACKGROUND                                                                   for NFTs, where each token is unique. These standardized
+A. Smart contract event and transaction log in EVM-based   events enable external systems, such as wallets and exchanges,
+Blockchains                                                      to monitor token  activities and update user balances or
+  Smart contracts, written in high-level languages like So-  ownership records in real time, ensuring accurate and efficient
+lidity [30] and Vyper [31], are compiled into bytecode for   tracking.
+execution on the Ethereum Virtual Machine (EVM) [18]. EVM-
+based blockchains support a wide range of functionalities, from   C. Cross-Chain Brdiges
+simple transfers to complex DApps [20]. In these blockchains,                                                 Some DApps rely on off-chain modules to monitor transac-
+events and transaction logs enable communication between                                                                   tions and events emitted by smart contracts in order to stay
+smart contracts and external systems. When a smart contract                                                          updated on on-chain activities and state changes in real time.
+emits an event, it is recorded as a transaction log, involving                                                         For example, cross-chain bridges use these events to trigger
+key components as follows.                                                                 off-chain processes, update user interfaces, or others.
+Event. An event, such as Deposit, is defined as a tuple     In the case of a cross-chain bridge, as illustrated in Fig. 1,
+EDeposit(P1, P2, . . . , Pn), where  the  parameters  Pi may   the smart contract on source chain acts as the emitter Ssource,

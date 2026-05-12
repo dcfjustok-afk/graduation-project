@@ -1,0 +1,66 @@
+                                                                                                                                                   6
+
+
+   4) Transfer Event Spoofing: This attack is a form of social   sanitization, such payloads can lead to unauthorized actions
+engineering attack [21]. One common example is the Zero  on the DApp interface, data theft, or database compromise.
+Transfer Scam, where the attacker creates a phantom event that                                                            Detection Method. This attack leverages the implicit trust that
+mimics a legitimate token transfer. After the user sends tokens,                                                           blockchain explorers, wallets, and monitoring tools place in
+the attacker generates a fake event that makes  it appear as                                                             on-chain data. Effective detection requires adaptable methods
+though the user has sent tokens to a similarly named recipient                                                                     tailored to the needs of each off-chain application. Explorers
+address, which belongs to the attacker. This counterfeit event                                                          should validate events against actual token transfers, while
+is recorded by wallets and blockchain explorers, misleading                                                                wallets need to confirm that transfers are permitted for the
+the victim into transferring additional funds to the attacker’s                                                                  sender. By customizing detection rules based on these unique
+account. This scam has reportedly caused losses of at least                                                                   validation standards, applications can mitigate the risks posed
+$27.36 million USD, affecting 28,414 victims [51].                                                     by phantom events and embedded malicious payloads.
+  The second variation, called the Airdrop Scam [6], exploits
+the common Web3 marketing tactic of token airdrops. Attackers
+                                                                        V. VULNERABILITY DETECTION
+forge phantom events by spoofing the sender’s address using
+real ERC-20 or ERC-721 contracts, often selecting addresses     In this section, we focus on detecting vulnerabilities related
+designed to catch attention (e.g., 0x8888...8888). These phan-   to the attack vectors discussed in Sect. IV. We introduce
+tom airdrops trick victims into interacting with the tokens.  our hybrid approach, which combines static analysis with
+Attackers may set up honeypot contracts where users can buy  symbolic execution and on-chain data monitoring to ensure
+tokens but are unable to sell them, or use phantom event logs   comprehensive vulnerability detection.
+to promote malicious links (e.g., using ENS names to deceive
+victims). In more severe cases, attackers may perform rug   A. PEVENTCATCHER Framework Design
+pulls, withdrawing liquidity and leaving victims with worthless                                                  As shown in Fig. 6, our detection approach employs a multi-
+tokens [29].                                                                     level strategy, encompassing transaction-level, bytecode-level,
+Detection Method. Attackers exploit the fact that many third-  and source code-level for vulnerability detection.
+party services, such as wallets and blockchain explorers, blindly    At the transaction level, we manually researched documenta-
+trust events emitted by smart contracts without verifying their   tion for different projects to establish appropriate rules, given
+authenticity. By taking advantage of this lack of verification,   the variation in authentic events and emitters. These rules are
+attackers can generate phantom events that mimic legitimate   applied to both historical and real-time on-chain transaction
+transfers, misleading users  into  transferring funds  to the   data to detect Contract Imitation by identifying instances where
+attacker’s address. To detect this, we can analyze the transaction  phantom events are blended with authentic ones.
+logs to ensure that the transfer event was genuinely initiated     For smart contracts, our analysis proceeds across bytecode
+by the correct sender, or verify if the sender had approved the   and source code levels. Initially, we decompile smart contract
+address that initiated the transaction.                         bytecode into an intermediate representation (IR) in three-
+                                                               address form using Gigahorse [52]. From this IR, we construct
+                   TXsender ̸= TokenSender and                  an inter-contract control flow graph (ICFG) based on basic
+   TS =  Lhash |                                                  (4)                Approve(TokenSender, TXsender) = false          blocks. This graph enables backward taint analysis, which we
+                                                             use to trace event-related paths and detect vulnerabilities related
+   • TokenSender represents the sender of the tokens in event.
+                                                                    to Event Counterfeiting and Inconsistent Logging.
+   • Approve(TokenSender, TXsender) indicates whether the
+                                                                                 If the source code is available, we extend our analysis
+     token sender has authorized the transaction initiator to
+                                                            using Slither to perform source code-level analysis. This
+     transfer their tokens.
+                                                            provides a secondary confirmation for Event Counterfeiting
+   5) Event Handling Error: This attack exploits vulnerabilities                                                    by tracing event-related call paths and extracting constraints
+in how blockchain explorers, wallets, and monitoring tools                                                                     for symbolic execution, allowing us to verify parameter values
+process and interpret transaction data. These applications rely                                                   more comprehensively.
+on on-chain data to provide real-time information to users.                                                  Due to the unique nature of certain attacks, Event Handling
+When phantom events are mistakenly treated as legitimate,                                                            Error lacks a specific detection method as it heavily relies on
+this can result in inaccurate wallet balances, false transaction                                                                   off-chain system validation. Similarly, Transfer Event Spoofing
+histories, or incorrect asset ownership records, which misleads                                                                               is primarily a social engineering attack that focuses on token
+users and potentially impacts their decision-making.                                                              behavior analysis. Therefore, our tool primarily targets detecting
+  For example, in the context of Contract Imitation attacks,                                                                the remaining three types of attacks: Event Counterfeiting,
+even if phantom events are not specifically targeting blockchain                                                                Inconsistent Logging, and Contract Imitation, where distinct
+explorers, they may still cause explorers to log these events                                                                  patterns and contract-level vulnerabilities can be effectively
+as valid ERC-20 or NFT transfers, despite no actual transfer                                                                      identified and addressed.
+occurring. This misinterpretation allows attackers to create the
+appearance of transfers without underlying transactions.
+                                                             B. Transaction-Level Detection  Attackers can further exploit this by embedding malicious
+payloads within event data to launch attacks such as cross-    At the transaction level, off-chain monitoring is applied to
+site scripting (XSS) or SQL injection (SQLi). Without proper   analyze on-chain transaction data and detect potential Contract

@@ -1,0 +1,71 @@
+                                                                                                                                                   3
+
+
+                      Trust Boundary-DApp (MD)  Trust Boundary-Others (MO)      Trust Boundary-DApp (MD). The second boundary encom-
+                                                             passes DApps that act as interfaces between users and the
+             Interact                                   Ecosystem
+                        DApp                                                             Infrastructure            blockchain. DApps listen for events from the blockchain and
+                                                          respond accordingly, often triggering transactions or updates
+                         Contract                              Event            in response to these events.
+                               Call                               Flow
+                                  (MSC)          (MTS)                  Trust Boundary-Others (MO). The third boundary includes
+          Contract                                                                the broader ecosystem, such as off-chain services, external
+                         Forged Contracts   Emit    Phantom Events             Call
+                                                            APIs, and wallets. These components also rely on the integrity
+                         Authentic Contracts           Authentic Events           of blockchain events for proper functionality.
+
+                                   (MOM)
+                                    Blockchain Infrastructure                  B. Threat Model
+                                                                 In our threat model, attackers seek to compromise DApps
+                                  Trust Boundary-Blockchain (MB)              and the broader ecosystem infrastructure by emitting forged
+                                                                  events, and may also exploit these attacks to mislead users
+     Fig. 2: Trust Boundaries in Blockchain Interactions                                                          through social engineering tactics. While regular users emit
+                                                                 legitimate events by invoking authentic contracts, attackers
+                                                        can emit forged events in several ways: by calling a forged
+emitting specific events such as Deposit when users deposit                                                                   contract, by calling an authentic contract, or by invoking a
+assets. And the smart contract on the destination chain as an                                                              forged contract that subsequently calls an authentic contract to
+actor, being invoked by an off-chain relayer to process the                                                             emit a forged event. The attacker’s capabilities are confined to
+deposited assets and complete the transfer operation.                                                     making direct contract calls or interacting with DApps.
+  When a user deposits tokens in a bridge contract in the
+source chain, the deposit event EDeposit  is emitted and
+                                                          C. Motivating Examplesrecorded as a transaction log Ldeposittx. An off-chain relayer,
+functioning as a listener, monitors these logs to detect the    Numerous real-world blockchain attacks have occurred due
+Deposit event, process the event information, and coordinate   to the forgery of transaction logs. For example, the Qubit Bridge
+with the smart contract on the destination chain to complete  and pNetwork Bridge attacks [28], [44] caused $80 million
+the asset transfer.                                       and $4.3 million losses, respectively, due to the exploitation
+                                                               of Phantom Event vulnerabilities.
+
+     III. THREAT MODEL AND MOTIVATING EXAMPLES
+                                                                                         Malicious        Vitctim                           Asset
+                                                                                         Attacker
+  This section presents a threat model for the systematic                   Contract       Contract                         Contract
+analysis of event-related attacks and illustrates the impact of                                                      Off-Chain
+Phantom Events through motivating examples.                                                                            Relayer
+                                                                                                           Source                         Destination
+                                                                                                Contract         Chain                         Chain
+                                                                                   Deployment
+A. Trust Boundaries in Event Interactions                                   done
+
+                                                                                                Normal   In the complex environment of blockchain interactions, estab-            Attack
+                                                                                                          Function                                                                                                                                     Call     Authentic
+lishing clear trust boundaries is essential for comprehensively                                              Events
+understanding the security risks and vulnerabilities associated                             done      Phantom
+with transaction and event workflows. The interact model                                            Events
+                                                                                    done
+illustrated in Fig. 2 defines three primary trust boundaries:                                                    Token Transfer
+                                                                                                                                done
+
+Trust Boundary-Blockchain (MB). The core trust boundary
+is the blockchain, which serves as the backbone of the system            Fig. 3: Attack sequence of pNetwork Hack.
+where transactions and smart contract events are stored. Within
+this boundary lies the Transaction Storage (MT S), which can     In the pNetwork hack, there is a flaw in the event han-
+be divided into phantom events and authentic events. Phantom   dling mechanism, where if both a malicious contract and a
+events are artificially created or manipulated events that may   legitimate contract are invoked within the same transaction
+trigger unintended actions, while authentic events are the  and both emit events, the mechanism mistakenly treats all
+expected output of blockchain transactions. The Smart Contract   emitted events as legitimate contract events. So as shown
+area (MSC) can be divided into authentic contracts and forged   in the attack sequence (Fig. 3), the attacker first deployed
+contracts, indicating the potential for contracts to operate   a malicious contract Smalicious on the source chain which
+as intended or act maliciously. Other Blockchain Modules   invoking the legitimate contract Slegitimate through a function
+(MOM) include consensus mechanisms, node communication   call. After the legitimate contract Slegitimate executed its
+protocols, and other components  that support blockchain   function fdeposit and emitted the authentic event EDeposit,
+functionality.                                                   the malicious contract Smalicious simultaneously emitted a
