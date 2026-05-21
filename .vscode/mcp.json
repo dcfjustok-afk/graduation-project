@@ -8,6 +8,14 @@
 				"chrome-devtools-mcp@latest"
 			]
 		},
+		"computer-use": {
+			"type": "stdio",
+			"command": "npx",
+			"args": [
+				"-y",
+				"computer-use-mcp"
+			]
+		},
 		"filesystem": {
 			"type": "stdio",
 			"command": "npx",
