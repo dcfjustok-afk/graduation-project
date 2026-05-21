@@ -1,0 +1,192 @@
+\documentclass[lettersize,journal]{IEEEtran}
+
+\usepackage[UTF8,fontset=windows]{ctex}
+\usepackage{verbatim} 
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{pgf-pie}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usetikzlibrary{positioning, shapes.multipart, fit, arrows.meta}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{url}
+\usepackage{orcidlink}
+\usepackage{xurl}
+\usepackage{mdframed}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{algorithm}
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{algorithm} % For the floating algorithm environment
+\usepackage[noend]{algpseudocode} % For pseudocode commands
+\usepackage{xspace}
+\usepackage{listings, xcolor}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{makecell}
+\usepackage{varwidth}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+
+\usepackage{siunitx}
+\usepackage[capitalize]{cleveref}
+\crefformat{section}{第#2#1#3节}
+\Crefformat{section}{第#2#1#3节}
+\crefformat{figure}{图#2#1#3}
+\Crefformat{figure}{图#2#1#3}
+\crefformat{table}{表#2#1#3}
+\Crefformat{table}{表#2#1#3}
+\crefformat{algorithm}{算法#2#1#3}
+\Crefformat{algorithm}{算法#2#1#3}
+\crefname{definition}{定义}{定义}
+\Crefname{definition}{定义}{定义}
+%\setlength{\abovedisplayskip}{2.2pt}
+%\setlength{\belowdisplayskip}{2.2pt}
+%\setlength{\abovecaptionskip}{2.2pt}
+%\setlength{\belowcaptionskip}{2.2pt}
+%\setlength{\textfloatsep}{2.2pt}
+%\setlength{\floatsep}{2.2pt}
+%\setlength{\intextsep}{2.2pt}
+%\setlength{\dbltextfloatsep}{2.2pt}
+%\setlength{\dblfloatsep}{2.2pt}
+\lstdefinelanguage{Solidity}{
+  keywords={function, external, payable, emit},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywords={},
+  ndkeywordstyle=\color{darkgray}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
+
+% Define Style
+\lstset{
+   language=Solidity,
+   backgroundcolor=\color{white},
+   extendedchars=true,
+   basicstyle=\footnotesize\ttfamily,
+   showstringspaces=false,
+   showspaces=false,
+   numbers=left,
+   xleftmargin=12pt,
+   numberstyle=\footnotesize,
+   numbersep=7pt,
+   tabsize=1,
+   breaklines=true,
+   showtabs=false,
+   captionpos=b
+}
+
+\renewcommand{\abstractname}{摘 要}
+\renewcommand{\figurename}{图}
+\renewcommand{\tablename}{表}
+\floatname{algorithm}{算法}
+
+\newcommand{\liuye}[1]{\textcolor{red}{Ye: #1}}
+
+\renewcommand{\paragraph}[1]{\vskip 0.05in \noindent\textbf{#1.}}
+
+\ifCLASSOPTIONcompsoc
+
+  \usepackage[nocompress]{cite}
+\else
+  \usepackage{cite}
+\fi
+
+
+\ifCLASSINFOpdf
+
+\else
+
+\fi
+
+
+\hyphenation{op-tical net-works semi-conduc-tor}
+\newcommand{\tool}[0]{\textsc{PEventCatcher}\xspace}
+\newcommand{\cnpaperheader}{幻影事件：揭示区块链日志伪造问题}
+
+\fancypagestyle{fancy}{
+  \fancyhf{}
+  \fancyhead[L]{\includegraphics[height=0.6cm]{dhu-logo.png}}
+  \fancyhead[R]{\zihao{-5}\cnpaperheader}
+  \fancyfoot[C]{\zihao{-5}\rmfamily\thepage}
+  \renewcommand{\headrulewidth}{0.75pt}
+  \renewcommand{\footrulewidth}{0pt}
+}
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyhead[L]{\includegraphics[height=0.6cm]{dhu-logo.png}}
+  \fancyhead[R]{\zihao{-5}\cnpaperheader}
+  \fancyfoot[C]{\zihao{-5}\rmfamily\thepage}
+  \renewcommand{\headrulewidth}{0.75pt}
+  \renewcommand{\footrulewidth}{0pt}
+}
+\setlength{\headheight}{21pt}
+\setlength{\headsep}{8pt}
+\pagestyle{fancy}
+
+\begin{document}
+
+\title{幻影事件：揭示区块链日志伪造问题}
+
+\author{
+    Yixuan Liu$^{\orcidlink{0009-0006-2255-7901}}$, 
+    Yuxin Dong$^{\orcidlink{0009-0003-6239-4690}}$,
+    Ye Liu$^{\orcidlink{0000-0001-6709-3721}}$,
+    Xiapu Luo$^{\orcidlink{0000-0002-9082-3208}}$,~\IEEEmembership{IEEE 高级会员,}
+    和 Yi Li$^{\orcidlink{0000-0003-4562-8208}}$,~\IEEEmembership{IEEE 会员} \thanks{Yixuan Liu 和 Yi Li 就职于新加坡南洋理工大学计算与数据科学学院。}
+    \thanks{Yuxin Dong 就职于中国北京大学软件与微电子学院。}
+    \thanks{Ye Liu 就职于新加坡管理大学计算与信息系统学院。}
+    \thanks{Xiapu Luo 就职于中国香港理工大学计算学系。}
+    
+}
+%\author{\IEEEauthorblockN{Michael Shell}
+%\IEEEauthorblockA{School of Electrical and\\Computer Engineering\\
+%Georgia Institute of Technology\\
+%Atlanta, Georgia 30332--0250\\
+%Email: http://www.michaelshell.org/contact.html}
+%\and
+%\IEEEauthorblockN{Homer Simpson}
+%\IEEEauthorblockA{Twentieth Century Fox\\
+%Springfield, USA\\
+%Email: homer@thesimpsons.com}
+%\and
+%\IEEEauthorblockN{James Kirk\\ and Montgomery Scott}
+%\IEEEauthorblockA{Starfleet Academy\\
+%San Francisco, California 96678-2391\\
+%Telephone: (800) 555--1212\\
+%Fax: (888) 555--1212}}
+
+\maketitle
+\thispagestyle{fancy}
+
+\input{Sections/0_Abstract}
+
+\IEEEpeerreviewmaketitle
+
+
+\input{Sections/1_Introduction}
+\input{Sections/2_Background}
+\input{Sections/3_Threat}
+\input{Sections/4_Vector}
+\input{Sections/5_Detection}
+\input{Sections/6_Evaluation}
+\input{Sections/7_Related}
+\input{Sections/8_Discussion}
+\input{Sections/9_Conclusion}
+
+
+\input{Sections/Acknowledgments}
+
+\input{bibliography}
+\input{Sections/Appendix}
+
+\end{document}

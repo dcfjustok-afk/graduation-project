@@ -1,0 +1,16 @@
+\section{相关工作}
+\subsection{智能合约安全分析}
+近年来，大量技术被提出用于分析智能合约安全性。
+
+\paragraph{静态分析}
+Tikhomirov 等人~\cite{tikhomirov2018smartcheck}设计了 SmartCheck，该系统将 Solidity 源代码转换为 XML，并通过 xPath 模式检测缺陷。Grech 等人~\cite{grech2022elipmoc}提出了名为 Gigahorse 的静态分析框架，该框架将基于栈的字节码转换为基于寄存器的中间表示。Fesit 提出了一个面向 Solidity 源代码的类似工具 Slither~\cite{Slither}。Lu 等人~\cite{lu2021neucheck}设计了名为 NeuCheck 的智能合约安全分析工具，该工具基于语法树解析。Ghaleb 等人~\cite{ghaleb2022etainter}提出了 eTainter，这是一种静态分析工具，通过将污点追踪应用于字节码来检测智能合约中的 gas 相关漏洞。
+
+\paragraph{符号执行}
+Luu 等人~\cite{luu2016making}提出了 Oyente，这是一个用于检测 Ethereum 智能合约缺陷的开创性符号执行工具。Lin 等人~\cite{lin2022solsee}提出了 SolSEE，这是首个面向 Solidity 智能合约的源代码级符号执行引擎。Ma 等人~\cite{ma2021pluto}提出了 Pluto，通过重建合约间 CFG 来检测安全缺陷。Pasqua 等人~\cite{pasqua2023enhancing}提出了一种基于 EVM 操作数符号执行的方法，用于精确构建 CFG 并改进漏洞检测。Ruaro 等人~\cite{ruaro2024not}实现了 CRUSH，该工具利用符号执行和程序切片检测此类合约组之间的存储冲突。Gritti 等人~\cite{gritti2023confusum}开发了 JACKAL，该工具基于控制流图（CFG）和函数调用图（FCG）执行符号执行，以检测混淆合约漏洞。此外，Mytrhil~\cite{mythril} 和 Manticore~\cite{mossberg2019manticore} 等工业界解决方案已成为智能合约审计的标准工具。
+
+我们的方法是开发一个结合多种技术的检测框架，包括字节码级分析、源代码分析、交易级监控和符号执行；但本文所处理的问题无法被任何现有漏洞模式捕获。
+
+\subsection{智能合约事件}
+通常而言，日志消息能够增强程序理解并降低维护成本，但关于 Solidity 事件日志记录和安全性的研究仍然有限。Li 等人~\cite{li2023understanding}首次对 Solidity 事件日志记录开展了实证研究，并开发了一种工具，用于识别会造成不必要 gas 消耗的事件。Zhang 等人~\cite{Xscope}设计了名为 Xscope 的工具，用于发现跨链桥中的安全违规事件。Cernera 等人~\cite{cernera2023token}通过扫描日志并查找 Transfer 事件，追踪由内部交易创建的代币。此外，Guidi 等人~\cite{sleepminting}分析了 sleepminting 现象，并探索了使用 Forta 追踪可疑事件和发出告警的方法。Zhu 等人~\cite{doccon}提出了名为 DocCon 的技术，用于检测 Solidity 代码及其对应文档之间的不一致。这些不一致包括文档中记录的事件发出行为未出现在代码中，或代码中出现了文档未记录的事件发出行为。TokenScope \cite{TokenScope} 通过监控 ERC-20 事件，为检测代币行为中的不一致性作出了贡献。尽管已有这些进展，大多数研究仅考虑了特定场景中与事件相关的问题，尚未充分解决由幻影事件导致攻击的一般性问题。
+
+\label{sec:related}

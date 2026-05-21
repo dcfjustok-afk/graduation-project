@@ -1,0 +1,199 @@
+\section{攻击分类与分析}\label{sec:vector}
+
+本节给出由幻影事件导致的攻击分类，并为每类攻击提供详细解释和检测规则。
+
+\begin{table*}[ht]
+\centering
+\caption{攻击向量与相关模块之间的映射关系。}
+\label{tab:attack-classification}
+\begin{tabular}{l|l|p{8.5cm}|p{3cm}}
+\toprule
+\textbf{层级} & \textbf{攻击} & \textbf{描述} & \textbf{相关模块} \\
+\midrule
+\multirow{2}{*}{\textbf{链上}}
+& 事件仿冒 & 利用现有合约发出幻影事件 & \(\bm{\mathcal{M}}_{TS}\), \(\bm{\mathcal{M}}_{O}\) \\
+\cmidrule{2-4}
+& 不一致日志记录 & 数据库记录与区块链事件发出之间存在不一致 & \(\bm{\mathcal{M}}_{SC}\), \(\bm{\mathcal{M}}_{TS}\), \(\bm{\mathcal{M}}_{D}\) \\
+\midrule
+\multirow{3}{*}{\textbf{链下}}
+&合约仿冒 & 部署恶意合约以发出幻影事件 & \(\bm{\mathcal{M}}_{SC}\), \(\bm{\mathcal{M}}_{TS}\), \(\bm{\mathcal{M}}_{O}\) \\
+\cmidrule{2-4}
+& 转账事件欺骗 & 结合社会工程学攻击发出幻影事件 & \(\bm{\mathcal{M}}_{SC}\), \(\bm{\mathcal{M}}_{TS}\), \(\bm{\mathcal{M}}_{O}\) \\
+\cmidrule{2-4}
+& 事件处理错误 & 由于事件处理存在缺陷而导致错误显示、插入或存储 & \(\bm{\mathcal{M}}_{D}\), \(\bm{\mathcal{M}}_{O}\) \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+我们基于行业报告、学术文献以及真实世界中的智能合约审计，构建了一个针对相对新颖且研究不足的幻影事件攻击的分类体系。我们建模了五种不同的攻击场景，并根据其来源将其划分为两类：（1）\emph{链上（智能合约）漏洞}；（2）\emph{链下弱点}。这些攻击总结于攻击分类表（\cref{tab:attack-classification}）中。
+
+这些攻击的详细演示可见补充材料。\footnote{\url{https://github.com/PhantomEvent/Event-attack-demo}}
+
+
+\subsection{攻击向量与检测规则}
+本节介绍五种与幻影事件相关的攻击，并提出相应的检测规则。这些攻击的示例见\cref{appendix:examples}。
+
+\subsubsection{事件仿冒}\label{vec:attack1}
+
+\begin{figure}
+\small
+\footnotesize
+\begin{lstlisting}[language=Solidity]
+function depositETH(uint destinationChainId) external payable {
+  require(msg.value > 0, "Deposit amount must be greater than 0");
+  ethBalances[msg.sender] += msg.value;
+  emit Deposit(msg.sender, msg.value, address(0), destinationChainId);
+}
+
+function deposit(address token, uint amount, uint destinationChainId) external {
+  require(amount > 0, "Deposit amount must be greater than 0");
+  safeTransfer(token, address(this), amount);
+  tokenBalances[msg.sender][token] += amount;
+  emit Deposit(msg.sender, amount, token, destinationChainId);
+}
+
+function safeTransfer(address token, address to, uint value) internal {
+  (bool success, bytes memory data) = token.call(abi.encodeWithSelector(0xa9059cbb, to, value));
+  require(success && (data.length == 0 || abi.decode(data, (bool))), "!safeTransfer");
+}
+\end{lstlisting}
+\caption{事件仿冒攻击的概念验证，其中 \texttt{deposit} 和
+\texttt{depositETH} 可能发出相同事件。}\label{code:1}
+\end{figure}
+
+该攻击利用合法合约中多个函数或执行路径会发出相同事件这一特性（\(\bm{\mathcal{M}}_{TS}\)）。在\cref{code:1}所示的代码示例中，\texttt{depositETH} 和 \texttt{deposit} 函数都会发出 \texttt{Deposit} 事件，其中第三个参数表示代币类型。\texttt{depositETH} 使用 \texttt{address(0)} 表示 ETH，而 \texttt{deposit} 函数则使用代币地址表示 ERC-20 代币。然而，\texttt{deposit} 函数也可以发出第三个参数为 \texttt{address(0)} 的事件，从而模仿一次 ETH 存款。
+
+攻击者可以通过调用 \texttt{deposit} 函数并将第三个参数伪造为 \texttt{address(0)} 来利用这一点，而无需实际转移任何 ETH。这会创建一个类似真实 ETH 存款的\emph{幻影} \texttt{Deposit} 事件。依赖事件日志进行交易验证的链下验证系统可能会错误地将该事件视为合法的 ETH 存款。由于事件验证流程存在缺陷，攻击者便能够在目标链上欺诈性地申领大量资产。
+
+
+\paragraph{检测方法}
+当不同函数或执行路径以相同参数发出同一事件，而这些函数本应施加不同约束时，就会出现该漏洞。链下系统通常会在未验证参数约束的情况下将这些事件视为真实事件。如果某个函数发出了一个本应由另一个函数约束或验证的值，则可将其视为潜在漏洞。检测规则会检查不同执行路径是否发出了相同参数值，即使这些路径原本应强制执行不同约束；若满足该条件，则将此类事件标记为潜在漏洞。
+
+
+形式化检测规则表示如下。
+
+\begin{equation}
+\small
+\text{EC} = \left\{
+e \in E \mid
+\begin{aligned}
+  & V(f, e) \cap V(g, e) \neq \emptyset \text{ and } \\
+  & \exists \; f, g \in F(e)
+\end{aligned}
+\right\}
+\end{equation}
+
+
+\begin{itemize}
+    \item \( E \) 是已发出事件的集合，\( e \in E \) 表示单个事件。
+    \item \( F \) 是合约中所有能够发出事件的函数路径集合，\( f, g \in F \) 是发出同一事件 \( e \) 的特定函数路径。
+    \item \( V(f, e) \) 和 \( V(g, e) \) 表示事件 \( e \) 的参数在函数路径 \( f \) 和 \( g \) 上可能取得的值范围。
+\end{itemize}
+
+
+\subsubsection{不一致日志记录}\label{vec:attack2}
+
+\begin{figure}
+\footnotesize
+\small
+\begin{lstlisting}[language=Solidity]
+function requestWithdraw(uint256 _type, uint256 _amount) external {
+  require(WITHDRAW_ALLOWED, "TroyEmpire: Withdrawal is disabled for now");
+  emit WithdrawalRequested(_msgSender(), _type, _amount);
+}
+\end{lstlisting}
+\caption{不一致日志记录攻击的概念验证。}\label{code:2}
+\end{figure}
+
+许多 DApp 采用混合日志记录模型，同时使用区块链和传统数据库记录关键操作。例如，DeFi 平台会记录存款和取款等金融交易，而 GameFi 平台会追踪用户操作。我们的分析表明，许多项目不仅依赖数据库记录，还会在区块链上发出日志。
+
+具体而言，设计不当的智能合约可能允许攻击者发出伪造事件，从而导致区块链日志与数据库日志之间出现不一致。例如，某金融平台可能同时使用区块链和链下数据库记录取款请求。如果智能合约缺乏适当的访问控制，攻击者就可以在区块链上任意生成取款事件，进而造成其与数据库记录不匹配，如\cref{code:2}所示。
+
+
+\paragraph{检测方法}
+当智能合约在缺乏适当访问控制或未与已存储数据进行校验的情况下发出事件时，就会出现该漏洞。具体而言，一些合约缺少必要约束，允许任意用户触发取款等关键事件，而不根据合约状态验证事件参数。为检测该问题，我们从两个关键方面分析合约函数：（1）是否存在访问控制机制或事件参数验证（例如 \texttt{require} 语句），以限制谁可以发出事件；（2）函数在发出事件时是否与存储交互，即是否读取或写入存储变量，以确保参数经过此前存储值的验证。如果某个函数在缺乏充分访问控制的情况下发出事件，或未与存储交互，则将其标记为潜在漏洞。
+
+形式化检测规则表示如下。
+
+\begin{equation}
+\small
+\text{IL} = \left\{
+f \in F \mid
+\begin{aligned}
+  & Constraint(f) = \emptyset \text{ or } \\
+  & (S_{\texttt{read}}(f) = \emptyset \text{ and } S_{\texttt{write}}(f) = \emptyset)
+\end{aligned}
+\right\}
+\end{equation}
+
+
+\begin{itemize}
+    \item \( Constraint(f) \)：函数 \( f \) 的访问控制机制或事件参数约束。如果 \( Constraint(f) = \emptyset \)，则表示不存在访问控制或约束。
+    \item \( S_{\texttt{read}}(f) \) 和 \( S_{\texttt{write}}(f) \)：函数 \( f \) 读取和写入的存储变量。
+\end{itemize}
+
+\subsubsection{合约仿冒}\label{vec:attack3}
+
+该攻击涉及部署恶意合约以利用或模仿现有合约（\(\bm{\mathcal{M}}_{SC}\)）。我们根据其特征将该攻击划分为两个子类型。第一种子类型称为混合事件攻击（Blended Event Attack），当恶意合约与合法合约交互，使两个合约发出的事件都被记录在同一笔交易中时，就会发生该攻击。这种事件混合使合法活动与欺诈活动难以区分。第二种子类型称为仿冒合约攻击（Mimicry Contract Attack），即攻击者部署一个模仿合法合约行为的伪造合约，从而操纵事件日志和交易细节。
+
+
+\emph{真实}合约通常记录其自身函数产生的日志。然而，大多数合约允许外部调用，因此恶意合约可以调用其函数，导致两个合约产生的日志被记录在同一笔交易中（\(\bm{\mathcal{M}}_{TS}\)）。这一场景被称为\emph{混合事件}攻击。当日志发出者未被验证时，该攻击会引入安全风险。
+
+\emph{仿冒合约}攻击利用了透明化实践，因为许多 DApp 团队会公开合约源代码以增强信任。这使攻击者能够修改并重新部署代码，创建模仿合法合约的恶意合约，并发出可被任意操纵的事件日志（\(\bm{\mathcal{M}}_{TS}\)）。对于 ERC-20 代币或 NFT 而言，这种操纵使攻击者能够伪造交易记录，例如铸造或转移代币或 NFT；其中还可能包括伪造发送者，使 NFT 看起来仿佛由知名艺术家发行。
+
+\paragraph{检测方法}
+%This vulnerability arises when an attacker deploys a forged contract to mimic an authentic contract, emitting phantom events that resemble legitimate ones. The attacker can further blend these phantom events with authentic events within the same transaction log, making it difficult for off-chain systems to distinguish between legitimate and forged events.
+为检测该攻击，我们分析\emph{交易日志}。具体而言，我们检查相同事件签名（\( Topics_0 \)）是否在同一笔交易中多次出现，但由不同合约发出。如果同一事件签名在同一笔交易中同时由真实合约和伪造合约发出，则将其标记为潜在攻击交易。该检测规则有助于识别事件签名相同但发出者不同的情况，这表明可能存在\emph{混合事件攻击}。
+
+
+\begin{equation}
+\small
+\text{BE} = \left\{
+L_{\textit{hash}} \mid
+\begin{aligned}
+  & Topics_0^i = Topics_0^j \text{ and } \\
+  & S_{\texttt{address}}^i = S_{\texttt{auth}} \text{ and } \\
+  & S_{\texttt{address}}^j = S_{\texttt{forge}}
+\end{aligned}
+\right\}
+\end{equation}
+
+
+
+\subsubsection{转账事件欺骗}\label{vec:attack4}
+
+该攻击是一种社会工程学攻击~\cite{social_engineer}。一个常见示例是零转账骗局（Zero Transfer Scam），攻击者会创建一个模仿合法代币转账的幻影事件。用户发送代币后，攻击者生成一个虚假事件，使其看起来像是用户已将代币发送至一个名称相似的接收地址，而该地址实际上由攻击者控制。这一伪造事件会被钱包和区块链浏览器记录，从而误导受害者将更多资金转入攻击者账户。据报道，该骗局已造成至少 2736 万美元的损失，并影响了 28,414 名受害者~\cite{wallet_visual}。
+
+第二种变体称为空投骗局（Airdrop Scam）~\cite{spoof}，它利用了 Web3 中常见的代币空投营销策略。攻击者使用真实的 ERC-20 或 ERC-721 合约伪造发送者地址，从而伪造幻影事件，并且通常会选择容易吸引注意力的地址（例如 0x8888...8888）。这些幻影空投会诱骗受害者与代币交互。攻击者可能设置蜜罐合约，使用户可以买入代币但无法卖出；也可能利用幻影事件日志推广恶意链接，例如使用 ENS 名称欺骗受害者。在更严重的情况下，攻击者可能实施 rug pull，撤走流动性并使受害者持有毫无价值的代币~\cite{rugpull}。
+
+
+\paragraph{检测方法}
+攻击者利用了许多第三方服务（如钱包和区块链浏览器）盲目信任智能合约发出事件、却不验证其真实性这一事实。借助这种验证缺失，攻击者可以生成模仿合法转账的幻影事件，误导用户将资金转入攻击者地址。为检测该攻击，可以分析交易日志，以确保转账事件确实由正确的发送者发起，或者验证发送者是否已授权发起交易的地址转移其代币。
+
+
+\begin{equation}
+\small
+\text{TS} = \left\{
+L_{\textit{hash}} \mid
+\begin{aligned}
+  & TX_{\textit{sender}} \neq \textit{TokenSender} \text{ and } \\
+  & Approve(\textit{TokenSender}, TX_{\textit{sender}}) = \text{false}
+\end{aligned}
+\right\}
+\end{equation}
+
+
+\begin{itemize}
+    \item \( \textit{TokenSender} \) 表示事件中的代币发送者。
+    \item \( Approve(\textit{TokenSender}, TX_{\textit{sender}}) \) 表示代币发送者是否已授权交易发起者转移其代币。
+\end{itemize}
+
+\subsubsection{事件处理错误}\label{vec:attack5}
+该攻击利用区块链浏览器、钱包和监控工具在处理和解释交易数据时存在的漏洞。这些应用依赖链上数据向用户提供实时信息。当幻影事件被错误地视为合法事件时，可能导致钱包余额不准确、交易历史虚假或资产所有权记录错误，从而误导用户并可能影响其决策。
+
+例如，在\emph{合约仿冒}攻击场景中，即使幻影事件并非专门针对区块链浏览器，它们仍可能导致浏览器将这些事件记录为有效的 ERC-20 或 NFT 转账，尽管实际上并未发生任何转账。这种误解使攻击者能够在不存在底层交易的情况下制造转账表象。
+
+攻击者还可以进一步在事件数据中嵌入恶意载荷，以发起跨站脚本（cross-site scripting，XSS）或 SQL 注入（SQL injection，SQLi）等攻击。如果缺乏适当的清理与过滤，这些载荷可能导致 DApp 界面上的未授权操作、数据窃取或数据库被攻陷。
+
+\paragraph{检测方法}
+该攻击利用了区块链浏览器、钱包和监控工具对链上数据的隐式信任。有效检测需要根据各类链下应用的需求设计可适配的方法。浏览器应根据实际代币转账验证事件，而钱包需要确认发送者是否被允许执行该转账。通过基于这些特定验证标准定制检测规则，应用可以降低幻影事件和嵌入式恶意载荷带来的风险。
